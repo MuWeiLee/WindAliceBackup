@@ -1,0 +1,789 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alice 连接器</title>
+  <link rel="stylesheet" href="./alice-cowork-visual-system.css" />
+  <style>
+    body{overflow:hidden;}
+    .connector-page{flex:1;min-height:0;overflow:hidden;background:#fff;display:flex;flex-direction:column;}
+    .plugin-shell-top{padding-left:30px;}
+    .plugin-tabs-row{height:66px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 30px;background:#fff;}
+    .plugin-workspace{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;}
+    .plugin-top{height:64px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:12px 24px;border-bottom:1px solid #EEF0F4;background:#fff;position:sticky;top:0;z-index:8;}
+    .ability-tabs{display:flex;align-items:center;gap:12px;}
+    .ability-tab{border:0;background:transparent;color:var(--text);font-size:14px;font-weight:800;padding:7px 10px;border-radius:8px;display:flex;align-items:center;gap:6px;}
+    .ability-tab:hover{background:var(--bg-inset);}
+    .ability-tab.active{background:#262A31;color:#fff;}
+    .ability-tab .lucide{width:15px;height:15px;}
+    .plugin-tools{display:flex;align-items:center;gap:8px;margin-left:auto;}
+    .search-box{width:260px;height:36px;border:1px solid var(--border-strong);background:#F8F9FB;border-radius:9px;display:flex;align-items:center;gap:7px;padding:0 10px;color:var(--text-tertiary);}
+    .search-box:focus-within{border-color:#B8C7EB;background:#fff;box-shadow:0 0 0 3px rgba(49,94,196,.08);}
+    .search-box input{border:0;outline:0;background:transparent;min-width:0;flex:1;font-size:13px;}
+    .clear-search{border:0;background:#D5D8DE;color:#fff;border-radius:50%;width:16px;height:16px;display:none;align-items:center;justify-content:center;padding:0;}
+    .clear-search.show{display:flex;}
+    .clear-search .lucide{width:12px;height:12px;}
+    .custom-btn{height:36px;border:1px solid var(--border-strong);background:#fff;border-radius:9px;padding:0 12px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:750;}
+    .custom-btn{white-space:nowrap;}
+    .custom-btn:hover{background:var(--bg-inset);}
+    .market-control-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0 0 20px;}
+    .plugin-tabs-row .market-control-row{margin:0;margin-left:auto;}
+    .market-tabs{display:flex;align-items:center;gap:4px;border:1px solid #E7EAF0;background:#F7F8FA;border-radius:10px;padding:3px;}
+    .market-tab{height:30px;border:0;background:transparent;border-radius:7px;padding:0 12px;font-size:13px;font-weight:800;color:#5D6572;}
+    .market-tab.active{background:#fff;color:#172033;box-shadow:0 1px 4px rgba(15,23,42,.08);}
+    .plugin-body{flex:1;min-height:0;overflow-y:auto;padding:16px 24px 106px;}
+    .market-section{margin-bottom:26px;}
+    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 0 12px;}
+    .section-title{font-size:15px;font-weight:900;color:#161B25;}
+    .section-subtitle{margin-top:4px;font-size:12px;color:#7A8393;font-weight:500;}
+    .bundle-grid{display:grid;grid-template-columns:repeat(4,minmax(210px,1fr));gap:12px;}
+    .bundle-card{position:relative;display:flex;flex-direction:column;min-height:158px;border:1px solid #E7EAF0;border-radius:14px;background:#fff;padding:16px;box-shadow:0 16px 36px rgba(20,24,34,.04);text-align:left;overflow:hidden;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;}
+    .bundle-card,.plugin-card{cursor:pointer;}
+    .bundle-card:before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--bundle-accent,#315EC4),rgba(49,94,196,.18));}
+    .bundle-card:hover{border-color:#CAD2E3;box-shadow:0 20px 42px rgba(33,47,79,.09);transform:translateY(-1px);}
+    .bundle-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+    .bundle-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#EFF4FF;color:#2654B6;font-weight:900;}
+    .bundle-card h3{font-size:16px;margin:0;font-weight:900;color:#141923;}
+    .bundle-card p{font-size:12.5px;line-height:1.65;color:#4F5665;margin:0;}
+    .bundle-logos{display:flex;margin-top:auto;padding-top:13px;}
+    .bundle-logos .plugin-logo{width:24px;height:24px;border-radius:8px;font-size:11px;margin-right:-5px;border:2px solid #fff;box-shadow:none;}
+    .bundle-action{height:30px;border:0;border-radius:8px;background:#172033;color:#fff;padding:0 10px;font-size:12px;font-weight:850;flex:none;white-space:nowrap;}
+    .bundle-action.installed{background:#EAF8F2;color:#07885F;}
+    .category-filter{display:flex;align-items:center;gap:8px;margin:0 0 14px;}
+    .cat-pill{height:30px;border:1px solid #E7EAF0;background:#F7F8FA;border-radius:8px;padding:0 12px;font-size:12.5px;font-weight:700;color:#5D6572;cursor:pointer;}
+    .cat-pill:hover{background:#EEF0F4;}
+    .cat-pill.active{background:#172033;color:#fff;border-color:#172033;}
+    .plugin-grid{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:12px;}
+    .plugin-card{position:relative;min-height:104px;border:1px solid #ECEEF2;background:#fff;border-radius:12px;padding:17px 56px 14px 16px;text-align:left;box-shadow:0 10px 28px rgba(20,24,34,.025);transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease,background .16s ease;}
+    .plugin-card:hover{border-color:#D8DCE5;box-shadow:0 16px 34px rgba(24,32,56,.075);transform:translateY(-1px);}
+    .plugin-card.connected{background:#FBFCFD;}
+    .plugin-head{display:flex;align-items:center;gap:10px;min-width:0;}
+    .plugin-logo{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;font-size:15px;font-weight:900;box-shadow:inset 0 0 0 1px rgba(255,255,255,.26);}
+    .logo-ima{background:linear-gradient(135deg,#E7F8E9,#101812);color:#111;}
+    .logo-feishu{background:#2F6BFF;}
+    .logo-tencent-doc{background:#2F75FF;}
+    .logo-kingsoft{background:#1E72E8;}
+    .logo-baidu{background:#178BFF;}
+    .logo-lexiang{background:#28B66F;}
+    .logo-notion{background:#111;}
+    .logo-zsxq{background:#2478FF;}
+    .logo-dingtalk{background:#3285FF;}
+    .logo-qqmail{background:#2B74E8;}
+    .logo-netease{background:#D92929;}
+    .logo-wecom{background:#1C83FF;}
+    .logo-meeting{background:#2479FF;}
+    .logo-scan{background:#0B84FF;}
+    .plugin-name{font-size:15px;font-weight:850;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .connected-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#10B981;margin-left:4px;vertical-align:1px;}
+    .plugin-desc{margin:10px 0 0;color:#4F5665;font-size:12.2px;line-height:1.65;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    mark{background:#FFF1B8;color:#523D00;border-radius:4px;padding:0 2px;}
+    .add-plugin{position:absolute;right:16px;top:18px;width:28px;height:28px;border:0;border-radius:8px;background:#F1F2F4;color:#666B76;display:flex;align-items:center;justify-content:center;}
+    .add-plugin:hover{background:#E6E9EF;color:#111;}
+    .status-chip{position:absolute;right:14px;top:18px;border:0;border-radius:8px;background:#E9F8F1;color:#07885F;font-size:11px;font-weight:800;padding:5px 8px;}
+    .my-panel{display:none;}
+    .my-panel.show{display:block;}
+    .my-meta{font-size:12px;color:#7A8393;}
+    .my-card{min-height:142px;padding-right:16px;display:flex;flex-direction:column;}
+    .my-card-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:14px;}
+    .my-card-status{display:flex;flex-direction:column;gap:2px;min-width:0;}
+    .my-card-actions{display:flex;align-items:center;gap:10px;flex:none;}
+    .switch{width:34px;height:20px;border:0;border-radius:999px;background:#18B283;position:relative;}
+    .switch:after{content:"";position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;}
+    .switch.off{background:#D5DAE3;}
+    .switch.off:after{right:auto;left:3px;}
+    .muted-link{border:0;background:transparent;color:#315EC4;font-weight:800;font-size:12px;}
+    .empty-state{display:none;align-items:center;justify-content:center;min-height:380px;color:var(--text-secondary);flex-direction:column;gap:10px;}
+    .empty-state.show{display:flex;}
+    .empty-state .glyph{width:42px;height:42px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);}
+    .empty-state h3{font-size:15px;}
+    .empty-state p{margin:0;font-size:12.5px;color:var(--text-tertiary);}
+    .hover-pop{position:relative;}
+    .ability-menu{position:absolute;left:8px;top:100%;width:148px;background:#fff;border:1px solid var(--border);border-radius:11px;box-shadow:var(--shadow-md);padding:6px;display:none;z-index:30;margin-top:8px;}
+    .ability-menu:before{content:"";position:absolute;inset:-8px 0 0 0;z-index:-1;}
+    .hover-pop:hover .ability-menu{display:block;}
+    .ability-menu button{width:100%;border:0;background:transparent;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;text-align:left;font-size:12.5px;font-weight:700;color:var(--text-secondary);}
+    .ability-menu button:hover,.ability-menu button.active{background:var(--accent-soft);color:var(--accent-strong);}
+    .rail-nav-flyout{left:100%;top:0;width:148px;margin-left:8px;margin-top:0;}
+    .rail-nav-flyout:before{inset:-8px -8px 0 0;}
+    .connector-composer{position:fixed;left:calc(252px + 18%);right:18%;bottom:12px;z-index:20;background:rgba(255,255,255,.94);border:1px solid #CAD7F5;border-radius:8px;box-shadow:0 16px 48px rgba(46,90,172,.16);backdrop-filter:blur(12px);}
+    .composer-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 13px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-secondary);}
+    .composer-input{display:flex;align-items:center;gap:8px;padding:10px 12px;}
+    .composer-input input{border:0;outline:0;flex:1;min-width:0;font-size:13px;background:transparent;color:var(--text);}
+    .send-btn{width:28px;height:28px;border:0;border-radius:50%;background:#86A6F6;color:#fff;display:flex;align-items:center;justify-content:center;}
+    .overlay{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.56);}
+    .overlay.show{display:flex;}
+    .connect-modal{width:640px;max-width:calc(100vw - 32px);background:#fff;border-radius:22px;box-shadow:0 26px 80px rgba(0,0,0,.22);position:relative;padding:42px 36px 30px;}
+    .modal-close{position:absolute;right:20px;top:18px;border:0;background:transparent;color:#555;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .modal-close:hover{background:var(--bg-inset);}
+    .connect-logos{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:18px;}
+    .alice-logo{width:58px;height:58px;border-radius:50%;background:#15C8A0;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;}
+    .dot-chain{display:flex;gap:6px;}
+    .dot-chain i{width:5px;height:5px;background:#E0E3E8;border-radius:50%;}
+    .target-logo{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:900;color:#fff;}
+    .connect-modal h2{text-align:center;font-size:22px;margin:0 0 10px;font-weight:900;}
+    .modal-desc{text-align:center;max-width:470px;margin:0 auto;color:#3F4654;font-size:14px;line-height:1.75;}
+    .connect-btn{height:36px;margin:20px auto 30px;border:0;border-radius:9px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;padding:0 22px;font-weight:800;}
+    .samples-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:850;margin:0 0 12px;}
+    .sample-list{display:flex;flex-direction:column;gap:10px;}
+    .sample-item{height:46px;border:0;background:#F7F8FA;border-radius:14px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#4A5160;text-align:left;font-size:13px;}
+    .sample-item:hover{background:#EEF3FF;color:#244A9A;}
+    .bundle-install-list{display:none;border:1px solid #EEF0F4;border-radius:12px;overflow:hidden;margin:18px 0 20px;}
+    .bundle-install-list.show{display:block;}
+    .bundle-install-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border-bottom:1px solid #EEF0F4;font-size:12.5px;}
+    .bundle-install-row:last-child{border-bottom:0;}
+    .bundle-install-row span{display:flex;align-items:center;gap:8px;font-weight:800;}
+    .bundle-install-row .bundle-row-done{color:#07885F;}
+    .bundle-install-row:has(.bundle-row-done){opacity:.6;}
+    .detail-page{display:none;flex:1;min-height:0;padding:16px 24px 120px;overflow-y:auto;}
+    .detail-page.show{display:block;}
+    .detail-wrap{width:100%;max-width:none;margin:0;}
+    .back-row{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+    .detail-page .back-row{position:sticky;top:0;z-index:60;margin:0 0 28px;padding:8px 0 12px;background:#fff;border-bottom:1px solid #EEF0F4;isolation:isolate;}
+    .detail-page .back-row:before{content:"";position:absolute;left:-24px;right:-24px;top:-16px;bottom:-1px;background:#fff;border-bottom:1px solid #EEF0F4;z-index:-1;}
+    .back-btn{border:0;background:transparent;color:var(--text-secondary);display:flex;align-items:center;gap:5px;font-size:13px;padding:6px 0;}
+    .back-btn:hover{color:var(--text);}
+    .detail-title-text{font-size:13px;font-weight:760;color:var(--text-secondary);}
+    .detail-hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:start;margin-bottom:22px;}
+    .detail-id{display:flex;align-items:center;gap:14px;min-width:0;}
+    .detail-id .plugin-logo{width:56px;height:56px;border-radius:13px;font-size:22px;}
+    .detail-main b{font-size:26px;font-weight:900;letter-spacing:0;}
+    .detail-main p{margin:5px 0 0;font-size:13px;color:#667085;font-weight:650;}
+    .detail-actions{display:flex;align-items:center;gap:10px;padding-top:10px;}
+    .enable-control{height:34px;display:none;align-items:center;gap:8px;padding:0 8px 0 10px;border:1px solid #E7EAF0;background:#fff;border-radius:9px;color:#475467;font-size:12.5px;font-weight:850;}
+    .enable-control.show{display:flex;}
+    .enable-control .switch{cursor:pointer;}
+    .detail-primary{height:34px;border:0;border-radius:8px;background:#111827;color:#fff;padding:0 16px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:850;}
+    .detail-primary:disabled{background:#E5E7EB;color:#8A93A3;cursor:not-allowed;}
+    .detail-ghost{height:34px;border:0;border-radius:8px;background:#F3F4F6;color:#1F2937;padding:0 12px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:850;}
+    .more-wrap{position:relative;}
+    .more-menu{position:absolute;right:0;top:calc(100% + 8px);width:172px;border:1px solid #E7EAF0;background:#fff;border-radius:10px;box-shadow:0 18px 42px rgba(15,23,42,.14);padding:6px;display:none;z-index:70;}
+    .more-menu.show{display:block;}
+    .more-menu button{width:100%;height:34px;border:0;background:transparent;border-radius:8px;padding:0 10px;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;color:#273142;text-align:left;}
+    .more-menu button:hover{background:#F3F5F8;}
+    .more-menu button.danger-item{color:#D92D20;}
+    .more-menu button.danger-item:hover{background:#FFF1F1;}
+    .detail-banner{border-radius:14px;background:linear-gradient(135deg,#EAF1FF 0%,#F7F4FF 54%,#EEF9F3 100%);padding:28px;margin-bottom:22px;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden;}
+    .prompt-pill{height:40px;min-width:min(560px,100%);border:0;border-radius:14px;background:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 12px 0 16px;color:#1F2937;font-size:13px;text-align:left;box-shadow:0 8px 18px rgba(49,94,196,.08);}
+    .prompt-pill b{color:#315EC4;margin-right:6px;}
+    .round-arrow{width:28px;height:28px;border-radius:50%;background:#D9DEEA;display:flex;align-items:center;justify-content:center;flex:none;color:#303744;}
+    .detail-summary{color:#4F5665;font-size:13.5px;line-height:1.8;margin:0 0 24px;}
+    .detail-section{margin:0 0 22px;}
+    .detail-section h3{font-size:15px;font-weight:900;margin:0 0 10px;color:#111827;}
+    .member-list{border:1px solid var(--border);border-radius:10px;background:#fff;overflow:hidden;margin-bottom:0;}
+    .member-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);}
+    .member-row:last-child{border-bottom:0;}
+    .member-info{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:850;min-width:0;}
+    .member-info small{display:block;color:#6B7280;font-weight:500;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:620px;}
+    .member-status{font-size:12px;color:#07885F;font-weight:800;background:#F1F8F5;border-radius:8px;padding:5px 8px;white-space:nowrap;}
+    .member-install{border:0;border-radius:8px;background:#172033;color:#fff;padding:5px 12px;font-size:12px;font-weight:850;white-space:nowrap;cursor:pointer;}
+    .info-grid{display:grid;grid-template-columns:140px 1fr;gap:13px 24px;border-top:1px solid #EEF0F4;padding-top:14px;font-size:13px;}
+    .info-grid dt{color:#8A93A3;}
+    .info-grid dd{margin:0;color:#111827;}
+    .detail-page .detail-hero,.detail-page .detail-banner,.detail-page .detail-summary,.detail-page .detail-section{max-width:980px;margin-left:auto;margin-right:auto;}
+    .config-page{display:none;padding:16px 24px 120px;}
+    .config-page.show{display:block;}
+    .config-panel{max-width:860px;border:1px solid var(--border);background:#fff;border-radius:10px;padding:18px;}
+    .config-row{display:grid;grid-template-columns:180px minmax(0,1fr);gap:18px;border-bottom:1px solid var(--border);padding:14px 0;align-items:center;}
+    .config-row:last-child{border-bottom:0;}
+    .config-row label{font-size:13px;font-weight:800;color:var(--text);}
+    .field{height:36px;border:1px solid var(--border-strong);border-radius:8px;padding:0 10px;background:#fff;font-size:13px;}
+    .toggle{width:42px;height:24px;border:0;border-radius:12px;background:#2F6BFF;position:relative;}
+    .toggle:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;right:3px;top:3px;}
+    @media (max-width:1200px){
+      .bundle-grid{grid-template-columns:repeat(2,minmax(230px,1fr));}
+      .plugin-grid{grid-template-columns:repeat(3,minmax(220px,1fr));}
+      .connector-composer{left:300px;right:36px;}
+    }
+    @media (max-width:960px){
+      .app-shell{grid-template-columns:1fr;}
+      .rail{display:none;}
+      .plugin-shell-top{padding-left:16px;padding-right:180px;}
+      .plugin-tabs-row{height:auto;padding:12px 16px;flex-direction:column;align-items:stretch;}
+      .plugin-tools{width:100%;flex-wrap:wrap;}
+      .market-control-row{align-items:flex-start;flex-wrap:wrap;}
+      .search-box{order:1;flex:1 1 100%;width:auto;}
+      .market-tabs{order:2;flex:none;}
+      .custom-btn{order:3;margin-left:auto;}
+      .plugin-body{padding:14px 16px 126px;}
+      .bundle-grid{grid-template-columns:1fr;}
+      .plugin-grid{grid-template-columns:1fr;}
+      .connector-composer{left:18px;right:18px;}
+      .detail-page,.config-page{padding:18px 16px 126px;}
+      .detail-actions{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="rail">
+      <div class="rail-brand">
+        <div class="logo-text">Alice</div>
+        <button class="rail-collapse-btn" title="收起侧栏"><i data-lucide="panel-left"></i></button>
+      </div>
+      <button class="market-top-tab" onclick="alert('原型演示：切换到我的首页')"><i data-lucide="globe-2" aria-hidden="true"></i><span>我的首页</span><span class="market-points">送积分</span></button>
+      <div class="top-tabs" role="tablist">
+        <button class="top-tab" onclick="alert('原型演示：切换到 Chat')">Chat</button>
+        <button class="top-tab active">Work</button>
+        <button class="top-tab" onclick="alert('原型演示：切换到 Link')">Link</button>
+      </div>
+      <nav class="rail-main-nav" aria-label="主导航">
+        <div class="hover-pop">
+          <button class="rail-main-item active"><span class="nav-ico"><i data-lucide="blocks" aria-hidden="true"></i></span><span>技能·专家·连接器</span></button>
+          <div class="ability-menu rail-nav-flyout">
+            <button><i data-lucide="bot"></i>专家</button>
+            <button><i data-lucide="wand-sparkles"></i>技能</button>
+            <button class="active"><i data-lucide="link"></i>连接器</button>
+          </div>
+        </div>
+        <button class="rail-main-item" onclick="alert('原型演示：定时与提醒')"><span class="nav-ico"><i data-lucide="alarm-clock" aria-hidden="true"></i></span><span>定时与提醒</span></button>
+        <button class="rail-main-item" onclick="alert('原型演示：知识库')"><span class="nav-ico"><i data-lucide="library" aria-hidden="true"></i></span><span>知识库</span></button>
+      </nav>
+      <div class="rail-bottom">
+        <div class="user-chip"><div class="av">李</div><span><b>李牧微</b><small>积分 1,157</small></span></div>
+        <button class="btn btn-sm">充值</button>
+      </div>
+    </aside>
+
+    <main class="main-col">
+      <section class="connector-page">
+        <header class="topbar plugin-shell-top">
+          <div class="topbar-title" aria-hidden="true"></div>
+        </header>
+        <div class="plugin-tabs-row">
+          <div class="ability-tabs">
+            <button class="ability-tab"><i data-lucide="bot"></i>专家</button>
+            <button class="ability-tab"><i data-lucide="wand-sparkles"></i>技能</button>
+            <button class="ability-tab active"><i data-lucide="link"></i>连接器</button>
+          </div>
+          <div class="market-control-row">
+            <div class="market-tabs" role="tablist" aria-label="连接器范围">
+              <button class="market-tab active" data-view="all" type="button">全部</button>
+              <button class="market-tab" data-view="mine" type="button">我的</button>
+            </div>
+            <label class="search-box">
+              <i data-lucide="search"></i>
+              <input id="searchInput" placeholder="搜索连接器或连接器包" autocomplete="off" />
+              <button class="clear-search" id="clearSearch" title="清空搜索" type="button"><i data-lucide="x"></i></button>
+            </label>
+          </div>
+        </div>
+        <div class="plugin-workspace" id="marketPage">
+          <div class="plugin-body">
+            <div id="allPanel">
+              <section class="market-section">
+                <div class="section-head">
+                  <div>
+                    <div class="section-title">连接器包</div>
+                  </div>
+                </div>
+                <div class="bundle-grid" id="bundleGrid"></div>
+              </section>
+              <section class="market-section">
+                <div class="section-head">
+                  <div>
+                    <div class="section-title">推荐连接器</div>
+                  </div>
+                </div>
+                <div class="category-filter" id="categoryFilter">
+                  <button class="cat-pill active" data-cat="全部" type="button">全部</button>
+                  <button class="cat-pill" data-cat="知识库" type="button">知识库</button>
+                  <button class="cat-pill" data-cat="文档协作" type="button">文档协作</button>
+                  <button class="cat-pill" data-cat="沟通邮箱" type="button">沟通邮箱</button>
+                  <button class="cat-pill" data-cat="文件资料" type="button">文件资料</button>
+                </div>
+                <div class="plugin-grid" id="pluginGrid"></div>
+              </section>
+            </div>
+            <div class="my-panel" id="myPanel">
+              <section class="market-section">
+                <div class="section-head">
+                  <div>
+                    <div class="section-title">我的连接器</div>
+                  </div>
+                </div>
+                <div class="plugin-grid" id="myList"></div>
+              </section>
+            </div>
+            <div class="empty-state" id="emptyState">
+              <div class="glyph"><i data-lucide="search-x"></i></div>
+              <h3>未找到相关内容</h3>
+              <p>换个关键词试试，或清空搜索词查看全部连接器和连接器包。</p>
+              <button class="btn btn-sm" id="emptyClear">清空搜索</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-page" id="detailPage">
+          <div class="detail-wrap">
+            <div class="back-row">
+              <button class="back-btn" id="backToMarket"><i data-lucide="chevron-left"></i>返回连接器市场</button>
+              <div class="detail-title-text" id="detailTitle">连接器详情</div>
+            </div>
+            <div class="detail-hero">
+              <div class="detail-id">
+                <div class="plugin-logo logo-notion" id="detailLogo">G</div>
+                <div class="detail-main">
+                  <b id="detailName">GitHub</b>
+                  <p id="detailMeta">连接器 · 知识库 · by Wind Alice</p>
+                </div>
+              </div>
+              <div class="detail-actions">
+                <div class="enable-control" id="enableControl">
+                  <span id="enableText">已开启</span>
+                  <button class="switch" id="enableSwitch" type="button" aria-label="启用连接器"></button>
+                </div>
+                <div class="more-wrap" id="moreWrap">
+                  <button class="detail-ghost" id="detailMore"><i data-lucide="ellipsis"></i>更多设置</button>
+                  <div class="more-menu" id="moreMenu">
+                    <button type="button" id="openConfigFromMore"><i data-lucide="settings"></i>配置连接器</button>
+                    <button type="button" class="danger-item" id="openRevoke"><i data-lucide="circle-x"></i>撤销授权</button>
+                  </div>
+                </div>
+                <button class="detail-primary" id="detailPrimary"><i data-lucide="plus"></i>连接</button>
+              </div>
+            </div>
+            <div class="detail-banner" id="detailBanner"></div>
+            <p class="detail-summary" id="detailSummary">连接后 Alice 可在对话和任务中调用该连接器能力。</p>
+            <section class="detail-section" id="memberSection">
+              <h3 id="memberTitle">包含连接器</h3>
+              <div class="member-list" id="detailMembers"></div>
+            </section>
+            <section class="detail-section" id="infoSection">
+              <h3>信息</h3>
+              <dl class="info-grid" id="detailInfo"></dl>
+            </section>
+          </div>
+        </div>
+
+        <div class="config-page" id="configPage">
+          <div class="back-row">
+            <button class="back-btn" id="backToDetail"><i data-lucide="chevron-left"></i>返回</button>
+            <div class="detail-title-text">连接器配置</div>
+          </div>
+          <div class="config-panel">
+            <div class="config-row">
+              <label>授权账号</label>
+              <input class="field" value="@limuwei" />
+            </div>
+            <div class="config-row">
+              <label>默认空间</label>
+              <select class="field"><option>个人空间</option><option>万得Alice 项目空间</option></select>
+            </div>
+            <div class="config-row">
+              <label>允许 Alice 自动调用</label>
+              <button class="toggle" aria-label="允许 Alice 自动调用"></button>
+            </div>
+            <div class="config-row">
+              <label>回答中展示引用来源</label>
+              <button class="toggle" aria-label="展示引用来源"></button>
+            </div>
+            <div class="config-row">
+              <label>刷新频率</label>
+              <select class="field"><option>每次使用前刷新</option><option>每天自动刷新</option><option>仅手动刷新</option></select>
+            </div>
+            <div class="config-row">
+              <label>操作</label>
+              <div class="topbar-actions">
+                <button class="btn btn-sm"><i data-lucide="refresh-cw"></i>刷新状态</button>
+                <button class="btn btn-primary btn-sm">保存配置</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="global-page-actions">
+      <button class="global-action-btn" title="新聊天"><i data-lucide="message-square-plus"></i></button>
+      <button class="global-action-btn" title="扫码"><i data-lucide="scan-line"></i></button>
+      <button class="global-recharge-btn"><i data-lucide="gift"></i>领取积分</button>
+      <button class="global-action-btn" title="通知"><i data-lucide="bell"></i><span class="badge-count">3</span></button>
+      <button class="global-action-btn" title="分享"><i data-lucide="share-2"></i></button>
+    </div>
+
+    <div class="connector-composer">
+      <div class="composer-top"><span><i data-lucide="chevron-up"></i> 展开对话，与连接器专家研判连接器能力</span><span>内容由 AI 生成，请核查重要信息</span></div>
+      <div class="composer-input">
+        <button class="btn btn-sm"><i data-lucide="plus"></i></button>
+        <button class="btn btn-primary btn-sm"><i data-lucide="plug-zap"></i>连接器专家</button>
+        <input id="composerInput" placeholder="问 AI：查找腾讯文档里本周更新的项目资料，或总结邮箱里的客户待办..." />
+        <button class="send-btn" title="发送"><i data-lucide="arrow-up"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="connectOverlay">
+    <section class="connect-modal">
+      <button class="modal-close" id="closeModal" title="关闭"><i data-lucide="x"></i></button>
+      <div class="connect-logos">
+        <div class="alice-logo">A</div>
+        <div class="dot-chain"><i></i><i></i><i></i></div>
+        <div class="target-logo" id="modalLogo">文</div>
+      </div>
+      <h2 id="modalTitle">连接 腾讯文档</h2>
+      <p class="modal-desc" id="modalDesc">Wind Alice 需要您的授权才可使用腾讯文档，点击连接并完成配置。</p>
+      <div class="bundle-install-list" id="bundleInstallList"></div>
+      <button class="connect-btn" id="connectBtn"><i data-lucide="link"></i>连接</button>
+      <div class="samples-title"><i data-lucide="lightbulb"></i>试试这样用</div>
+      <div class="sample-list" id="sampleList"></div>
+    </section>
+  </div>
+
+  <div class="overlay" id="revokeOverlay">
+    <section class="connect-modal" style="width:460px;padding:28px 30px;">
+      <button class="modal-close" id="closeRevoke" title="关闭"><i data-lucide="x"></i></button>
+      <h2 style="text-align:left;font-size:18px;">撤销授权</h2>
+      <p class="modal-desc" style="text-align:left;margin:8px 0 20px;">撤销后 Alice 将无法继续读取该连接器账号内容，相关对话中的历史引用不会被删除。</p>
+      <div class="topbar-actions" style="justify-content:flex-end;">
+        <button class="btn" id="cancelRevoke">取消</button>
+        <button class="btn btn-danger" id="confirmRevoke">确认撤销</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script>
+    const plugins = [
+      {id:'ima', name:'ima知识库', logo:'知', logoClass:'logo-ima', connected:false, desc:'引用知识库资料及文件，浏览知识库详情。', samples:['在 ima 知识库中搜索「季度复盘」相关的资料','查看「产品手册」ima 知识库的详情和文件列表','引用 ima 知识库中关于 OpenAPI 的内容回答这个问题']},
+      {id:'feishu', name:'飞书', logo:'飞', logoClass:'logo-feishu', connected:false, desc:'连接飞书文档、群消息、日程和项目资料，帮助整理团队协作上下文。', samples:['总结飞书项目群最近三天的讨论重点','新建一份飞书项目周报并填入本周进展','查询上周客户评审会议的待办事项']},
+      {id:'tencentdoc', name:'腾讯文档', logo:'T', logoClass:'logo-tencent-doc', connected:false, desc:'创建、编辑和协作腾讯文档。用自然语言管理在线表格、文档和幻灯片。', samples:['帮我新建一份会议纪要文档','把项目计划整理成腾讯表格','总结最近更新的团队文档']},
+      {id:'kingsoft', name:'金山文档', logo:'W', logoClass:'logo-kingsoft', connected:false, desc:'创建、搜索和管理金山文档，支持多种文档类型读取与整理。', samples:['查找金山文档里的路演材料','总结这个 WPS 表格里的任务进展','把访谈纪要整理成金山文档']},
+      {id:'baidu', name:'百度网盘', logo:'B', logoClass:'logo-baidu', connected:false, desc:'连接百度网盘，支持文件分类浏览、关键词语义检索、文件内容总结。', samples:['查找最近上传的研报文件','总结这个文件夹下的 PDF 内容','找出和新能源相关的文档']},
+      {id:'lexiang', name:'乐享知识库', logo:'L', logoClass:'logo-lexiang', connected:false, desc:'搜索、创建和管理乐享知识库文档，追踪团队文档更新动态。', samples:['搜索乐享知识库里的投研流程','总结最近更新的制度文档','创建一条客户服务知识记录']},
+      {id:'notion', name:'Notion', logo:'N', logoClass:'logo-notion', connected:false, desc:'创建、搜索和管理 Notion 工作区，查询数据库并更新知识库。', samples:['搜索 Notion 里关于连接器服务的页面','总结项目数据库里的高优任务','创建一条新的知识记录']},
+      {id:'zsxq', name:'知识星球', logo:'星', logoClass:'logo-zsxq', connected:false, desc:'查询星球内容、整理社群知识，沉淀高价值讨论和问答。', samples:['总结知识星球最近一周热门问答','查找关于产品增长的帖子','整理某个话题下的精华内容']},
+      {id:'dingtalk', name:'钉钉', logo:'钉', logoClass:'logo-dingtalk', connected:false, desc:'管理钉钉 AI 表格、考勤、日历、群聊和开放平台文档。', samples:['总结钉钉项目群今天的待办','查询明天的会议安排','把客户拜访计划同步到钉钉文档']},
+      {id:'qqmail', name:'QQ邮箱', logo:'Q', logoClass:'logo-qqmail', connected:false, desc:'通过 IMAP/SMTP 连接邮箱，支持收发邮件、搜索、附件下载和总结。', samples:['帮我总结今天的重要邮件','起草一封客户回访邮件','提取邮件中的待办事项']},
+      {id:'netease', name:'网易邮箱', logo:'网', logoClass:'logo-netease', connected:false, desc:'连接 163、126、yeah.net 等网易邮箱，支持邮件搜索和内容整理。', samples:['查找客户最近一个月的往来邮件','总结未读邮件里的风险事项','写一封会议改期通知']},
+      {id:'wecom', name:'企业微信', logo:'企', logoClass:'logo-wecom', connected:false, desc:'覆盖消息、邮件、文档、待办、日程和会议，支持组织协作查询。', samples:['查询客户群最近讨论的关键问题','总结企业微信里的项目待办','查找上周销售会议内容']},
+      {id:'meeting', name:'腾讯会议', logo:'会', logoClass:'logo-meeting', connected:false, desc:'查询会议记录、总结会议纪要，提取会议待办和参会信息。', samples:['总结最近一次会议纪要','查找上周的客户会议','提取会议中的待办事项']},
+      {id:'scan', name:'扫描全能王', logo:'扫', logoClass:'logo-scan', connected:false, desc:'读取扫描文档、OCR 图片和 PDF，帮助整理票据、合同和资料。', samples:['识别这份扫描合同的关键条款','把图片里的表格整理出来','总结扫描 PDF 的主要内容']}
+    ];
+    const bundles = [
+      {id:'wechat', name:'微信生态', icon:'微', accent:'#10B981', pluginIds:['wecom','meeting','tencentdoc','qqmail','ima'], desc:'一次接入企业微信、会议、腾讯文档、邮箱和知识库，覆盖客户沟通、会议纪要与团队资料。', samples:['汇总客户群最近一周的沟通重点，并找出待办','查找腾讯文档和企业微信里关于路演项目的资料','根据会议记录和邮件往来生成客户跟进摘要']},
+      {id:'knowledge', name:'知识库', icon:'知', accent:'#315EC4', pluginIds:['ima','lexiang','notion','zsxq'], desc:'把企业知识库、个人知识库和社群知识接入 Alice，支持搜索、引用、总结和问答。', samples:['搜索所有知识库里关于 OpenAPI 的资料并总结','汇总产品策略相关的内部文档和社群讨论','引用知识库内容生成一份客户答疑材料']},
+      {id:'mail', name:'邮箱', icon:'邮', accent:'#E05A2B', pluginIds:['qqmail','netease'], desc:'连接常用邮箱，支持查询邮件、总结往来、起草回复和提取附件中的关键信息。', samples:['总结今天的重要邮件并提取待办','查找某客户最近一个月的邮件往来','起草一封关于会议改期的客户通知']},
+      {id:'docs', name:'文档协作', icon:'文', accent:'#64748B', pluginIds:['feishu','tencentdoc','kingsoft'], desc:'连接主流在线文档和表格，支持读取、创建、编辑和整理项目资料。', samples:['把本周项目资料整理成一份进展周报','查找各文档平台中关于尽调清单的内容','根据会议纪要新建一份任务跟踪表']}
+    ];
+    const categories = {
+      ima:'知识库', feishu:'文档协作', tencentdoc:'文档协作', kingsoft:'文档协作', baidu:'文件资料',
+      lexiang:'知识库', notion:'知识库', zsxq:'知识库', dingtalk:'沟通邮箱', qqmail:'沟通邮箱',
+      netease:'沟通邮箱', wecom:'沟通邮箱', meeting:'沟通邮箱', scan:'文件资料'
+    };
+    const categoryOrder = ['知识库','文档协作','沟通邮箱','文件资料'];
+    let currentTarget = plugins[2];
+    let detailTarget = null;
+    let currentView = 'all';
+    let selectedCategory = '全部';
+    const grid = document.getElementById('pluginGrid');
+    const bundleGrid = document.getElementById('bundleGrid');
+    const myList = document.getElementById('myList');
+    const allPanel = document.getElementById('allPanel');
+    const myPanel = document.getElementById('myPanel');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearch = document.getElementById('clearSearch');
+    const emptyState = document.getElementById('emptyState');
+    function escapeRegExp(text){return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');}
+    function highlight(text, keyword){
+      if(!keyword) return text;
+      const re = new RegExp('('+escapeRegExp(keyword)+')','ig');
+      return text.replace(re,'<mark>$1</mark>');
+    }
+    function getPlugin(id){return plugins.find(p => p.id === id);}
+    function isEnabled(target){return target.enabled !== false;}
+    function connectorStateLabel(target){
+      if(!target.connected) return '未连接';
+      return isEnabled(target) ? '已开启' : '已关闭';
+    }
+    function displayLogo(target){
+      return target.logo || target.icon || (target.name || '').trim().charAt(0).toUpperCase();
+    }
+    function targetSearchText(target){
+      if(target.pluginIds){
+        const names = target.pluginIds.map(id => getPlugin(id)?.name || '').join(' ');
+        return [target.name, target.desc, names, ...target.samples].join(' ').toLowerCase();
+      }
+      return [target.name, target.desc, categories[target.id] || '', ...target.samples].join(' ').toLowerCase();
+    }
+    function renderBundle(bundle, keyword){
+      const allInstalled = bundle.pluginIds.every(id => getPlugin(id)?.connected);
+      const logos = bundle.pluginIds.slice(0,5).map(id => {
+        const p = getPlugin(id);
+        return `<div class="plugin-logo ${p.logoClass}" title="${p.name}">${displayLogo(p)}</div>`;
+      }).join('');
+      return `
+        <article class="bundle-card" data-bundle-id="${bundle.id}" style="--bundle-accent:${bundle.accent}">
+          <div class="bundle-top">
+            <h3>${highlight(bundle.name, keyword)}</h3>
+            ${allInstalled ? '' : '<button class="bundle-action" data-action="bundle">一键连接</button>'}
+          </div>
+          <p>${highlight(bundle.desc, keyword)}</p>
+          <div class="bundle-logos">${logos}</div>
+        </article>`;
+    }
+    function renderPluginCard(p, keyword){
+      return `
+        <article class="plugin-card ${p.connected?'connected':''}" data-id="${p.id}">
+          <div class="plugin-head">
+            <div class="plugin-logo ${p.logoClass}">${displayLogo(p)}</div>
+            <div class="plugin-name">${highlight(p.name, keyword)}${p.connected?'<span class="connected-dot"></span>':''}</div>
+          </div>
+          <p class="plugin-desc">${highlight(p.desc, keyword)}</p>
+          ${p.connected?`<button class="status-chip" data-action="detail">${connectorStateLabel(p)}</button>`:'<button class="add-plugin" data-action="add" title="连接"><i data-lucide="plus"></i></button>'}
+        </article>`;
+    }
+    function renderMy(keyword){
+      const installedPlugins = plugins.filter(p => p.connected).filter(p => !keyword || targetSearchText(p).includes(keyword.toLowerCase()));
+      myList.innerHTML = installedPlugins.map(p => `
+          <article class="plugin-card my-card connected" data-id="${p.id}">
+            <div class="plugin-head">
+              <div class="plugin-logo ${p.logoClass}">${displayLogo(p)}</div>
+              <div class="plugin-name">${highlight(p.name, keyword)}<span class="connected-dot"></span></div>
+            </div>
+            <p class="plugin-desc">${highlight(p.desc, keyword)}</p>
+            <div class="my-card-footer">
+              <div class="my-card-status">
+                <div class="my-meta">${categories[p.id]}</div>
+                <div class="my-meta">已授权 · ${connectorStateLabel(p)}</div>
+              </div>
+              <div class="my-card-actions">
+                <button class="switch ${isEnabled(p)?'':'off'}" data-action="toggle-enabled" aria-label="启用${p.name}"></button>
+                <button class="muted-link" data-action="plugin-detail">设置</button>
+              </div>
+            </div>
+          </article>`).join('');
+      return installedPlugins.length;
+    }
+    function renderPlugins(){
+      const keyword = searchInput.value.trim();
+      clearSearch.classList.toggle('show', !!keyword);
+      allPanel.style.display = currentView === 'all' ? 'block' : 'none';
+      myPanel.classList.toggle('show', currentView === 'mine');
+      const matchedBundles = bundles.filter(b => !keyword || targetSearchText(b).includes(keyword.toLowerCase()));
+      const matchedPlugins = plugins.filter(p => (!keyword || targetSearchText(p).includes(keyword.toLowerCase())) && (selectedCategory === '全部' || categories[p.id] === selectedCategory));
+      bundleGrid.innerHTML = matchedBundles.map(b => renderBundle(b, keyword)).join('');
+      grid.innerHTML = matchedPlugins.map(p => renderPluginCard(p, keyword)).join('');
+      const visibleCount = currentView === 'mine' ? renderMy(keyword) : matchedBundles.length + matchedPlugins.length;
+      emptyState.classList.toggle('show', visibleCount===0);
+      if(window.lucide) window.lucide.createIcons();
+    }
+    function openModal(target){
+      currentTarget = target;
+      const isBundle = !!target.pluginIds;
+      document.getElementById('modalLogo').className = isBundle ? 'target-logo' : 'target-logo ' + target.logoClass;
+      document.getElementById('modalLogo').style.background = isBundle ? target.accent : '';
+      document.getElementById('modalLogo').textContent = displayLogo(target);
+      document.getElementById('modalTitle').textContent = '连接 ' + target.name;
+      document.getElementById('modalDesc').textContent = `Wind Alice 需要您的授权才可使用${target.name}，点击连接并完成配置。`;
+      document.getElementById('connectBtn').innerHTML = '<i data-lucide="link"></i>连接';
+      const bundleList = document.getElementById('bundleInstallList');
+      bundleList.classList.toggle('show', isBundle);
+      bundleList.innerHTML = isBundle ? target.pluginIds.map(id => {
+        const p = getPlugin(id);
+        return `<div class="bundle-install-row"><span><div class="plugin-logo ${p.logoClass}">${displayLogo(p)}</div>${p.name}</span><b class="${p.connected?'bundle-row-done':''}">${p.connected?'已连接':'待连接'}</b></div>`;
+      }).join('') : '';
+      const samplesTitle = document.querySelector('.samples-title');
+      const sampleListEl = document.getElementById('sampleList');
+      if(isBundle){
+        if(samplesTitle) samplesTitle.style.display = 'none';
+        sampleListEl.style.display = 'none';
+      } else {
+        if(samplesTitle) samplesTitle.style.display = 'flex';
+        sampleListEl.style.display = 'flex';
+        sampleListEl.innerHTML = target.samples.map(s => `<button class="sample-item">"${s}"<i data-lucide="message-square-plus"></i></button>`).join('');
+      }
+      document.getElementById('connectOverlay').classList.add('show');
+      if(window.lucide) window.lucide.createIcons();
+    }
+    function openDetail(target){
+      detailTarget = target;
+      const isBundle = !!target.pluginIds;
+      const connectedCount = isBundle ? target.pluginIds.filter(id => getPlugin(id)?.connected).length : 0;
+      const allInstalled = isBundle ? connectedCount === target.pluginIds.length : !!target.connected;
+      document.getElementById('marketPage').style.display = 'none';
+      document.querySelector('.plugin-tabs-row').style.display = 'none';
+      document.getElementById('configPage').classList.remove('show');
+      document.getElementById('detailPage').classList.add('show');
+      document.getElementById('detailTitle').textContent = isBundle ? '连接器包' : '连接器详情';
+      document.getElementById('detailName').textContent = target.name;
+      const stateText = target.connected ? `已授权 · ${connectorStateLabel(target)}` : '未连接';
+      document.getElementById('detailMeta').innerHTML = isBundle
+        ? `连接器包 · ${connectedCount}/${target.pluginIds.length} 已连接 · by Wind Alice`
+        : `连接器 · ${categories[target.id]} · ${target.connected ? '<span class="connected-dot"></span> ' : ''}${stateText} · by Wind Alice`;
+      document.getElementById('detailSummary').textContent = target.desc;
+      const logo = document.getElementById('detailLogo');
+      logo.className = isBundle ? 'plugin-logo' : 'plugin-logo ' + target.logoClass;
+      logo.style.background = isBundle ? target.accent : '';
+      logo.textContent = displayLogo(target);
+      const primary = document.getElementById('detailPrimary');
+      if(isBundle){
+        primary.style.display = allInstalled ? 'none' : 'inline-flex';
+        primary.innerHTML = '<i data-lucide="link"></i>一键连接';
+      } else {
+        primary.style.display = 'inline-flex';
+        primary.innerHTML = target.connected ? '<i data-lucide="message-square"></i>立即体验' : '<i data-lucide="plus"></i>连接';
+        primary.disabled = target.connected && !isEnabled(target);
+      }
+      if(isBundle) primary.disabled = false;
+      const enableControl = document.getElementById('enableControl');
+      const enableSwitch = document.getElementById('enableSwitch');
+      const enableText = document.getElementById('enableText');
+      enableControl.classList.toggle('show', !isBundle && target.connected);
+      enableSwitch.classList.toggle('off', !isEnabled(target));
+      enableSwitch.setAttribute('aria-pressed', String(isEnabled(target)));
+      enableText.textContent = isEnabled(target) ? '已开启' : '已关闭';
+      document.getElementById('moreWrap').style.display = (!isBundle && target.connected) ? 'block' : 'none';
+      document.getElementById('moreMenu').classList.remove('show');
+      document.getElementById('detailBanner').innerHTML = target.samples.map(s => `<button class="prompt-pill"><span><b>@${target.name}</b>${s}</span><span class="round-arrow"><i data-lucide="arrow-right"></i></span></button>`).join('');
+      const members = document.getElementById('detailMembers');
+      document.getElementById('memberSection').style.display = isBundle ? 'block' : 'none';
+      document.getElementById('memberTitle').textContent = isBundle ? `相关连接器 ${target.pluginIds.length}` : '应用授权';
+      members.innerHTML = isBundle ? target.pluginIds.map(id => {
+        const p = getPlugin(id);
+        return `<div class="member-row"><div class="member-info"><div class="plugin-logo ${p.logoClass}">${displayLogo(p)}</div><span>${p.name}<small>${p.desc}</small></span></div>${p.connected ? '<div class="member-status">已连接</div>' : '<button class="member-install" data-action="install-plugin" data-plugin-id="'+p.id+'">连接</button>'}</div>`;
+      }).join('') : '';
+      document.getElementById('infoSection').style.display = isBundle ? 'none' : 'block';
+      document.getElementById('detailInfo').innerHTML = `
+        <dt>功能</dt><dd>${isBundle ? 'Read, Search, Summarize, Write' : 'Read, Search, Write'}</dd>
+        <dt>开发者</dt><dd>Wind Alice</dd>
+        <dt>类别</dt><dd>${isBundle ? '连接器包' : categories[target.id]}</dd>
+        <dt>版本</dt><dd>0.2.0</dd>
+        <dt>启用状态</dt><dd>${target.connected ? connectorStateLabel(target) : '未连接'}</dd>
+        <dt>调用方式</dt><dd>@${target.name}</dd>`;
+      if(window.lucide) window.lucide.createIcons();
+    }
+    document.querySelector('.plugin-body').addEventListener('click', e => {
+      const bundleCard = e.target.closest('[data-bundle-id]');
+      const pluginCard = e.target.closest('[data-id]');
+      if(bundleCard){
+        const bundle = bundles.find(b => b.id === bundleCard.dataset.bundleId);
+        if(e.target.closest('[data-action="bundle"]')) openModal(bundle);
+        else openDetail(bundle);
+        return;
+      }
+      if(pluginCard){
+        const plugin = plugins.find(p => p.id === pluginCard.dataset.id);
+        if(e.target.closest('[data-action="toggle-enabled"]')){
+          if(plugin && plugin.connected){
+            plugin.enabled = !isEnabled(plugin);
+            renderPlugins();
+          }
+          return;
+        }
+        if(e.target.closest('[data-action="add"]')) openModal(plugin);
+        else openDetail(plugin);
+      }
+    });
+    document.getElementById('detailPrimary').addEventListener('click', () => {
+      if(!detailTarget) return;
+      if(detailTarget.pluginIds){
+        openModal(detailTarget);
+      } else if(detailTarget.connected && isEnabled(detailTarget)){
+        document.getElementById('composerInput').value = `@${detailTarget.name} `;
+      } else {
+        openModal(detailTarget);
+      }
+    });
+    document.getElementById('enableSwitch').addEventListener('click', () => {
+      if(!detailTarget || detailTarget.pluginIds || !detailTarget.connected) return;
+      detailTarget.enabled = !isEnabled(detailTarget);
+      renderPlugins();
+      openDetail(detailTarget);
+    });
+    document.getElementById('detailPage').addEventListener('click', e => {
+      const installBtn = e.target.closest('[data-action="install-plugin"]');
+      if(!installBtn) return;
+      const plugin = plugins.find(p => p.id === installBtn.dataset.pluginId);
+      if(plugin) openModal(plugin);
+    });
+    document.getElementById('detailMore').addEventListener('click', e => {
+      e.stopPropagation();
+      document.getElementById('moreMenu').classList.toggle('show');
+    });
+    document.getElementById('openConfigFromMore').addEventListener('click', () => {
+      document.getElementById('moreMenu').classList.remove('show');
+      document.getElementById('detailPage').classList.remove('show');
+      document.getElementById('configPage').classList.add('show');
+    });
+    document.addEventListener('click', e => {
+      if(!e.target.closest('#moreWrap')) document.getElementById('moreMenu').classList.remove('show');
+    });
+    document.getElementById('connectBtn').addEventListener('click', () => {
+      if(currentTarget.pluginIds) currentTarget.pluginIds.forEach(id => { const p = getPlugin(id); if(p){ p.connected = true; p.enabled = true; } });
+      else {
+        currentTarget.connected = true;
+        currentTarget.enabled = true;
+      }
+      document.getElementById('connectOverlay').classList.remove('show');
+      renderPlugins();
+      if(detailTarget) openDetail(detailTarget);
+    });
+    document.getElementById('closeModal').addEventListener('click', () => document.getElementById('connectOverlay').classList.remove('show'));
+    document.getElementById('connectOverlay').addEventListener('click', e => { if(e.target.id==='connectOverlay') e.currentTarget.classList.remove('show'); });
+    searchInput.addEventListener('input', renderPlugins);
+    clearSearch.addEventListener('click', () => { searchInput.value=''; renderPlugins(); searchInput.focus(); });
+    document.getElementById('categoryFilter').addEventListener('click', e => {
+      const pill = e.target.closest('.cat-pill');
+      if(!pill) return;
+      selectedCategory = pill.dataset.cat;
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p === pill));
+      renderPlugins();
+    });
+    document.getElementById('emptyClear').addEventListener('click', () => { searchInput.value=''; renderPlugins(); });
+    document.getElementById('backToMarket').addEventListener('click', () => {
+      document.getElementById('detailPage').classList.remove('show');
+      document.getElementById('marketPage').style.display = 'flex';
+      document.querySelector('.plugin-tabs-row').style.display = '';
+    });
+    const legacyOpenConfig = document.getElementById('openConfig');
+    if(legacyOpenConfig){
+      legacyOpenConfig.addEventListener('click', () => {
+        document.getElementById('detailPage').classList.remove('show');
+        document.getElementById('configPage').classList.add('show');
+      });
+    }
+    document.getElementById('backToDetail').addEventListener('click', () => {
+      document.getElementById('configPage').classList.remove('show');
+      document.getElementById('detailPage').classList.add('show');
+    });
+    document.getElementById('openRevoke').addEventListener('click', () => {
+      document.getElementById('moreMenu').classList.remove('show');
+      document.getElementById('revokeOverlay').classList.add('show');
+    });
+    document.getElementById('closeRevoke').addEventListener('click', () => document.getElementById('revokeOverlay').classList.remove('show'));
+    document.getElementById('cancelRevoke').addEventListener('click', () => document.getElementById('revokeOverlay').classList.remove('show'));
+    document.getElementById('confirmRevoke').addEventListener('click', () => {
+      if(detailTarget && !detailTarget.pluginIds){
+        detailTarget.connected = false;
+        detailTarget.enabled = false;
+      }
+      document.getElementById('revokeOverlay').classList.remove('show');
+      document.getElementById('detailPage').classList.remove('show');
+      document.getElementById('marketPage').style.display = 'flex';
+      document.querySelector('.plugin-tabs-row').style.display = '';
+      renderPlugins();
+    });
+    document.querySelectorAll('.market-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        currentView = tab.dataset.view;
+        document.querySelectorAll('.market-tab').forEach(t => t.classList.toggle('active', t === tab));
+        renderPlugins();
+      });
+    });
+    document.querySelectorAll('.sample-list').forEach(list => {
+      list.addEventListener('click', e => {
+        const item = e.target.closest('.sample-item');
+        if(!item) return;
+        document.getElementById('composerInput').value = item.textContent.replace(/[“”]/g,'').trim();
+        document.getElementById('connectOverlay').classList.remove('show');
+      });
+    });
+    document.querySelector('.rail-collapse-btn').addEventListener('click', () => document.querySelector('.app-shell').classList.toggle('rail-collapsed'));
+    window.addEventListener('DOMContentLoaded', () => {
+      renderPlugins();
+      if(window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

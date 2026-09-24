@@ -1,0 +1,1569 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wind Alice · 拓客服务与创意市场</title>
+  <style>
+    :root{
+      --nav-w:68px;
+      --panel-w:286px;
+      --header-h:58px;
+      --ink:#18191e;
+      --muted:#6f717b;
+      --subtle:#999ba5;
+      --line:#e4e4e9;
+      --panel:#f3f3f6;
+      --surface:#ffffff;
+      --nav:#13151a;
+      --purple:#6f5cf0;
+      --purple-strong:#5d49de;
+      --purple-soft:#eeebff;
+      --green:#15956d;
+      --amber:#ba6b13;
+      --red:#c7464d;
+      --shadow:0 12px 34px rgba(31,31,40,.09);
+      --content-max:1180px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:#fff;overflow:hidden}
+    button,input,select{font:inherit}
+    button{color:inherit}
+    svg{display:block}
+    .app{height:100vh;min-width:1120px;display:grid;grid-template-columns:var(--nav-w) var(--panel-w) minmax(0,1fr);background:#fff;transition:grid-template-columns .18s ease}
+    .app.panel-collapsed{grid-template-columns:var(--nav-w) 0 minmax(0,1fr)}
+
+    .global-nav{position:relative;z-index:30;background:var(--nav);display:flex;flex-direction:column;align-items:center;border-right:1px solid #272a32;color:#aeb2bc}
+    .brand{width:40px;height:40px;margin:11px 0 8px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#846fff,#5340d0);color:#fff;font-weight:900;font-size:18px;box-shadow:0 8px 20px rgba(111,92,240,.3)}
+    .nav-list{width:100%;display:flex;flex-direction:column;gap:4px;padding:0 7px}
+    .nav-spacer{flex:1}
+    .nav-item{position:relative;width:54px;min-height:58px;border:0;border-radius:10px;background:transparent;color:#989da8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:.16s ease}
+    .nav-item:hover{background:#20232b;color:#e8e9ed}
+    .nav-item.active{background:#fff;color:#16181d;box-shadow:0 4px 12px rgba(0,0,0,.24)}
+    .nav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75}
+    .nav-item span{font-size:10px;white-space:nowrap}
+    .profile{width:34px;height:34px;margin:0 0 12px;border-radius:50%;border:0;background:linear-gradient(145deg,#d457d3,#694cff);color:#fff;font-weight:800;cursor:pointer}
+
+    .context-panel{position:relative;z-index:20;min-width:0;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid #d9d9df;overflow:hidden;transition:opacity .14s ease,transform .18s ease}
+    .panel-collapsed .context-panel{opacity:0;transform:translateX(-18px);pointer-events:none}
+    .panel-top{padding:14px 14px 10px;background:rgba(248,248,250,.92);border-bottom:1px solid rgba(224,224,229,.7)}
+    .panel-title-row{height:32px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .panel-title{font-size:16px;font-weight:800;letter-spacing:-.2px;flex:1}
+    .icon-btn{width:32px;height:32px;border:1px solid transparent;border-radius:8px;background:transparent;display:grid;place-items:center;cursor:pointer;color:#747681}
+    .icon-btn:hover{background:#e8e8ed;color:#26272d}
+    .icon-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9}
+    .panel-search{height:38px;border:1px solid #d4d4da;border-radius:10px;background:#fff;display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:center;padding:0 11px}
+    .panel-search:focus-within{border-color:#a89ff8;box-shadow:0 0 0 3px rgba(111,92,240,.1)}
+    .panel-search svg{width:17px;height:17px;stroke:#8b8d98;fill:none;stroke-width:1.8}
+    .panel-search input{border:0;outline:0;background:transparent;min-width:0;font-size:13px;color:var(--ink)}
+    .panel-body{flex:1;min-height:0;overflow:auto;padding:10px 9px 18px;scrollbar-width:thin;scrollbar-color:#c7c7ce transparent}
+    .panel-module[hidden]{display:none}
+    .drawer{margin-bottom:8px}
+    .drawer-header{width:100%;height:42px;border:0;border-radius:9px;background:transparent;display:flex;align-items:center;gap:9px;padding:0 10px;cursor:pointer;text-align:left;font-weight:750;color:#363740}
+    .drawer-header:hover,.drawer-header.active{background:#e9e8ee}
+    .drawer-header svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .drawer-label{flex:1}
+    .drawer-count{font-size:11px;color:#8c8e98;font-weight:650}
+    .drawer-chevron{transition:transform .16s ease}
+    .drawer-header[aria-expanded="true"] .drawer-chevron{transform:rotate(90deg)}
+    .drawer-content{padding:4px 0 6px}
+    .drawer-content[hidden]{display:none}
+    .group-label{font-size:11px;color:#8c8e98;font-weight:750;padding:11px 11px 6px;text-transform:uppercase;letter-spacing:.45px}
+    .object-row{width:100%;min-height:42px;border:0;border-radius:9px;background:transparent;padding:7px 10px;display:flex;align-items:center;gap:9px;text-align:left;cursor:pointer;color:#42434b;transition:.14s ease}
+    .object-row:hover{background:#e9e9ee}
+    .object-row.selected{background:#dedde5;color:#191a20;font-weight:750}
+    .object-row .row-main{min-width:0;flex:1}
+    .object-row strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .object-row small{display:block;font-size:11px;color:#858792;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+    .row-count{font-size:10px;color:#777983;background:#fff;border:1px solid #dcdce2;border-radius:999px;padding:2px 6px}
+    .mini-avatar{width:28px;height:28px;flex:0 0 28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#d8e6ff,#9587ff);color:#313647;font-size:10px;font-weight:900;border:2px solid rgba(255,255,255,.7)}
+    .conversation-list{margin:2px 0 8px 37px;padding-left:9px;border-left:1px solid #d6d6dc}
+    .conversation-row{width:100%;min-height:36px;border:0;border-radius:8px;background:transparent;padding:7px 9px;text-align:left;font-size:12px;color:#666872;cursor:pointer;display:flex;align-items:center;gap:7px}
+    .conversation-row:hover{background:#e8e8ed;color:#25262d}
+    .conversation-row.selected{background:#dcdbe4;color:#17181d;font-weight:750}
+    .conversation-row svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9;flex:0 0 auto}
+    .nav-row{width:100%;height:40px;border:0;border-radius:8px;background:transparent;padding:0 10px;display:flex;align-items:center;gap:9px;text-align:left;cursor:pointer;font-size:13px;color:#555760}
+    .nav-row:hover{background:#e8e8ed}
+    .nav-row.selected{background:#dedde5;color:#18191f;font-weight:750}
+    .nav-row svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .nav-row .row-count{margin-left:auto}
+    .searchable.is-filtered{display:none}
+
+    .workspace{position:relative;min-width:0;background:#fff;overflow:hidden}
+    .workspace-header{position:absolute;z-index:15;inset:0 0 auto 0;height:var(--header-h);display:flex;align-items:center;gap:16px;padding:0 22px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .restore-panel{display:none}
+    .panel-collapsed .restore-panel{display:grid}
+    .workspace-heading{min-width:0;flex:1}
+    .breadcrumb{font-size:11px;color:#92949d;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .workspace-title-row{display:flex;align-items:center;gap:8px;min-width:0}
+    .workspace-title{margin:0;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+    .status-pill{height:22px;padding:0 8px;border-radius:999px;display:inline-flex;align-items:center;font-size:11px;font-weight:750;background:#edebff;color:#5f50ce}
+    .header-actions{display:flex;align-items:center;gap:8px}
+    .btn{height:34px;border:1px solid #d9d9df;border-radius:9px;background:#fff;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:720;cursor:pointer;transition:.14s ease}
+    .btn:hover{background:#f4f4f7;border-color:#c9c9d1}
+    .btn.primary{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:0 7px 16px rgba(111,92,240,.22)}
+    .btn.primary:hover{background:var(--purple-strong)}
+    .btn.ghost{border-color:transparent;background:transparent;color:#6f717b}
+    .btn.small{height:30px;padding:0 10px;font-size:11px}
+    .btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9}
+    .toolbar-search{height:34px;width:210px;border:1px solid #dcdce2;border-radius:9px;display:flex;align-items:center;gap:7px;padding:0 10px;background:#fff}
+    .toolbar-search svg{width:15px;height:15px;stroke:#9698a2;fill:none;stroke-width:1.8}
+    .toolbar-search input{border:0;outline:0;min-width:0;width:100%;font-size:12px}
+    .workspace-scroll{position:absolute;inset:var(--header-h) 0 0;overflow:auto;background:#fff;scrollbar-width:thin;scrollbar-color:#cccdd4 transparent}
+    .content{width:min(100%,var(--content-max));margin:0 auto;padding:28px clamp(24px,5vw,68px) 80px}
+    .page-view[hidden]{display:none}
+    .workspace[data-market-view] .content{width:min(100%,1360px);padding:24px clamp(28px,4vw,56px) 96px}
+    .workspace[data-market-view] .page-intro{margin-bottom:20px}
+    .workspace[data-market-view] .board-list-row{padding:16px 8px}
+    .page-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;margin-bottom:22px}
+    .page-intro h2{margin:0 0 7px;font-size:26px;letter-spacing:-.65px}
+    .page-intro p{margin:0;max-width:720px;color:#696b75;font-size:13px;line-height:1.75}
+    .count-note{font-size:12px;color:#777984;white-space:nowrap;padding-top:10px}
+    .segmented{display:inline-flex;gap:2px;background:#f1f1f4;border-radius:10px;padding:3px}
+    .segmented button{height:30px;border:0;border-radius:8px;background:transparent;padding:0 13px;color:#777984;font-size:12px;cursor:pointer}
+    .segmented button.active{background:#fff;color:#292a31;font-weight:750;box-shadow:0 2px 8px rgba(30,30,38,.08)}
+    .filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 0 17px;border-bottom:1px solid #ececf0;margin-bottom:6px}
+    .market-filter-row{gap:10px;padding:12px 14px;margin:0 0 22px;border:1px solid #e4e5ea;border-radius:12px;background:#fafbfc}
+    .market-filter-row .segmented{margin-right:2px;background:#eceef2}
+    .market-filter-label{color:#92949e;font-size:10px;font-weight:700;letter-spacing:.2px}
+    .market-filter-divider{width:1px;height:20px;margin:0 2px;background:#dddfe5}
+    .market-section-heading{display:none;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 0 12px}
+    .market-section-heading h3{margin:0;font-size:15px}
+    .market-section-heading span{color:#8b8d97;font-size:11px}
+    .workspace[data-market-view="plaza"] .market-section-heading{display:flex}
+    .workspace[data-market-view="plaza"] #viewCommunity .page-intro,
+    .workspace[data-market-view="plaza"] #viewCommunity .market-filter-row{display:none}
+    .chip{height:28px;border:1px solid transparent;border-radius:999px;background:#f4f4f6;padding:0 11px;font-size:11px;color:#686a73;cursor:pointer}
+    .chip:hover{background:#ececf1}
+    .chip.active{background:var(--purple);color:#fff}
+    .filter-spacer{flex:1}
+    .sort-select{height:30px;border:1px solid #dedee4;border-radius:8px;background:#fff;color:#666872;font-size:11px;padding:0 26px 0 9px;outline:0}
+
+    .client-list{border-top:1px solid #e4e4e9}
+    .client-item{width:100%;border:0;border-bottom:1px solid #e8e8ec;background:#fff;padding:14px 6px;display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(240px,1.7fr) 150px 120px;align-items:center;gap:16px;text-align:left;cursor:pointer;transition:.14s ease}
+    .client-item:hover{background:#fafaff}
+    .client-person{display:flex;align-items:center;gap:12px;min-width:0}
+    .client-person .mini-avatar{width:42px;height:42px;flex-basis:42px;font-size:12px}
+    .client-name{font-size:13px;font-weight:800}
+    .client-sub{font-size:11px;color:#858792;margin-top:4px}
+    .client-source strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .client-source small{display:block;color:#858792;font-size:11px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .client-stat{font-size:11px;color:#696b75}
+    .client-time{text-align:right;font-size:11px;color:#6f7180}
+    .empty-line{padding:44px;text-align:center;color:#8c8e98;font-size:13px}
+
+    .conversation-shell{max-width:900px;margin:0 auto}
+    .conversation-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;color:#858792;font-size:11px}
+    .source-card{position:relative;display:grid;grid-template-columns:126px minmax(0,1fr) auto;gap:16px;align-items:center;padding:15px;border:1px solid #e0dff0;border-radius:14px;background:linear-gradient(120deg,#fcfbff 0%,#fff 58%);box-shadow:0 8px 24px rgba(63,54,112,.07);margin-bottom:24px;cursor:pointer;transition:.16s ease;text-align:left;width:100%}
+    .source-card:hover{transform:translateY(-1px);border-color:#c9c3fa;box-shadow:0 12px 28px rgba(71,59,139,.11)}
+    .source-card:focus-visible{outline:3px solid rgba(111,92,240,.18);outline-offset:2px}
+    .source-card.generic-source{grid-template-columns:minmax(0,1fr) auto}
+    .source-card.generic-source .source-thumb{display:none}
+    .source-thumb{height:82px;border-radius:10px;overflow:hidden;position:relative;background:linear-gradient(145deg,#1d2340,#6556dd);padding:11px;color:#fff}
+    .source-thumb small{font-size:9px;opacity:.78}
+    .source-thumb strong{display:block;font-size:12px;line-height:1.35;margin-top:6px;max-width:94px}
+    .source-chart{position:absolute;left:11px;right:11px;bottom:10px;height:18px}
+    .source-chart svg{width:100%;height:100%;overflow:visible}
+    .source-chart path{fill:none;stroke:#9ef0d2;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+    .source-copy{min-width:0}
+    .source-eyebrow{font-size:10px;color:#6b5ada;font-weight:850;margin-bottom:5px}
+    .source-copy h3{margin:0 0 7px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .source-meta{display:flex;flex-wrap:wrap;gap:7px 14px;color:#767883;font-size:11px;line-height:1.6}
+    .source-meta span{display:inline-flex;align-items:center;gap:4px}
+    .source-action{display:flex;align-items:center;gap:6px;color:#6655dc;font-size:12px;font-weight:800;white-space:nowrap}
+    .source-action svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+    .timeline-day{text-align:center;margin:14px 0;color:#999ba5;font-size:10px}
+    .messages{display:flex;flex-direction:column;gap:20px}
+    .messages[hidden]{display:none!important}
+    .message{display:flex;gap:10px;align-items:flex-start;max-width:78%}
+    .message.mine{align-self:flex-end;flex-direction:row-reverse}
+    .message-avatar{width:32px;height:32px;flex:0 0 32px;border-radius:50%;display:grid;place-items:center;background:#dfe7ff;color:#3f4661;font-size:10px;font-weight:900}
+    .message.mine .message-avatar{background:linear-gradient(145deg,#b662db,#6b55eb);color:#fff}
+    .message-author{font-size:11px;color:#777985;margin:0 0 5px 2px;font-weight:750}
+    .message.mine .message-author{text-align:right;margin-right:2px}
+    .bubble{padding:11px 13px;border-radius:5px 14px 14px 14px;background:#f1f2f5;color:#272831;font-size:13px;line-height:1.75}
+    .message.mine .bubble{background:#eeebff;border-radius:14px 5px 14px 14px}
+    .message-time{font-size:9px;color:#aaaab2;margin-top:5px}
+    .message.mine .message-time{text-align:right}
+
+    .market-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding-top:0;margin-bottom:34px}
+    .board-card{border:1px solid #e4e4e9;border-radius:14px;background:#fff;overflow:hidden;transition:.16s ease;box-shadow:0 5px 16px rgba(30,30,38,.035)}
+    .board-card:hover{transform:translateY(-2px);border-color:#d3d0ee;box-shadow:0 13px 28px rgba(41,37,75,.09)}
+    .board-art{height:152px;position:relative;overflow:hidden;padding:16px;background:linear-gradient(145deg,var(--art-a),var(--art-b));color:#fff}
+    .board-art::before,.board-art::after{content:"";position:absolute;border-radius:50%;filter:blur(3px);opacity:.58}
+    .board-art::before{width:120px;height:120px;right:-25px;top:-30px;background:var(--art-c)}
+    .board-art::after{width:90px;height:90px;left:-24px;bottom:-35px;background:rgba(255,255,255,.22)}
+    .art-tag{position:relative;z-index:2;font-size:10px;opacity:.8}
+    .board-art h3{position:relative;z-index:2;margin:10px 0 0;font-size:17px;line-height:1.42;max-width:82%;letter-spacing:-.2px}
+    .mini-chart{position:absolute;z-index:2;left:17px;right:17px;bottom:16px;height:38px;display:flex;align-items:end;gap:5px}
+    .mini-chart i{display:block;flex:1;border-radius:4px 4px 1px 1px;background:rgba(255,255,255,.76)}
+    .board-card-body{padding:14px 15px 13px}
+    .board-title-row{display:flex;align-items:flex-start;gap:8px}
+    .board-title-row h3{margin:0;font-size:14px;line-height:1.45;flex:1}
+    .avatar-badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:#f1edff;color:#6956d9;font-size:9px;font-weight:800;padding:3px 7px;white-space:nowrap}
+    .board-description{margin:8px 0 11px;color:#777984;font-size:11px;line-height:1.65;min-height:36px}
+    .board-meta{display:flex;align-items:center;gap:9px;color:#92949e;font-size:10px;flex-wrap:wrap}
+    .board-footer{display:flex;align-items:center;border-top:1px solid #efeff2;margin-top:12px;padding-top:10px;gap:8px}
+    .author{display:flex;align-items:center;gap:6px;color:#666872;font-size:10px;min-width:0;flex:1}
+    .author .mini-avatar{width:22px;height:22px;flex-basis:22px;font-size:8px}
+    .card-icon-btn{width:30px;height:30px;border:0;border-radius:8px;background:transparent;display:grid;place-items:center;color:#777985;cursor:pointer}
+    .card-icon-btn:hover{background:#f1efff;color:#6552dc}
+    .card-icon-btn[aria-pressed="true"]{background:#f1efff;color:#6552dc}
+    .card-icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9}
+    .board-card.is-filtered{display:none}
+    #viewMyBoards{--dashboard-ink:#1c2430;--dashboard-muted:#737b87;--dashboard-line:#e5e8ec;--dashboard-navy:#24334f;--dashboard-teal:#2d887d;--dashboard-gold:#c18b3d}
+    .my-dashboard-hero{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin:-2px 0 16px;padding:24px 26px;border:1px solid #dde3e8;border-radius:16px;background:#f8fafb}
+    .my-dashboard-hero::after{content:"";position:absolute;right:-74px;top:-110px;width:280px;height:280px;border-radius:50%;border:52px solid rgba(45,136,125,.08);pointer-events:none}
+    .my-dashboard-eyebrow{display:flex;align-items:center;gap:7px;margin-bottom:9px;color:var(--dashboard-teal);font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+    .my-dashboard-eyebrow::before{content:"";width:18px;height:2px;background:var(--dashboard-teal)}
+    .my-dashboard-hero h2{margin:0 0 7px;color:var(--dashboard-ink);font-size:27px;letter-spacing:-.7px}
+    .my-dashboard-hero p{max-width:620px;margin:0;color:#666f7c;font-size:12px;line-height:1.7}
+    .my-dashboard-date{position:relative;z-index:1;min-width:150px;text-align:right;color:#868e98;font-size:10px;line-height:1.65}
+    .my-dashboard-date strong{display:block;color:#263244;font-size:13px;font-weight:750}
+    .my-dashboard-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+    .my-dashboard-kpi{position:relative;overflow:hidden;min-height:108px;padding:15px 16px;border:1px solid var(--dashboard-line);border-radius:13px;background:#fff;box-shadow:0 4px 14px rgba(30,40,54,.035)}
+    .my-dashboard-kpi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--kpi-color,#8791a0);opacity:.8}
+    .my-dashboard-kpi-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#858d98;font-size:10px}
+    .my-dashboard-kpi-head svg{width:15px;height:15px;stroke:var(--kpi-color,#8791a0);fill:none;stroke-width:1.8}
+    .my-dashboard-kpi-value{display:flex;align-items:baseline;gap:6px;margin-top:11px;color:var(--dashboard-ink)}
+    .my-dashboard-kpi-value strong{font-size:25px;letter-spacing:-.65px}
+    .my-dashboard-kpi-value span{font-size:10px;color:#8b929c}
+    .my-dashboard-kpi-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px;color:#8b929c;font-size:9px}
+    .my-dashboard-kpi-foot .up{color:#168167;font-weight:750}
+    .my-dashboard-kpi-spark{width:54px;height:17px;overflow:visible}
+    .my-dashboard-kpi-spark path{fill:none;stroke:var(--kpi-color,#8791a0);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .my-dashboard-grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(280px,.82fr);gap:12px;margin-bottom:12px}
+    .my-dashboard-panel{border:1px solid var(--dashboard-line);border-radius:14px;background:#fff;box-shadow:0 4px 15px rgba(30,40,54,.035)}
+    .my-dashboard-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:16px 18px 0}
+    .my-dashboard-panel-title h3{margin:0 0 4px;color:#242c38;font-size:13px}
+    .my-dashboard-panel-title p{margin:0;color:#969ca5;font-size:9px;line-height:1.5}
+    .my-dashboard-legend{display:flex;align-items:center;gap:13px;color:#7e8691;font-size:9px;white-space:nowrap}
+    .my-dashboard-legend span{display:flex;align-items:center;gap:5px}
+    .my-dashboard-legend i{width:7px;height:7px;border-radius:50%;background:#314565}
+    .my-dashboard-legend span:last-child i{background:#3b9b8f}
+    .my-impact-chart{height:244px;padding:14px 16px 12px 10px}
+    .my-impact-chart svg{width:100%;height:100%;overflow:visible}
+    .my-impact-chart .chart-grid{stroke:#edf0f2;stroke-width:1}
+    .my-impact-chart .chart-axis{fill:#9aa1aa;font-size:9px}
+    .my-impact-chart .chart-area{fill:url(#myImpactArea)}
+    .my-impact-chart .chart-line{fill:none;stroke:#314565;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:900;animation:draw-dashboard-line .9s ease-out both}
+    .my-impact-chart .chart-line-secondary{fill:none;stroke:#3b9b8f;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:6 6}
+    .my-impact-chart .chart-point{fill:#fff;stroke:#314565;stroke-width:2}
+    @keyframes draw-dashboard-line{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+    .my-portfolio-body{display:flex;align-items:center;gap:22px;padding:22px 20px 20px}
+    .my-portfolio-donut{position:relative;flex:0 0 132px;width:132px;height:132px;border-radius:50%;background:conic-gradient(#314565 0 50%,#3b9b8f 50% 100%,#c18b3d 100% 100%)}
+    .my-portfolio-donut::after{content:"";position:absolute;inset:19px;border-radius:50%;background:#fff}
+    .my-portfolio-total{position:absolute;z-index:1;inset:0;display:grid;place-content:center;text-align:center;color:#8b929c;font-size:9px}
+    .my-portfolio-total strong{display:block;color:#202936;font-size:24px;line-height:1.15}
+    .my-portfolio-legend{display:grid;gap:13px;min-width:0;flex:1}
+    .my-portfolio-item{display:grid;grid-template-columns:8px minmax(0,1fr) auto;align-items:center;gap:8px;color:#646d79;font-size:10px}
+    .my-portfolio-item i{width:8px;height:8px;border-radius:2px;background:var(--item-color)}
+    .my-portfolio-item strong{color:#26303d;font-size:12px}
+    .my-portfolio-note{margin:0 18px 17px;padding-top:13px;border-top:1px solid #eef0f2;color:#7f8792;font-size:9px;line-height:1.6}
+    .my-dashboard-lower{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(280px,.82fr);gap:12px;align-items:start}
+    .my-board-filter{display:flex;align-items:center;gap:4px;padding:3px;border-radius:9px;background:#f2f4f6}
+    .my-board-filter button{height:26px;border:0;border-radius:7px;background:transparent;padding:0 9px;color:#7c8490;font-size:9px;cursor:pointer}
+    .my-board-filter button span{margin-left:3px;color:#9ca2aa}
+    .my-board-filter button.active{background:#fff;color:#26303d;font-weight:750;box-shadow:0 2px 7px rgba(35,43,55,.09)}
+    .my-board-aggregate{padding:8px 10px 11px}
+    .my-board-item{display:grid;grid-template-columns:90px minmax(0,1fr) auto;gap:13px;align-items:center;min-height:86px;padding:10px 8px;border-radius:10px;cursor:pointer;transition:.16s ease}
+    .my-board-item+.my-board-item{border-top:1px solid #eef0f2;border-radius:0}
+    .my-board-item:hover{background:#f8fafb;transform:translateX(2px)}
+    .my-board-item:focus-visible{outline:2px solid rgba(49,69,101,.25);outline-offset:1px}
+    .my-board-thumb{position:relative;height:62px;overflow:hidden;border-radius:8px;background:linear-gradient(145deg,var(--thumb-a),var(--thumb-b));color:#fff}
+    .my-board-thumb::after{content:"";position:absolute;right:-16px;top:-20px;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.14)}
+    .my-board-thumb svg{position:absolute;left:9px;right:9px;bottom:8px;width:72px;height:28px;overflow:visible}
+    .my-board-thumb path{fill:none;stroke:rgba(255,255,255,.9);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .my-board-thumb-label{position:absolute;z-index:1;left:9px;top:8px;font-size:8px;opacity:.82}
+    .my-board-copy{min-width:0}
+    .my-board-copy-head{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+    .my-board-copy h4{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0;color:#28313e;font-size:12px}
+    .my-board-kind{flex:0 0 auto;display:inline-flex;align-items:center;height:19px;border-radius:999px;padding:0 7px;background:var(--kind-bg,#eef1f4);color:var(--kind-color,#66707d);font-size:8px;font-weight:750}
+    .my-board-copy p{margin:0 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8c939d;font-size:9px}
+    .my-board-copy-meta{display:flex;align-items:center;gap:10px;color:#777f8a;font-size:8px}
+    .my-board-copy-meta .positive{color:#178068}
+    .my-board-open{display:flex;align-items:center;gap:6px;color:#47566f;font-size:9px;font-weight:750}
+    .my-board-open svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+    .my-board-empty{padding:46px 20px;color:#8a929c;text-align:center;font-size:11px}
+    .my-dashboard-side{display:grid;gap:12px}
+    .my-task-list,.my-activity-list{padding:8px 14px 14px}
+    .my-task-row{width:100%;display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 4px;border:0;border-top:1px solid #eef0f2;background:transparent;text-align:left;cursor:pointer}
+    .my-task-row:first-child{border-top:0}
+    .my-task-row:hover .my-task-copy strong{color:#425575}
+    .my-task-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--task-bg);color:var(--task-color)}
+    .my-task-icon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9}
+    .my-task-copy{min-width:0}
+    .my-task-copy strong{display:block;margin-bottom:3px;color:#303945;font-size:10px}
+    .my-task-copy span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#949aa3;font-size:8px}
+    .my-task-count{min-width:20px;height:20px;padding:0 6px;border-radius:999px;display:grid;place-items:center;background:#f0f2f4;color:#616b78;font-size:8px;font-weight:750}
+    .my-activity-row{position:relative;display:grid;grid-template-columns:8px minmax(0,1fr);gap:10px;padding:9px 2px}
+    .my-activity-row::before{content:"";position:absolute;left:5px;top:22px;bottom:-8px;width:1px;background:#e4e8eb}
+    .my-activity-row:last-child::before{display:none}
+    .my-activity-dot{position:relative;z-index:1;width:8px;height:8px;margin-top:3px;border:2px solid #fff;border-radius:50%;background:var(--activity-color);box-shadow:0 0 0 1px var(--activity-color)}
+    .my-activity-copy strong{display:block;margin-bottom:3px;color:#343d49;font-size:9px;font-weight:700}
+    .my-activity-copy span{color:#969ca5;font-size:8px;line-height:1.5}
+
+    .summary-band{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 18px}
+    .metric{padding:15px 16px;border:1px solid #e4e4e9;border-radius:12px;background:#fff}
+    .metric small{display:block;color:#8b8d97;font-size:10px;margin-bottom:7px}
+    .metric strong{font-size:21px;letter-spacing:-.4px}
+    .metric span{display:block;color:#9b9da6;font-size:9px;margin-top:5px}
+    .board-list{border-top:1px solid #e5e5e9}
+    .board-list-row{display:grid;grid-template-columns:54px minmax(240px,1.5fr) minmax(150px,1fr) 130px auto;gap:14px;align-items:center;padding:13px 4px;border-bottom:1px solid #ebebee}
+    .board-list-row:hover{background:#fafaff}
+    #viewCreated .board-list-row{cursor:pointer}
+    .tiny-art{width:54px;height:42px;border-radius:8px;background:linear-gradient(145deg,var(--art-a),var(--art-b));position:relative;overflow:hidden}
+    .tiny-art::after{content:"";position:absolute;width:32px;height:32px;border-radius:50%;right:-8px;top:-9px;background:rgba(255,255,255,.24)}
+    .board-list-copy h3{margin:0 0 4px;font-size:13px}
+    .board-list-copy p{margin:0;color:#858792;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .state-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .tag{height:22px;padding:0 8px;border-radius:999px;background:#f2f2f5;color:#6f717b;font-size:9px;font-weight:750;display:inline-flex;align-items:center}
+    .tag.purple{background:#eeebff;color:#604fd0}
+    .tag.green{background:#e9f7f2;color:#117c5a}
+    .tag.amber{background:#fff2e2;color:#a75a0b}
+    .tag.red{background:#ffeded;color:#b83a42}
+    .list-meta{font-size:10px;color:#858792;line-height:1.6}
+    .row-actions{display:flex;align-items:center;gap:5px}
+    .switch{position:relative;width:36px;height:20px;border:0;border-radius:999px;background:#c9c9d1;cursor:pointer;padding:0;transition:.15s ease}
+    .switch::after{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.22);transition:.15s ease}
+    .switch[aria-checked="true"]{background:var(--purple)}
+    .switch[aria-checked="true"]::after{transform:translateX(16px)}
+
+    .modal-backdrop{position:absolute;z-index:80;inset:var(--header-h) 0 0;background:rgba(24,25,31,.36);backdrop-filter:blur(3px);display:flex;justify-content:flex-end;overflow:hidden}
+    .modal-backdrop[hidden]{display:none}
+    .modal{width:max(720px,68%);height:100%;display:grid;grid-template-rows:58px minmax(0,1fr);overflow:hidden;background:#f5f7fa;border-left:1px solid #dfe1e7;box-shadow:-18px 0 48px rgba(24,27,38,.18);transition:width .22s ease}
+    .modal.is-expanded{width:100%}
+    .modal-head{height:58px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:0 14px;border-bottom:1px solid #e1e3e8;background:#fff;z-index:2}
+    .modal-head h2{min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:700}
+    .modal-head-actions{display:flex;align-items:center;gap:6px}
+    .modal-head .btn{height:34px;padding:0 11px;background:#fff}
+    .modal-head .btn:hover{background:#f2f1f7}
+    .modal-head .btn.primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+    .modal-head .btn[aria-pressed="true"]{border-color:#cfc9ff;background:#f0edff;color:#624fd5}
+    .modal-body{min-height:0;overflow:auto;background:#eef2f6}
+    .modal-body .dashboard-view{padding:20px 22px 40px}
+    .modal-layout-toggle{width:34px;height:34px;border:1px solid #dedfe5;border-radius:8px;background:#fff;color:#626570;display:grid;place-items:center;cursor:pointer}
+    .modal-layout-toggle:hover{background:#f2f1f7;color:#5f4bd5}
+    .modal-layout-toggle svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .toast{position:fixed;z-index:100;left:50%;bottom:28px;transform:translate(-50%,16px);padding:10px 14px;border-radius:10px;background:#24242a;color:#fff;font-size:12px;box-shadow:0 10px 28px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:.18s ease}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+
+    @media(max-width:1320px){
+      .market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .client-item{grid-template-columns:minmax(180px,1fr) minmax(220px,1.5fr) 120px 100px}
+      .toolbar-search{width:170px}
+      .my-dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .my-dashboard-grid,.my-dashboard-lower{grid-template-columns:1fr}
+      .my-dashboard-side{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-height:760px){
+      :root{--header-h:54px}
+      .content{padding-top:22px}
+      .board-art{height:132px}
+      .source-card{margin-bottom:18px}
+      .messages{gap:15px}
+    }
+    /* Wind Alice Web 模板：全局导航 + Panel 最终态 */
+    :root{
+      --nav-w:68px;
+      --panel-w:252px;
+      --panel-dark:#242934;
+      --panel-elevated:#2c323e;
+      --panel-hover:#343b49;
+      --panel-active:#3b4455;
+      --panel-border:#414958;
+      --panel-text:#f3f5f8;
+      --panel-muted:#a9b0bd;
+    }
+    .global-nav{background:#13161d;border-right-color:#2b3039;padding:7px 0 9px}
+    .brand{display:none}
+    .nav-list{gap:5px;padding:0 7px}
+    .nav-item{width:54px;min-height:58px;border-radius:9px;color:#979eaa}
+    .nav-item:hover{background:#20242c;color:#fff}
+    .nav-item.active{background:#fff;color:#11141a;box-shadow:none}
+    .nav-item span{font-size:10.5px;line-height:1;white-space:nowrap}
+    .profile{margin-bottom:2px}
+
+    .context-panel{background:var(--panel-dark);border-right-color:#3b4350;color:var(--panel-text)}
+    .panel-top{height:40px;padding:0 12px;background:var(--panel-dark);border-bottom:1px solid #3c4451}
+    .panel-title-row{height:40px;margin:0;gap:8px}
+    .panel-title{font-size:14px;font-weight:800;color:#fff}
+    .context-panel .icon-btn{width:28px;height:28px;color:#c6ccd6}
+    .context-panel .icon-btn:hover{background:var(--panel-hover);color:#fff}
+    .panel-search{display:none}
+    .panel-body{position:relative;display:flex;flex-direction:column;overflow:hidden;padding:0 8px 10px}
+    .accordion-shell{height:100%;min-height:0;display:flex;flex-direction:column;gap:12px;padding-top:14px}
+    .top-headers,.bottom-dock{display:flex;flex-direction:column;gap:12px}
+    .top-headers:empty,.bottom-dock:empty{display:none}
+    .active-drawer{min-height:0;flex:1 1 auto;display:flex;flex-direction:column;overflow:visible}
+    .drawer-header{flex:0 0 42px;width:100%;height:42px;margin:0;border:0;border-radius:9px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);color:#dce1e8;padding:0 12px;display:flex;align-items:center;gap:10px;text-align:left;font-weight:650;cursor:pointer}
+    .drawer-header:hover{background:rgba(255,255,255,.055);box-shadow:inset 0 0 0 1px rgba(255,255,255,.46);color:#fff}
+    .active-drawer>.drawer-header.active{background:transparent;box-shadow:none;border-radius:0;border-bottom:1px solid #8298ff;color:#fff}
+    .drawer-header svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;flex:0 0 auto}
+    .drawer-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:400}
+    .drawer-chevron{width:15px!important;height:15px!important;transform:rotate(0);transition:transform .16s ease}
+    .drawer-header.active .drawer-chevron{transform:rotate(90deg);color:#8298ff}
+    .drawer-count,.group-count,.row-count{display:none!important}
+    .drawer-list{min-height:0;flex:1 1 auto;overflow:auto;padding:4px 0 112px;scrollbar-width:thin;scrollbar-color:transparent transparent}
+    .drawer-list:hover{scrollbar-color:#596272 transparent}
+    .group{padding:5px 0 8px}
+    .group+.group{border-top:1px solid #424a58}
+    .group-title{width:100%;min-height:34px;border:0;background:transparent;color:#8f98a7;padding:6px 10px;display:flex;align-items:center;gap:8px;text-align:left;cursor:pointer}
+    .group-title:hover{color:#cdd3dc}
+    .group-title.selected{color:#fff}
+    .group-title-copy{display:flex;align-items:center;gap:8px;min-width:0}
+    .group-title .mini-avatar{width:24px;height:24px;flex-basis:24px;border:0}
+    .group-title-name{font-size:12px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tool-item{width:100%;min-height:38px;border:0;border-radius:7px;background:transparent;color:#e7ebf1;padding:7px 10px 7px 14px;display:flex;align-items:center;gap:9px;text-align:left;cursor:pointer}
+    .tool-item:hover,.tool-item.selected{background:rgba(255,255,255,.08);color:#fff}
+    .tool-item.selected .item-name{font-weight:700}
+    .item-mark{width:18px;height:18px;flex:0 0 18px;display:grid;place-items:center;color:#aeb5c1}
+    .item-mark svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .item-copy{min-width:0;flex:1;overflow:hidden}
+    .item-name{display:block;font-size:14px;font-weight:400;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .item-subtitle{display:block;margin-top:2px;color:#8f98a7;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bottom-dock{position:absolute;z-index:30;left:8px;right:8px;bottom:10px;padding-top:14px;background:var(--panel-dark);transition:opacity .18s ease,transform .18s ease}
+    .bottom-dock::before{content:"";position:absolute;left:0;right:0;top:-26px;height:26px;background:linear-gradient(180deg,rgba(36,41,52,0),var(--panel-dark) 78%);pointer-events:none}
+    .bottom-dock.hidden{opacity:0;transform:translateY(calc(100% + 16px));pointer-events:none}
+    .panel-empty{padding:18px 12px;color:#8f98a7;font-size:12px;line-height:1.7}
+
+    .customer-conversation-list{border-top:1px solid #e4e4e9}
+    .customer-conversation-item{width:100%;border:0;border-bottom:1px solid #e8e8ec;background:#fff;padding:16px 6px;display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1.45fr) 128px;align-items:center;gap:18px;text-align:left;cursor:pointer}
+    .customer-conversation-item:hover{background:#fafaff}
+    .conversation-object-title{font-size:14px;font-weight:800}
+    .conversation-object-sub{margin-top:5px;color:#858792;font-size:11px}
+    .conversation-origin strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .conversation-origin small{display:block;margin-top:5px;color:#858792;font-size:11px}
+    .pending-note{margin:0 0 18px;padding:15px 17px;border:1px solid #dedcf0;border-radius:12px;background:#faf9ff;color:#5f5a74;font-size:12px;line-height:1.7}
+
+    /* workspace内容模板库V2：Panel 同构样式 */
+    :root{--panel-w:272px;--scheme-panel-bg:#242934;--scheme-panel-text:#f3f5f8;--scheme-panel-muted:#a9b0bd}
+    html body .panel{
+      position:relative;z-index:15;min-width:0;display:flex;flex-direction:column;
+      width:var(--panel-w);overflow:hidden;background:var(--scheme-panel-bg);color:var(--scheme-panel-text);
+      border:0;border-right:1px solid #3b4350;
+    }
+    html body .panel .panel-top{
+      flex:0 0 57px;height:57px;min-height:57px;padding:10px 12px;
+      background:var(--scheme-panel-bg);border:0;border-bottom:1px solid #3a3f46;
+    }
+    html body .panel .panel-title-row{
+      height:36px;margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;
+    }
+    html body .panel .panel-title{margin:0;color:#f1f4f8;font-size:15px;font-weight:700;letter-spacing:0}
+    html body .panel .panel-actions{display:flex;align-items:center;gap:2px}
+    html body .panel .panel-icon-button{
+      width:30px;height:30px;border:0;border-radius:7px;background:transparent;color:#bac3ce;
+      display:grid;place-items:center;cursor:pointer;
+    }
+    html body .panel .panel-icon-button:hover{background:#3a4048;color:#fff}
+    html body .panel .panel-icon-button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+    html body .panel .accordion-shell{
+      position:relative;flex:1 1 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column;
+      gap:12px;padding:14px 8px 8px;
+    }
+    html body .panel .top-headers,
+    html body .panel .bottom-dock{display:flex;flex-direction:column;gap:12px;margin:0}
+    html body .panel .top-headers:empty,
+    html body .panel .bottom-dock:empty{display:none}
+    html body .panel .active-drawer{
+      position:relative;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;
+      overflow:visible;border:0;background:transparent;
+    }
+    html body .panel .drawer-header{
+      width:100%;height:40px;min-height:40px;flex:0 0 40px;margin:0;border:0;border-radius:14px;
+      display:grid;grid-template-columns:24px minmax(0,1fr) auto 16px;align-items:center;gap:7px;
+      padding:0 10px;background:rgba(255,255,255,.025);color:#dce1e8;text-align:left;cursor:pointer;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
+    }
+    html body .panel .top-headers>.drawer-header:hover,
+    html body .panel .bottom-dock>.drawer-header:hover{
+      background:rgba(255,255,255,.055);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.46);
+    }
+    html body .panel .active-drawer>.drawer-header.active,
+    html body .panel .active-drawer>.drawer-header.active:hover{
+      border:1.5px solid rgba(255,255,255,.92);border-radius:14px;background:transparent;color:#fff;box-shadow:none;
+    }
+    html body .panel .drawer-symbol{
+      width:22px;height:22px;border:0;border-radius:7px;background:transparent;color:#bac2cf;
+      display:grid;place-items:center;
+    }
+    html body .panel .drawer-symbol svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5}
+    html body .panel .active-drawer>.drawer-header.active .drawer-symbol,
+    html body .panel .active-drawer>.drawer-header.active .drawer-symbol svg,
+    html body .panel .active-drawer>.drawer-header.active .drawer-symbol use{color:#fff;stroke:#fff}
+    html body .panel .drawer-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:400}
+    html body .panel .drawer-count{display:block!important;visibility:hidden;font-size:12px}
+    html body .panel .drawer-chevron{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;transition:transform .16s ease}
+    html body .panel .drawer-header.active .drawer-chevron{transform:rotate(90deg);color:#fff;stroke:#fff}
+    html body .panel #drawerList,
+    html body .panel .drawer-list{
+      position:relative;min-height:0;flex:1 1 auto;overflow:auto;overscroll-behavior:contain;
+      margin:0;padding:4px 3px calc(var(--dock-space,96px) + 28px) 4px;background:transparent;border:0;border-radius:0;
+      scrollbar-width:thin;scrollbar-color:transparent transparent;
+    }
+    html body .panel #drawerList:hover{scrollbar-color:#596272 transparent}
+    html body .panel #drawerList .group{margin:5px 0 9px;padding:0;background:transparent;border:0}
+    html body .panel #drawerList .group+.group{border-top:1px solid #424a58}
+    html body .panel #drawerList .group-title{
+      width:100%;height:32px;min-height:32px;margin:0;padding:0 8px 0 12px;border:0;border-radius:6px;
+      display:flex;align-items:center;gap:8px;background:transparent;color:#8f98a7;text-align:left;
+      font-size:14px;font-weight:400;letter-spacing:0;cursor:pointer;
+    }
+    html body .panel #drawerList .group-title:hover,
+    html body .panel #drawerList .group-title.selected{background:transparent;color:#fff}
+    html body .panel #drawerList .group-title .group-line{display:none}
+    html body .panel #drawerList .group-count{display:block!important;visibility:hidden;font-size:12px}
+    html body .panel #drawerList .tool-item{
+      width:100%;height:34px;min-height:34px;margin:0 2px;padding:0 7px 0 15px;border:0;border-radius:6px;
+      display:grid;grid-template-columns:18px minmax(0,1fr) 20px;gap:7px;align-items:center;
+      background:transparent;color:#e7ebf1;text-align:left;cursor:pointer;box-shadow:none;
+    }
+    html body .panel #drawerList .tool-item:hover,
+    html body .panel #drawerList .tool-item.selected{background:rgba(255,255,255,.08);color:#fff}
+    html body .panel #drawerList .tool-item.selected .item-name{font-weight:700;color:#fff}
+    html body .panel #drawerList .item-mark{
+      width:17px;height:17px;flex:0 0 17px;border:0;border-radius:5px;background:#394049;color:#c2cbd6;
+      display:grid;place-items:center;
+    }
+    html body .panel #drawerList .item-mark svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7}
+    html body .panel #drawerList .item-copy{min-width:0;overflow:hidden;display:flex;align-items:center}
+    html body .panel #drawerList .item-name{display:block;max-width:100%;font-size:14px;font-weight:400;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    html body .panel #drawerList .item-subtitle{display:none}
+    html body .panel .bottom-dock{
+      position:absolute;z-index:30;left:8px;right:8px;bottom:8px;padding-top:14px;background:var(--scheme-panel-bg);
+      transition:opacity .18s ease,transform .18s ease;
+    }
+    html body .panel .bottom-dock::before{
+      content:"";position:absolute;left:0;right:0;top:-26px;height:26px;
+      background:linear-gradient(180deg,rgba(36,41,52,0),var(--scheme-panel-bg) 78%);pointer-events:none;
+    }
+    html body .panel .bottom-dock.hidden{opacity:0;transform:translateY(calc(100% + 16px));pointer-events:none}
+    html body .panel .category-avatar{width:24px;height:24px;flex:0 0 24px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#d8e6ff,#9587ff);color:#fff;font-size:10px;font-weight:800}
+
+    /* 拓客服务：客户分类与对话对象的专用密度 */
+    html body .panel[data-panel-module="link"] .accordion-shell{padding:8px 8px 8px;gap:0}
+    html body .panel[data-panel-module="link"] .active-drawer>.drawer-header.active,
+    html body .panel[data-panel-module="link"] .active-drawer>.drawer-header.active:hover{
+      height:42px;min-height:42px;flex-basis:42px;border-width:1px;padding:0 10px;
+    }
+    html body .panel[data-panel-module="link"] #drawerList{
+      padding:6px 0 18px;overflow-y:auto;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group{
+      margin:0;padding:0 0 6px;border:0;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group+.group{
+      position:relative;margin-top:8px;padding-top:9px;border-top:0;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group+.group::before{
+      content:"";position:absolute;left:8px;right:8px;top:0;height:1px;background:rgba(255,255,255,.12);
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group-title{
+      height:34px;min-height:34px;margin:0;padding:0 8px;
+      border-radius:6px;color:#c7ced8;font-size:13px;line-height:1;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group-title:hover{
+      background:rgba(255,255,255,.045);color:#fff;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group-title.selected{
+      background:transparent;color:#fff;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group-title-copy{
+      min-width:0;display:flex;align-items:center;gap:8px;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .group-title-name{
+      min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .category-avatar{
+      width:22px;height:22px;min-width:22px;min-height:22px;flex:0 0 22px;
+      display:flex;align-items:center;justify-content:center;align-self:center;
+      overflow:visible;font-size:9px;line-height:1;text-align:center;
+      box-shadow:0 0 0 1px rgba(255,255,255,.16);
+    }
+    html body .panel[data-panel-module="link"] #drawerList .tool-item{
+      height:36px;min-height:36px;margin:1px 0 0;padding:0 10px 0 38px;
+      grid-template-columns:minmax(0,1fr);gap:0;border-radius:6px;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .tool-item:hover,
+    html body .panel[data-panel-module="link"] #drawerList .tool-item.selected{
+      background:rgba(255,255,255,.09);
+    }
+    html body .panel[data-panel-module="link"] #drawerList .item-mark,
+    html body .panel[data-panel-module="link"] #drawerList .status-slot{
+      display:none;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .item-copy{
+      width:100%;min-width:0;display:block;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .item-name{
+      font-size:13px;line-height:36px;color:#edf0f4;
+    }
+    html body .panel[data-panel-module="link"] #drawerList .tool-item.selected .item-name{
+      font-weight:600;color:#fff;
+    }
+    html body .panel[data-panel-module="link"] .panel-empty{display:none}
+    html body .workspace[data-header-mode="breadcrumb-only"] .workspace-heading{display:flex;align-items:center;min-width:0}
+    html body .workspace[data-header-mode="breadcrumb-only"] .breadcrumb{
+      margin:0;color:#5f626c;font-size:13px;font-weight:500;line-height:1.4;
+    }
+    html body .workspace[data-header-mode="breadcrumb-only"] .workspace-title-row{display:none}
+
+    .market-composer{
+      position:absolute;z-index:24;left:50%;bottom:16px;transform:translateX(-50%);
+      width:min(860px,calc(100% - 56px));padding:8px;border:1px solid #dedee6;border-radius:16px;
+      display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:8px;
+      background:rgba(255,255,255,.96);box-shadow:0 14px 36px rgba(31,31,42,.14);backdrop-filter:blur(14px);
+    }
+    .market-composer[hidden]{display:none}
+    .market-composer-mark{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#f0edff;color:#6957d8}
+    .market-composer-mark svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .market-composer input{width:100%;height:40px;border:0;outline:0;background:transparent;color:#22242a;font-size:13px}
+    .market-composer input::placeholder{color:#92949e}
+    .market-composer button{height:38px;border:0;border-radius:10px;padding:0 16px;background:#111318;color:#fff;display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:700}
+    .market-composer button:hover{background:#000}
+    .market-composer button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+    .workspace[data-composer="market"] .workspace-scroll{bottom:82px}
+
+    .dashboard-view{min-height:100%;padding:22px;background:#f6f7f9;color:#1e2026}
+    .dashboard-hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:16px}
+    .dashboard-hero small{display:block;margin-bottom:6px;color:#7c7f89;font-size:11px}
+    .dashboard-hero h2{margin:0 0 7px;font-size:24px;letter-spacing:-.5px}
+    .dashboard-hero p{margin:0;color:#70737d;font-size:12px;line-height:1.65}
+    .dashboard-updated{padding-top:6px;color:#858892;font-size:11px;white-space:nowrap}
+    .dashboard-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
+    .dashboard-panel{border:1px solid #e1e2e7;border-radius:13px;background:#fff;box-shadow:0 3px 12px rgba(31,34,42,.035)}
+    .dashboard-kpi{padding:15px 16px}
+    .dashboard-kpi small{display:block;color:#858892;font-size:10px;margin-bottom:8px}
+    .dashboard-kpi strong{font-size:24px;letter-spacing:-.5px}
+    .dashboard-kpi span{display:block;margin-top:5px;color:#168263;font-size:10px}
+    .dashboard-main{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(260px,.8fr);gap:12px;margin-bottom:12px}
+    .dashboard-chart{padding:16px 18px}
+    .dashboard-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+    .dashboard-panel-head h3{margin:0;font-size:14px}
+    .dashboard-panel-head span{color:#8b8d96;font-size:10px}
+    .dashboard-chart svg{width:100%;height:230px;overflow:visible}
+    .dashboard-chart .grid-line{stroke:#ececf1;stroke-width:1}
+    .dashboard-chart .area{fill:url(#boardAreaGradient);opacity:.42}
+    .dashboard-chart .line{fill:none;stroke:#6d5be7;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+    .dashboard-chart .compare{fill:none;stroke:#53a98a;stroke-width:2;stroke-dasharray:6 6}
+    .dashboard-insights{padding:16px}
+    .insight-item{padding:12px 0;border-top:1px solid #ededf1}
+    .insight-item:first-of-type{border-top:0;padding-top:0}
+    .insight-item strong{display:block;margin-bottom:5px;font-size:12px}
+    .insight-item p{margin:0;color:#747781;font-size:11px;line-height:1.65}
+    .dashboard-table{padding:16px 18px}
+    .dashboard-table-row{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(4,minmax(90px,.7fr));gap:12px;align-items:center;min-height:42px;border-top:1px solid #ededf1;font-size:11px}
+    .dashboard-table-row.head{min-height:30px;border-top:0;color:#8b8d96;font-size:10px}
+    .dashboard-table-row strong{font-size:12px}
+    .dashboard-table-row .positive{color:#13815e}
+    .dashboard-table-row .negative{color:#c84f57}
+
+    .workspace[data-content-mode="workbench"] .workspace-scroll{overflow:hidden}
+    .workspace[data-content-mode="workbench"] .content{width:100%;height:100%;max-width:none;padding:0}
+    #viewBoardWorkbench{height:100%}
+    .board-workbench{height:100%;display:grid;grid-template-columns:minmax(430px,1fr) minmax(520px,1fr);background:#eef0f4}
+    .board-workbench[data-layout="board"]{grid-template-columns:1fr}
+    .board-workbench[data-layout="board"] .workbench-chat{display:none}
+    .board-workbench[data-layout="chat"]{grid-template-columns:1fr}
+    .board-workbench[data-layout="chat"] .workbench-board{display:none}
+    .workbench-chat,.workbench-board{min-width:0;height:100%;overflow:hidden;background:#fff}
+    .workbench-chat{display:grid;grid-template-rows:48px minmax(0,1fr) auto;border-right:1px solid #dfe0e5}
+    .workbench-board{display:grid;grid-template-rows:48px minmax(0,1fr);background:#f6f7f9}
+    .workbench-pane-head{height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px 0 18px;border-bottom:1px solid #e2e3e8;background:#fff}
+    .workbench-pane-title{min-width:0;display:flex;align-items:center;gap:10px}
+    .workbench-pane-title h2{margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600;color:#272932}
+    .workbench-pane-title small{flex:0 0 auto;color:#9698a2;font-size:10px}
+    .workbench-pane-actions{display:flex;align-items:center;gap:4px}
+    .workbench-layout-btn{width:30px;height:30px;border:0;border-radius:7px;background:transparent;color:#70737e;display:grid;place-items:center;cursor:pointer}
+    .workbench-layout-btn:hover,.workbench-layout-btn.active{background:#f0edff;color:#6251d4}
+    .workbench-layout-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .workbench-chat-scroll,.workbench-board-scroll{min-height:0;overflow:auto}
+    .workbench-chat-scroll{padding:28px 34px 24px}
+    .workbench-chat-intro{margin:0 0 28px;color:#858792;font-size:11px;line-height:1.6}
+    .workbench-message{max-width:88%;margin:0 0 16px;padding:11px 13px;border-radius:13px;background:#f1f2f5;font-size:12px;line-height:1.65}
+    .workbench-message.ai{margin-left:auto;background:#eeebff}
+    .workbench-chat-form{display:flex;gap:8px;margin:12px 18px 18px;padding:7px;border:1px solid #dddde4;border-radius:12px;background:#fff;box-shadow:0 8px 22px rgba(31,31,42,.09)}
+    .workbench-chat-form input{min-width:0;flex:1;height:36px;border:0;outline:0;padding:0 8px}
+    .workbench-chat-form button{width:36px;height:36px;border:0;border-radius:9px;background:#111318;color:#fff;display:grid;place-items:center;cursor:pointer}
+    .workbench-chat-form svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+    .workbench-board .dashboard-view{padding:22px}
+    [data-layout-only]{display:none}
+    .board-workbench[data-layout="split"] [data-layout-only="split"],
+    .board-workbench[data-layout="board"] [data-layout-only="board"],
+    .board-workbench[data-layout="chat"] [data-layout-only="chat"]{display:grid}
+    .board-workbench[data-layout="board"] .workbench-board{grid-column:1/-1}
+    .board-workbench[data-layout="chat"] .workbench-chat{grid-column:1/-1;border-right:0}
+    .board-workbench[data-layout="chat"] .workbench-chat-scroll{padding-left:max(34px,calc((100% - 860px)/2));padding-right:max(34px,calc((100% - 860px)/2))}
+    .board-workbench[data-layout="chat"] .workbench-chat-form{width:min(860px,calc(100% - 36px));margin-left:auto;margin-right:auto}
+    @media(max-width:1320px){
+      .dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .dashboard-main{grid-template-columns:1fr}
+      .board-workbench{grid-template-columns:minmax(380px,1fr) minmax(470px,1fr)}
+    }
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5v8a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/></symbol>
+    <symbol id="i-tools" viewBox="0 0 24 24"><path d="M14.5 6.5 17.5 3a5 5 0 0 1-6 6L5 15.5A2.1 2.1 0 0 0 8 18.5l6.5-6.5a5 5 0 0 1 6-6L17 9.5z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.4"/><path d="M3.5 19c.6-3.2 2.5-5 5.5-5s4.9 1.8 5.5 5M14 15c2.8-.7 5.2.7 6 3.5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3z"/></symbol>
+    <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15V9m5 6V6m5 9v-3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10m-7 6h4"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 5.8a5 5 0 0 0-7.1 0L12 7.5l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21l8.8-8.1a5 5 0 0 0 0-7.1z"/></symbol>
+    <symbol id="i-fork" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><path d="M6 7v2c0 3 2 4 6 4m6-6v2c0 3-2 4-6 4v4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L20 8l-4-4zM14 6l4 4"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5m-8 7 8 5"/></symbol>
+    <symbol id="i-collapse-left" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-4-4-4 4-4"/></symbol>
+    <symbol id="i-collapse-right" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16m-6-4 4-4-4-4"/></symbol>
+    <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5M9 20H4v-5m11 5h5v-5M4 9l6-6m4 0 6 6M4 15l6 6m4 0 6-6"/></symbol>
+    <symbol id="i-contract" viewBox="0 0 24 24"><path d="M9 9H4V4m11 5h5V4M9 15H4v5m11-5h5v5M4 4l6 6m4 0 6-6M4 20l6-6m4 0 6 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <div class="app" id="app">
+    <nav class="global-nav" aria-label="Alice 全局导航">
+      <div class="brand" aria-label="Wind Alice">A</div>
+      <div class="nav-list">
+        <button class="nav-item" type="button" aria-label="首页"><svg><use href="#i-home"/></svg><span>首页</span></button>
+        <button class="nav-item" type="button" aria-label="聊天"><svg><use href="#i-chat"/></svg><span>聊天</span></button>
+        <button class="nav-item active" type="button" data-module="link" aria-label="拓客服务"><svg><use href="#i-link"/></svg><span>拓客服务</span></button>
+        <button class="nav-item" type="button" data-module="market" aria-label="创意市场"><svg><use href="#i-sparkle"/></svg><span>创意市场</span></button>
+        <button class="nav-item" type="button" aria-label="自动任务"><svg><use href="#i-clock"/></svg><span>自动任务</span></button>
+        <button class="nav-item" type="button" aria-label="工具市场"><svg><use href="#i-tools"/></svg><span>工具市场</span></button>
+      </div>
+      <div class="nav-spacer"></div>
+      <button class="profile" type="button" aria-label="个人中心">李</button>
+    </nav>
+
+    <aside class="panel context-panel wa-o-context-panel" data-architecture-panel="true" aria-label="上下文导航">
+      <div class="panel-top wa-o-panel-toolbar">
+        <div class="panel-title-row">
+          <h2 class="panel-title" id="panelTitle">拓客服务</h2>
+          <div class="panel-actions">
+            <button class="panel-icon-button" type="button" id="collapsePanel" aria-label="折叠 Panel" title="折叠 Panel"><svg><use href="#i-panel"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-shell wa-o-panel-drawer-stack" id="accordionShell" aria-live="polite"></div>
+    </aside>
+
+    <main class="workspace" aria-label="Workspace">
+      <header class="workspace-header">
+        <button class="icon-btn restore-panel" type="button" id="restorePanel" aria-label="展开导航面板"><svg><use href="#i-panel"/></svg></button>
+        <div class="workspace-heading">
+          <div class="breadcrumb" id="breadcrumb">拓客服务 / 客户连接</div>
+          <div class="workspace-title-row"><h1 class="workspace-title" id="workspaceTitle">客户连接</h1><span class="status-pill" id="workspaceStatus">共 3 位客户</span></div>
+        </div>
+        <div class="header-actions" id="headerActions">
+          <button class="btn" type="button" onclick="showToast('筛选条件已展开（原型演示）')"><svg><use href="#i-filter"/></svg>筛选</button>
+          <label class="toolbar-search"><svg><use href="#i-search"/></svg><input type="search" placeholder="搜索客户" aria-label="搜索客户"></label>
+        </div>
+      </header>
+
+      <div class="workspace-scroll" id="workspaceScroll">
+        <div class="content">
+          <section class="page-view" id="viewClients">
+            <div class="page-intro">
+              <div><h2>客户连接</h2><p>查看由内容分享、看板咨询和数字分身建立的客户联系，并追溯每段对话对应的来源看板。</p></div>
+              <div class="count-note">共 3 位客户 · 3 段对话</div>
+            </div>
+            <div class="filter-row"><div class="segmented"><button class="active" type="button">最近活跃</button><button type="button">全部客户</button></div></div>
+            <div class="client-list">
+              <button class="client-item" type="button" data-open-customer="u2616">
+                <span class="client-person"><span class="mini-avatar">U</span><span><span class="client-name">USER_2616</span><span class="client-sub">2 个对话 · 来自社区看板</span></span></span>
+                <span class="client-source"><strong>美债收益率倒挂下的配置评估</strong><small>最近对话：美债配置咨询</small></span>
+                <span class="client-stat">看过 2 个看板<br>发起 2 个对话</span><span class="client-time">2026/09/24<br>11:07</span>
+              </button>
+              <button class="client-item" type="button" data-open-customer="lin">
+                <span class="client-person"><span class="mini-avatar" style="background:linear-gradient(145deg,#ffe5cf,#e99776)">林</span><span><span class="client-name">林女士</span><span class="client-sub">1 个对话 · 来自链接分享</span></span></span>
+                <span class="client-source"><strong>半导体设备龙头对比</strong><small>最近对话：估值口径咨询</small></span>
+                <span class="client-stat">看过 1 个看板<br>发起 1 个对话</span><span class="client-time">2026/09/23<br>16:42</span>
+              </button>
+              <button class="client-item" type="button" data-open-customer="chen">
+                <span class="client-person"><span class="mini-avatar" style="background:linear-gradient(145deg,#ddf5e9,#68b69b)">陈</span><span><span class="client-name">陈先生</span><span class="client-sub">暂无对话 · 来自官方看板</span></span></span>
+                <span class="client-source"><strong>9 月宏观数据月报</strong><small>仅查看，尚未发起咨询</small></span>
+                <span class="client-stat">看过 1 个看板<br>发起 0 个对话</span><span class="client-time">2026/09/21<br>09:18</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="page-view" id="viewCustomerConversations" hidden>
+            <div class="page-intro">
+              <div><h2 id="customerConversationTitle">USER_2616 的对话记录</h2><p>选择一段会话，查看完整聊天记录，以及客户查看过的来源看板。</p></div>
+              <div class="count-note" id="customerConversationCount">共 2 段会话</div>
+            </div>
+            <div class="customer-conversation-list" id="customerConversationList"></div>
+          </section>
+
+          <section class="page-view" id="viewConversation" hidden>
+            <div class="conversation-shell">
+              <div class="conversation-meta"><span id="conversationCustomer">USER_2616 · 数字分身对话</span><span id="conversationTime">开始于 2026/09/24 11:07</span></div>
+              <button class="source-card" type="button" id="sourceBoardCard" data-board-title="美债收益率倒挂下的配置评估">
+                <span class="source-thumb"><small>资产配置 · 看板</small><strong id="sourceThumbTitle">美债收益率倒挂下的配置评估</strong><span class="source-chart"><svg viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 13 15 11 28 15 43 8 57 10 73 4 86 7 100 2"/></svg></span></span>
+                <span class="source-copy"><span class="source-eyebrow">来源看板</span><h3 id="sourceTitle">美债收益率倒挂下的配置评估</h3><span class="source-meta"><span id="sourceVersion">v1.2 · 作者 MUWEI</span><span id="sourceDataTime">数据时间 2026/09/24 10:30</span><span id="sourceChannel">社区看板 · 用户于 11:02 查看后发起对话</span></span></span>
+                <span class="source-action"><span id="sourceActionText">查看看板</span> <svg><use href="#i-arrow"/></svg></span>
+              </button>
+              <div class="timeline-day">2026 年 9 月 24 日</div>
+              <div class="messages" id="messagesBond">
+                <article class="message"><span class="message-avatar">U</span><div><div class="message-author">USER_2616</div><div class="bubble">我看到看板里提到美债收益率倒挂已经接近历史极值，这是否意味着现在应该增加长久期债券配置？</div><div class="message-time">11:07</div></div></article>
+                <article class="message mine"><span class="message-avatar">AI</span><div><div class="message-author">MUWEI · 数字分身</div><div class="bubble">倒挂本身更像是经济预期和政策周期的信号，不能单独作为加仓依据。结合看板中的期限利差、通胀预期与组合久期，目前更适合分阶段增加久期，而不是一次性切换。</div><div class="message-time">11:08</div></div></article>
+                <article class="message"><span class="message-avatar">U</span><div><div class="message-author">USER_2616</div><div class="bubble">如果接下来通胀数据反弹，哪些指标说明这个判断需要调整？</div><div class="message-time">11:10</div></div></article>
+                <article class="message mine"><span class="message-avatar">AI</span><div><div class="message-author">MUWEI · 数字分身</div><div class="bubble">重点关注核心通胀三个月年化、就业工资增速以及十年期实际利率。若三项同步回升，应降低长久期暴露。相关信息仅供参考，不构成投资建议。</div><div class="message-time">11:11</div></div></article>
+              </div>
+              <div class="messages" id="messagesGreeting" hidden>
+                <article class="message"><span class="message-avatar">U</span><div><div class="message-author">USER_2616</div><div class="bubble">你好，我想了解创意市场里的看板可以怎样用于客户沟通？</div><div class="message-time">10:26</div></div></article>
+                <article class="message mine"><span class="message-avatar">AI</span><div><div class="message-author">MUWEI · 数字分身</div><div class="bubble">你可以收藏官方或社区看板，也可以改建为自己的版本，再通过链接分享给客户。客户基于看板发起的咨询会回到这里。</div><div class="message-time">10:27</div></div></article>
+              </div>
+              <div class="messages" id="messagesSemiconductor" hidden>
+                <article class="message"><span class="message-avatar" style="background:#ffe5cf">林</span><div><div class="message-author">林女士</div><div class="bubble">北方华创和中微公司的估值为什么用了不同的观察指标？</div><div class="message-time">16:42</div></div></article>
+                <article class="message mine"><span class="message-avatar">AI</span><div><div class="message-author">MUWEI · 数字分身</div><div class="bubble">两家公司收入结构、设备品类和盈利阶段不同，因此看板同时采用 PE、PS 与订单增速交叉验证。单一估值倍数不适合直接比较。</div><div class="message-time">16:43</div></div></article>
+              </div>
+            </div>
+          </section>
+
+          <section class="page-view" id="viewOfficial" hidden>
+            <div class="page-intro"><div><h2>看板广场</h2><p>浏览官方与社区看板，通过来源、主题分类和排序快速定位内容。</p></div><div class="count-note">共 6 个看板</div></div>
+            <div class="filter-row market-filter-row"><div class="segmented"><button class="active" type="button" data-market-view="plaza">全部</button><button type="button" data-market-view="official">官方</button><button type="button" data-market-view="community">社区</button></div><span class="market-filter-divider"></span><span class="market-filter-label">主题</span><button class="chip active" type="button" data-category="all">全部</button><button class="chip" type="button" data-category="宏观">宏观</button><button class="chip" type="button" data-category="行业">行业</button><button class="chip" type="button" data-category="策略">策略</button><span class="filter-spacer"></span><select class="sort-select" aria-label="看板排序"><option>综合排序</option><option>最近更新</option><option>收藏最多</option></select></div>
+            <div class="market-section-heading"><h3>官方精选</h3><span>3 个看板</span></div>
+            <div class="market-grid" data-board-grid="official">
+              <article class="board-card" data-category="宏观" data-title="全球宏观流动性观察" style="--art-a:#1f2d4f;--art-b:#5a65d9;--art-c:#69d4c0"><div class="board-art"><span class="art-tag">官方 · 宏观</span><h3>全球宏观流动性观察</h3><span class="mini-chart"><i style="height:36%"></i><i style="height:57%"></i><i style="height:45%"></i><i style="height:74%"></i><i style="height:67%"></i><i style="height:91%"></i></span></div><div class="board-card-body"><div class="board-title-row"><h3>全球宏观流动性观察</h3><span class="avatar-badge">可咨询</span></div><p class="board-description">跟踪主要央行资产负债表、美元流动性和风险资产表现。</p><div class="board-meta"><span>v2.4</span><span>数据 09/24 09:30</span><span>收藏 1,286</span></div><div class="board-footer"><span class="author"><span class="mini-avatar">W</span>Wind 官方</span><button class="card-icon-btn" type="button" aria-label="收藏" aria-pressed="false"><svg><use href="#i-heart"/></svg></button><button class="card-icon-btn" type="button" aria-label="改建"><svg><use href="#i-fork"/></svg></button></div></div></article>
+              <article class="board-card" data-category="行业" data-title="半导体设备景气跟踪" style="--art-a:#23443f;--art-b:#2c8b7d;--art-c:#d6c57e"><div class="board-art"><span class="art-tag">官方 · 行业</span><h3>半导体设备景气跟踪</h3><span class="mini-chart"><i style="height:62%"></i><i style="height:49%"></i><i style="height:71%"></i><i style="height:84%"></i><i style="height:76%"></i><i style="height:95%"></i></span></div><div class="board-card-body"><div class="board-title-row"><h3>半导体设备景气跟踪</h3><span class="avatar-badge">可咨询</span></div><p class="board-description">覆盖订单、招投标、估值和核心设备国产化进度。</p><div class="board-meta"><span>v1.8</span><span>数据 09/23 17:00</span><span>收藏 968</span></div><div class="board-footer"><span class="author"><span class="mini-avatar">W</span>Wind 官方</span><button class="card-icon-btn" type="button" aria-label="收藏" aria-pressed="false"><svg><use href="#i-heart"/></svg></button><button class="card-icon-btn" type="button" aria-label="改建"><svg><use href="#i-fork"/></svg></button></div></div></article>
+              <article class="board-card" data-category="策略" data-title="红利低波组合监测" style="--art-a:#4a2d49;--art-b:#9b5e87;--art-c:#efc36d"><div class="board-art"><span class="art-tag">官方 · 策略</span><h3>红利低波组合监测</h3><span class="mini-chart"><i style="height:42%"></i><i style="height:48%"></i><i style="height:60%"></i><i style="height:58%"></i><i style="height:77%"></i><i style="height:86%"></i></span></div><div class="board-card-body"><div class="board-title-row"><h3>红利低波组合监测</h3></div><p class="board-description">观察股息率、波动率、行业暴露与组合回撤变化。</p><div class="board-meta"><span>v3.1</span><span>数据 09/24 10:00</span><span>收藏 742</span></div><div class="board-footer"><span class="author"><span class="mini-avatar">W</span>Wind 官方</span><button class="card-icon-btn" type="button" aria-label="收藏" aria-pressed="false"><svg><use href="#i-heart"/></svg></button><button class="card-icon-btn" type="button" aria-label="改建"><svg><use href="#i-fork"/></svg></button></div></div></article>
+            </div>
+          </section>
+
+          <section class="page-view" id="viewCommunity" hidden>
+            <div class="page-intro"><div><h2>看板广场 · 社区</h2><p>浏览用户发布的看板，收藏原看板引用，或通过做同款生成自己的创建记录。</p></div><div class="count-note">社区发布 · 3 个看板</div></div>
+            <div class="filter-row market-filter-row"><div class="segmented"><button type="button" data-market-view="plaza">全部</button><button type="button" data-market-view="official">官方</button><button class="active" type="button" data-market-view="community">社区</button></div><span class="market-filter-divider"></span><span class="market-filter-label">主题</span><button class="chip active" type="button" data-category="all">全部</button><button class="chip" type="button" data-category="资产配置">资产配置</button><button class="chip" type="button" data-category="公司">公司</button><button class="chip" type="button" data-category="宏观">宏观</button><span class="filter-spacer"></span><select class="sort-select" aria-label="社区看板排序"><option>热门优先</option><option>最新发布</option><option>收藏最多</option></select></div>
+            <div class="market-section-heading"><h3>社区精选</h3><span>3 个看板</span></div>
+            <div class="market-grid">
+              <article class="board-card" data-title="美债收益率倒挂下的配置评估" style="--art-a:#202947;--art-b:#675ad7;--art-c:#72dec1"><div class="board-art"><span class="art-tag">社区 · 资产配置</span><h3>美债收益率倒挂下的配置评估</h3><span class="mini-chart"><i style="height:73%"></i><i style="height:62%"></i><i style="height:54%"></i><i style="height:44%"></i><i style="height:68%"></i><i style="height:82%"></i></span></div><div class="board-card-body"><div class="board-title-row"><h3>美债收益率倒挂下的配置评估</h3><span class="avatar-badge">分身已开启</span></div><p class="board-description">从期限利差、通胀预期和久期暴露评估组合调整窗口。</p><div class="board-meta"><span>v1.2</span><span>数据 09/24 10:30</span><span>改建 126</span></div><div class="board-footer"><span class="author"><span class="mini-avatar" style="background:linear-gradient(145deg,#ba6be1,#6654df);color:#fff">李</span>MUWEI</span><button class="card-icon-btn" type="button" aria-label="收藏" aria-pressed="true"><svg><use href="#i-heart"/></svg></button><button class="card-icon-btn" type="button" aria-label="改建"><svg><use href="#i-fork"/></svg></button></div></div></article>
+              <article class="board-card" data-title="半导体设备龙头对比" style="--art-a:#263f47;--art-b:#4d9d8c;--art-c:#f2cc7c"><div class="board-art"><span class="art-tag">社区 · 公司</span><h3>半导体设备龙头对比</h3><span class="mini-chart"><i style="height:34%"></i><i style="height:55%"></i><i style="height:68%"></i><i style="height:62%"></i><i style="height:88%"></i><i style="height:81%"></i></span></div><div class="board-card-body"><div class="board-title-row"><h3>半导体设备龙头对比</h3><span class="avatar-badge">分身已开启</span></div><p class="board-description">北方华创、中微公司关键业务、订单与估值对比。</p><div class="board-meta"><span>v2.0</span><span>数据 09/23 15:00</span><span>改建 88</span></div><div class="board-footer"><span class="author"><span class="mini-avatar" style="background:#ffe5cf">林</span>Lin Research</span><button class="card-icon-btn" type="button" aria-label="收藏" aria-pressed="false"><svg><use href="#i-heart"/></svg></button><button class="card-icon-btn" type="button" aria-label="改建"><svg><use href="#i-fork"/></svg></button></div></div></article>
+              <article class="board-card" data-title="黄金与实际利率观察" style="--art-a:#544126;--art-b:#b38a40;--art-c:#f4e3a1"><div class="board-art"><span class="art-tag">社区 · 宏观</span><h3>黄金与实际利率观察</h3><span class="mini-chart"><i style="height:50%"></i><i style="height:43%"></i><i style="height:65%"></i><i style="height:73%"></i><i style="height:66%"></i><i style="height:92%"></i></span></div><div class="board-card-body"><div class="board-title-row"><h3>黄金与实际利率观察</h3></div><p class="board-description">跟踪实际利率、美元指数与黄金价格的滚动关系。</p><div class="board-meta"><span>v1.4</span><span>数据 09/24 09:45</span><span>改建 54</span></div><div class="board-footer"><span class="author"><span class="mini-avatar" style="background:#efe0b2">金</span>Macro Lens</span><button class="card-icon-btn" type="button" aria-label="收藏" aria-pressed="false"><svg><use href="#i-heart"/></svg></button><button class="card-icon-btn" type="button" aria-label="改建"><svg><use href="#i-fork"/></svg></button></div></div></article>
+            </div>
+          </section>
+
+          <section class="page-view" id="viewMyBoards" hidden>
+            <header class="my-dashboard-hero">
+              <div><div class="my-dashboard-eyebrow">Personal dashboard</div><h2>我的看板</h2><p>从一个页面掌握看板资产、内容影响力和客户连接，优先处理需要更新与发布的事项。</p></div>
+              <div class="my-dashboard-date"><strong>2026 年 9 月 24 日</strong>数据汇总至 11:30 · 自动刷新</div>
+            </header>
+            <section class="my-dashboard-kpis" aria-label="看板核心指标">
+              <article class="my-dashboard-kpi" style="--kpi-color:#314565"><div class="my-dashboard-kpi-head"><span>看板资产</span><svg><use href="#i-board"/></svg></div><div class="my-dashboard-kpi-value"><strong id="myBoardTotalCount">6</strong><span>个</span></div><div class="my-dashboard-kpi-foot"><span>创建与收藏合计</span><svg class="my-dashboard-kpi-spark" viewBox="0 0 54 17"><path d="M1 14 9 12 17 13 25 8 33 9 41 5 53 3"/></svg></div></article>
+              <article class="my-dashboard-kpi" style="--kpi-color:#3b9b8f"><div class="my-dashboard-kpi-head"><span>累计被查看</span><svg><use href="#i-eye"/></svg></div><div class="my-dashboard-kpi-value"><strong>1,842</strong><span>次</span></div><div class="my-dashboard-kpi-foot"><span class="up">近 7 日 +18%</span><svg class="my-dashboard-kpi-spark" viewBox="0 0 54 17"><path d="M1 13 9 14 17 10 25 11 33 7 41 8 53 2"/></svg></div></article>
+              <article class="my-dashboard-kpi" style="--kpi-color:#c18b3d"><div class="my-dashboard-kpi-head"><span>客户连接</span><svg><use href="#i-users"/></svg></div><div class="my-dashboard-kpi-value"><strong>29</strong><span>人</span></div><div class="my-dashboard-kpi-foot"><span class="up">本周新增 6 人</span><svg class="my-dashboard-kpi-spark" viewBox="0 0 54 17"><path d="M1 14 9 13 17 13 25 9 33 10 41 6 53 5"/></svg></div></article>
+              <article class="my-dashboard-kpi" style="--kpi-color:#7b699f"><div class="my-dashboard-kpi-head"><span>被收藏 / 改建</span><svg><use href="#i-fork"/></svg></div><div class="my-dashboard-kpi-value"><strong>310</strong><span>次</span></div><div class="my-dashboard-kpi-foot"><span>收藏 236 · 改建 74</span><svg class="my-dashboard-kpi-spark" viewBox="0 0 54 17"><path d="M1 12 9 9 17 11 25 7 33 8 41 4 53 6"/></svg></div></article>
+            </section>
+            <section class="my-dashboard-grid">
+              <article class="my-dashboard-panel">
+                <div class="my-dashboard-panel-head"><div class="my-dashboard-panel-title"><h3>看板影响力趋势</h3><p>近 7 日查看与客户咨询变化</p></div><div class="my-dashboard-legend"><span><i></i>查看次数</span><span><i></i>客户咨询</span></div></div>
+                <div class="my-impact-chart"><svg viewBox="0 0 720 220" preserveAspectRatio="none" aria-label="近七日看板影响力趋势图"><defs><linearGradient id="myImpactArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#314565" stop-opacity=".22"/><stop offset="1" stop-color="#314565" stop-opacity="0"/></linearGradient></defs><path class="chart-grid" d="M42 20H710M42 68H710M42 116H710M42 164H710"/><text class="chart-axis" x="8" y="24">400</text><text class="chart-axis" x="14" y="72">300</text><text class="chart-axis" x="14" y="120">200</text><text class="chart-axis" x="14" y="168">100</text><path class="chart-area" d="M42 158 L150 146 L258 152 L366 108 L474 119 L582 72 L710 42 L710 180 L42 180 Z"/><path class="chart-line" d="M42 158 L150 146 L258 152 L366 108 L474 119 L582 72 L710 42"/><path class="chart-line-secondary" d="M42 174 L150 169 L258 171 L366 154 L474 158 L582 139 L710 128"/><circle class="chart-point" cx="710" cy="42" r="4"/><text class="chart-axis" x="34" y="207">09/18</text><text class="chart-axis" x="142" y="207">09/19</text><text class="chart-axis" x="250" y="207">09/20</text><text class="chart-axis" x="358" y="207">09/21</text><text class="chart-axis" x="466" y="207">09/22</text><text class="chart-axis" x="574" y="207">09/23</text><text class="chart-axis" x="686" y="207">今天</text></svg></div>
+              </article>
+              <article class="my-dashboard-panel">
+                <div class="my-dashboard-panel-head"><div class="my-dashboard-panel-title"><h3>看板资产构成</h3><p id="myBoardPortfolioSummary">共 6 个看板对象</p></div></div>
+                <div class="my-portfolio-body"><div class="my-portfolio-donut" id="myBoardDonut"><div class="my-portfolio-total"><strong id="myBoardAllMetric">6</strong>全部看板</div></div><div class="my-portfolio-legend"><div class="my-portfolio-item" style="--item-color:#314565"><i></i><span>我创建的</span><strong id="myBoardCreatedMetric">3</strong></div><div class="my-portfolio-item" style="--item-color:#3b9b8f"><i></i><span>我收藏的</span><strong id="myBoardFavoriteMetric">3</strong></div><div class="my-portfolio-item" style="--item-color:#c18b3d"><i></i><span>我分享的</span><strong id="myBoardSharedMetric">0</strong></div></div></div>
+                <p class="my-portfolio-note">3 个原创 / 改建看板正在持续产生浏览和客户连接，其中 2 个已开启数字分身。</p>
+              </article>
+            </section>
+            <section class="my-dashboard-lower">
+              <article class="my-dashboard-panel">
+                <div class="my-dashboard-panel-head"><div class="my-dashboard-panel-title"><h3>最近看板</h3><p>按最近更新与操作时间聚合</p></div><div class="my-board-filter"><button class="active" type="button" data-my-board-filter="all">全部 <span>6</span></button><button type="button" data-my-board-filter="created">创建</button><button type="button" data-my-board-filter="favorites">收藏</button><button type="button" data-my-board-filter="shared">分享</button></div></div>
+                <div class="my-board-aggregate" id="myBoardAggregateGrid"></div>
+              </article>
+              <aside class="my-dashboard-side">
+                <section class="my-dashboard-panel"><div class="my-dashboard-panel-head"><div class="my-dashboard-panel-title"><h3>待处理</h3><p>需要你关注的看板事项</p></div></div><div class="my-task-list"><button class="my-task-row" type="button" onclick="showMarket('favorites');renderPanel()"><span class="my-task-icon" style="--task-bg:#eef0f8;--task-color:#4b5f82"><svg><use href="#i-clock"/></svg></span><span class="my-task-copy"><strong>同步新版本</strong><span>美债配置评估已发布 v1.3</span></span><span class="my-task-count">1</span></button><button class="my-task-row" type="button" onclick="showMarket('created');renderPanel()"><span class="my-task-icon" style="--task-bg:#eaf6f3;--task-color:#278476"><svg><use href="#i-share"/></svg></span><span class="my-task-copy"><strong>继续发布</strong><span>红利低波周报仍为私有状态</span></span><span class="my-task-count">1</span></button><button class="my-task-row" type="button" onclick="showMarket('created');renderPanel()"><span class="my-task-icon" style="--task-bg:#fff4e5;--task-color:#a96d1d"><svg><use href="#i-users"/></svg></span><span class="my-task-copy"><strong>开启数字分身</strong><span>1 个看板尚未开放咨询</span></span><span class="my-task-count">1</span></button></div></section>
+                <section class="my-dashboard-panel"><div class="my-dashboard-panel-head"><div class="my-dashboard-panel-title"><h3>最近动态</h3><p>你的看板正在发生什么</p></div></div><div class="my-activity-list"><div class="my-activity-row" style="--activity-color:#3b9b8f"><i class="my-activity-dot"></i><div class="my-activity-copy"><strong>新增 2 位客户连接</strong><span>来自「美债收益率倒挂下的配置评估」 · 11:07</span></div></div><div class="my-activity-row" style="--activity-color:#314565"><i class="my-activity-dot"></i><div class="my-activity-copy"><strong>看板获得 18 次查看</strong><span>半导体设备龙头对比 · 10:42</span></div></div><div class="my-activity-row" style="--activity-color:#c18b3d"><i class="my-activity-dot"></i><div class="my-activity-copy"><strong>收藏引用有新版本</strong><span>美债配置评估更新至 v1.3 · 09:36</span></div></div></div></section>
+              </aside>
+            </section>
+          </section>
+
+          <section class="page-view" id="viewFavorites" hidden>
+            <div class="page-intro"><div><h2>我收藏的</h2><p>这里保存的是对原看板的引用。原看板发布新版本时会提示更新，下架后仍保留收藏记录。</p></div><div class="count-note" id="favoriteBoardCount">3 个引用对象</div></div>
+            <div class="board-list" id="favoriteBoardList">
+              <div class="board-list-row"><span class="tiny-art" style="--art-a:#202947;--art-b:#675ad7"></span><span class="board-list-copy"><h3>美债收益率倒挂下的配置评估</h3><p>MUWEI · 社区看板</p></span><span class="state-group"><span class="tag purple">有新版本 v1.3</span><span class="tag green">分身可咨询</span></span><span class="list-meta">收藏于 09/20<br>当前引用 v1.2</span><span class="row-actions"><button class="btn small" type="button" onclick="openBoardModal('美债收益率倒挂下的配置评估')">查看</button><button class="icon-btn" type="button" aria-label="更多"><svg><use href="#i-more"/></svg></button></span></div>
+              <div class="board-list-row"><span class="tiny-art" style="--art-a:#263f47;--art-b:#4d9d8c"></span><span class="board-list-copy"><h3>半导体设备龙头对比</h3><p>Lin Research · 社区看板</p></span><span class="state-group"><span class="tag">最新版本</span><span class="tag green">分身可咨询</span></span><span class="list-meta">收藏于 09/18<br>当前引用 v2.0</span><span class="row-actions"><button class="btn small" type="button" onclick="openBoardModal('半导体设备龙头对比')">查看</button><button class="icon-btn" type="button" aria-label="更多"><svg><use href="#i-more"/></svg></button></span></div>
+              <div class="board-list-row"><span class="tiny-art" style="--art-a:#544126;--art-b:#b38a40"></span><span class="board-list-copy"><h3>黄金与实际利率观察</h3><p>Macro Lens · 社区看板</p></span><span class="state-group"><span class="tag red">已下架</span></span><span class="list-meta">收藏于 09/12<br>历史引用 v1.3</span><span class="row-actions"><button class="btn small" type="button" disabled>不可查看</button><button class="icon-btn" type="button" aria-label="更多"><svg><use href="#i-more"/></svg></button></span></div>
+            </div>
+          </section>
+
+          <section class="page-view" id="viewCreated" hidden>
+            <div class="page-intro"><div><h2>我创建的</h2><p>每个看板都是一个 Work 结果。原创或改建看板可以继续编辑、分享、发布到社区，并单独设置数字分身。</p></div><div class="count-note" id="createdBoardCount">3 个 Work 结果</div></div>
+            <div class="summary-band"><div class="metric"><small>累计被查看</small><strong>1,842</strong><span>近 7 日 +18%</span></div><div class="metric"><small>被收藏</small><strong>236</strong><span>3 个看板累计</span></div><div class="metric"><small>被改建</small><strong>74</strong><span>获得积分 1,480</span></div><div class="metric"><small>客户连接</small><strong>29</strong><span>数字分身带来</span></div></div>
+            <div class="board-list" id="createdBoardList">
+              <div class="board-list-row"><span class="tiny-art" style="--art-a:#202947;--art-b:#675ad7"></span><span class="board-list-copy"><h3>美债收益率倒挂下的配置评估</h3><p>原创 · Work 结果 · 最近编辑 09/24 10:22</p></span><span class="state-group"><span class="tag purple">社区 v1.2</span><span class="tag green">分身已开启</span></span><span class="list-meta">查看 826<br>客户连接 18</span><span class="row-actions"><button class="switch" type="button" role="switch" aria-label="数字分身" aria-checked="true"></button><button class="btn small" type="button" onclick="openCreatedBoard('bondCreated')"><svg><use href="#i-edit"/></svg>继续编辑</button><button class="icon-btn" type="button" aria-label="更多"><svg><use href="#i-more"/></svg></button></span></div>
+              <div class="board-list-row"><span class="tiny-art" style="--art-a:#263f47;--art-b:#4d9d8c"></span><span class="board-list-copy"><h3>半导体设备龙头对比 · 我的版本</h3><p>改建自 Lin Research v1.8 · 最近编辑 09/22 16:08</p></span><span class="state-group"><span class="tag amber">链接分享</span><span class="tag green">分身已开启</span></span><span class="list-meta">查看 631<br>客户连接 11</span><span class="row-actions"><button class="switch" type="button" role="switch" aria-label="数字分身" aria-checked="true"></button><button class="btn small" type="button" onclick="openCreatedBoard('semiconductorCreated')"><svg><use href="#i-edit"/></svg>继续编辑</button><button class="icon-btn" type="button" aria-label="更多"><svg><use href="#i-more"/></svg></button></span></div>
+              <div class="board-list-row"><span class="tiny-art" style="--art-a:#4a2d49;--art-b:#9b5e87"></span><span class="board-list-copy"><h3>红利低波组合周报</h3><p>原创 · Work 结果 · 最近编辑 09/21 09:34</p></span><span class="state-group"><span class="tag">私有</span><span class="tag">分身未开启</span></span><span class="list-meta">查看 385<br>客户连接 0</span><span class="row-actions"><button class="switch" type="button" role="switch" aria-label="数字分身" aria-checked="false"></button><button class="btn small" type="button" onclick="openCreatedBoard('dividendCreated')"><svg><use href="#i-edit"/></svg>继续编辑</button><button class="icon-btn" type="button" aria-label="更多"><svg><use href="#i-more"/></svg></button></span></div>
+            </div>
+          </section>
+
+          <section class="page-view" id="viewShared" hidden>
+            <div class="page-intro"><div><h2>我分享的</h2><p>仅记录已经执行过分享的看板及其分享结果。创建中、未分享的看板不会出现在这里。</p></div><div class="count-note" id="sharedBoardCount">0 个分享记录</div></div>
+            <div class="pending-note" id="sharedBoardEmpty">暂无分享记录。请从看板展示抽屉点击「分享」后生成。</div>
+            <div class="board-list" id="sharedBoardList"></div>
+          </section>
+
+          <section class="page-view" id="viewBoardDetail" hidden>
+            <div id="boardDetailCanvas"></div>
+          </section>
+
+          <section class="page-view" id="viewBoardWorkbench" hidden>
+            <div class="board-workbench" id="boardWorkbench" data-layout="split">
+              <section class="workbench-chat" aria-label="创建看板对话">
+                <header class="workbench-pane-head">
+                  <div class="workbench-pane-title"><h2 id="workbenchChatTitle">看板创建对话</h2><small>对话</small></div>
+                  <div class="workbench-pane-actions" aria-label="对话栏布局">
+                    <button class="workbench-layout-btn" type="button" data-workbench-layout="split" data-layout-only="chat" aria-label="展开看板" title="展开看板"><svg><use href="#i-columns"/></svg></button>
+                    <button class="workbench-layout-btn" type="button" data-workbench-layout="board" data-layout-only="split" aria-label="收起对话" title="收起对话"><svg><use href="#i-collapse-left"/></svg></button>
+                  </div>
+                </header>
+                <div class="workbench-chat-scroll">
+                  <p class="workbench-chat-intro">通过对话继续修改数据范围、组件和结论，右侧看板会同步更新。</p>
+                  <div id="workbenchMessages">
+                    <div class="workbench-message">请把这份看板的期限利差、实际利率和组合久期放在同一页。</div>
+                    <div class="workbench-message ai">已完成。我在右侧保留核心指标、趋势图、关键判断和资产配置明细。</div>
+                  </div>
+                </div>
+                <form class="workbench-chat-form" id="workbenchChatForm">
+                  <input id="workbenchChatInput" type="text" placeholder="继续描述你希望如何修改看板…" aria-label="修改看板">
+                  <button type="submit" aria-label="发送修改要求"><svg><use href="#i-arrow"/></svg></button>
+                </form>
+              </section>
+              <section class="workbench-board" aria-label="看板内容">
+                <header class="workbench-pane-head">
+                  <div class="workbench-pane-title"><h2 id="workbenchBoardTitle">看板</h2><small>Work 结果</small></div>
+                  <div class="workbench-pane-actions" aria-label="看板栏布局">
+                    <button class="workbench-layout-btn" type="button" data-workbench-layout="split" data-layout-only="board" aria-label="恢复双栏" title="恢复双栏"><svg><use href="#i-columns"/></svg></button>
+                    <button class="workbench-layout-btn" type="button" data-workbench-layout="board" data-layout-only="split" aria-label="收起对话" title="收起对话"><svg><use href="#i-collapse-left"/></svg></button>
+                    <button class="workbench-layout-btn" type="button" data-workbench-layout="chat" aria-label="收起看板" title="收起看板"><svg><use href="#i-collapse-right"/></svg></button>
+                  </div>
+                </header>
+                <div class="workbench-board-scroll"><div id="workbenchBoardCanvas"></div></div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <form class="market-composer" id="marketComposer" hidden>
+        <span class="market-composer-mark"><svg><use href="#i-sparkle"/></svg></span>
+        <input id="marketComposerInput" type="text" placeholder="描述你想创建的看板，例如：生成一份美债期限利差与久期配置看板" aria-label="描述要创建的看板">
+        <button type="submit">创建看板 <svg><use href="#i-arrow"/></svg></button>
+      </form>
+
+      <div class="modal-backdrop" id="boardModal" hidden>
+        <section class="modal" id="boardPreviewDrawer" role="dialog" aria-modal="true" aria-labelledby="modalBoardTitle">
+          <header class="modal-head">
+            <button class="modal-layout-toggle" type="button" id="toggleBoardDrawer" aria-label="展开看板" title="展开看板"><svg><use href="#i-expand"/></svg></button>
+            <h2 id="modalBoardTitle">看板名称</h2>
+            <div class="modal-head-actions">
+              <button class="btn" type="button" id="remixBoard"><svg><use href="#i-fork"/></svg>做同款</button>
+              <button class="btn" type="button" id="favoriteBoard" aria-pressed="false"><svg><use href="#i-heart"/></svg><span>收藏</span></button>
+              <button class="btn primary" type="button" id="shareBoard"><svg><use href="#i-share"/></svg><span>分享</span></button>
+              <button class="icon-btn" type="button" id="closeModal" aria-label="关闭看板" title="关闭"><svg><use href="#i-close"/></svg></button>
+            </div>
+          </header>
+          <div class="modal-body" id="modalDashboardCanvas"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const app=document.getElementById('app');
+    const panelTitle=document.getElementById('panelTitle');
+    const accordionShell=document.getElementById('accordionShell');
+    const workspaceTitle=document.getElementById('workspaceTitle');
+    const workspaceStatus=document.getElementById('workspaceStatus');
+    const breadcrumb=document.getElementById('breadcrumb');
+    const headerActions=document.getElementById('headerActions');
+    const workspaceScroll=document.getElementById('workspaceScroll');
+    const workspace=document.querySelector('.workspace');
+    const marketComposer=document.getElementById('marketComposer');
+    const views=[...document.querySelectorAll('.page-view')];
+    let currentModule='link';
+    let currentMarketView='plaza';
+    let lastModalTrigger=null;
+    let activeDrawerBoard=null;
+    let generatedBoardIndex=0;
+    let sharedDrawerRecordId=null;
+    let toastTimer;
+
+    const customers={
+      u2616:{name:'USER_2616',avatar:'U',style:'',conversations:[
+        {id:'bond',title:'美债配置咨询',time:'2026/09/24 11:07',source:'美债收益率倒挂下的配置评估',sourceMeta:'社区看板 · 用户查看后发起对话'},
+        {id:'greeting',title:'Simple Greeting',time:'2026/09/24 10:26',source:'来自创意市场',sourceMeta:'通用咨询 · 无特定看板版本'}
+      ]},
+      lin:{name:'林女士',avatar:'林',style:'background:linear-gradient(145deg,#ffe5cf,#e99776)',conversations:[
+        {id:'semiconductor',title:'估值口径咨询',time:'2026/09/23 16:42',source:'半导体设备龙头对比',sourceMeta:'链接分享 · 用户查看后发起对话'}
+      ]},
+      chen:{name:'陈先生',avatar:'陈',style:'background:linear-gradient(145deg,#ddf5e9,#68b69b)',conversations:[]}
+    };
+
+    const boards={
+      liquidity:{title:'全球宏观流动性观察',subtitle:'官方精选 · 宏观'},
+      semiconductorOfficial:{title:'半导体设备景气跟踪',subtitle:'官方精选 · 行业'},
+      dividend:{title:'红利低波组合监测',subtitle:'官方精选 · 策略'},
+      bondBoard:{title:'美债收益率倒挂下的配置评估',subtitle:'MUWEI · 社区看板'},
+      semiconductorBoard:{title:'半导体设备龙头对比',subtitle:'Lin Research · 社区看板'},
+      gold:{title:'黄金与实际利率观察',subtitle:'Macro Lens · 社区看板'},
+      bondCreated:{title:'美债收益率倒挂下的配置评估',subtitle:'原创 · Work 结果'},
+      semiconductorCreated:{title:'半导体设备龙头对比 · 我的版本',subtitle:'改建 · Work 结果'},
+      dividendCreated:{title:'红利低波组合周报',subtitle:'原创 · Work 结果'}
+    };
+
+    const panelCatalog={
+      link:{title:'拓客服务',order:['clients'],drawers:{
+        clients:{label:'客户连接',icon:'i-link',groups:[
+          {id:'u2616',name:'USER_2616',avatar:'U',items:[{id:'bond',name:'美债配置咨询',subtitle:'2026/09/24 11:07'},{id:'greeting',name:'Simple Greeting',subtitle:'2026/09/24 10:26'}]},
+          {id:'lin',name:'林女士',avatar:'林',avatarStyle:'background:linear-gradient(145deg,#ffe5cf,#e99776)',items:[{id:'semiconductor',name:'估值口径咨询',subtitle:'2026/09/23 16:42'}]},
+          {id:'chen',name:'陈先生',avatar:'陈',avatarStyle:'background:linear-gradient(145deg,#ddf5e9,#68b69b)',items:[]}
+        ]}
+      },state:{drawer:'clients',group:null,object:null}},
+      market:{title:'创意市场',order:['plaza','my'],drawers:{
+        plaza:{label:'看板广场',icon:'i-sparkle',groups:[]},
+        my:{label:'我的看板',icon:'i-folder',groups:[
+          {id:'favorites',name:'我收藏的',items:[
+            {id:'bondBoard',name:boards.bondBoard.title,subtitle:'引用 · 当前 v1.2'},
+            {id:'semiconductorBoard',name:boards.semiconductorBoard.title,subtitle:'引用 · 当前 v2.0'},
+            {id:'gold',name:boards.gold.title,subtitle:'引用 · 已下架'}
+          ]},
+          {id:'created',name:'我创建的',items:[
+            {id:'bondCreated',name:boards.bondCreated.title,subtitle:'原创 · Work 结果'},
+            {id:'semiconductorCreated',name:boards.semiconductorCreated.title,subtitle:'改建 · Work 结果'},
+            {id:'dividendCreated',name:boards.dividendCreated.title,subtitle:'原创 · Work 结果'}
+          ]},
+          {id:'shared',name:'我分享的',items:[]}
+        ]}
+      },state:{drawer:'plaza',group:null,object:null}}
+    };
+
+    function icon(id){return `<svg aria-hidden="true"><use href="#${id}"/></svg>`}
+    function escapeHtml(value){return String(value).replace(/[&<>"]/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[character]))}
+    function showViews(ids){
+      const visible=Array.isArray(ids)?ids:[ids];
+      views.forEach(view=>view.hidden=!visible.includes(view.id));
+      workspaceScroll.scrollTop=0;
+    }
+    function setWorkspaceSurface(mode='default',composer=false){
+      workspace.dataset.contentMode=mode;
+      workspace.dataset.composer=composer?'market':'none';
+      marketComposer.hidden=!composer;
+    }
+    function setToolbar(title,crumb,status,actions){
+      workspaceTitle.textContent=title;
+      breadcrumb.textContent=crumb;
+      workspaceStatus.textContent=status||'';
+      workspaceStatus.hidden=!status;
+      headerActions.innerHTML=actions||'';
+    }
+    function clientActions(){return `<button class="btn" type="button" onclick="showToast('筛选条件已展开（原型演示）')">${icon('i-filter')}筛选</button><label class="toolbar-search">${icon('i-search')}<input type="search" placeholder="搜索客户" aria-label="搜索客户"></label>`}
+    function marketActions(showCreate=true){return `${showCreate?`<button class="btn primary" type="button" onclick="focusMarketComposer()">${icon('i-plus')}新建看板</button>`:''}<label class="toolbar-search">${icon('i-search')}<input id="boardSearch" type="search" placeholder="搜索看板" aria-label="搜索看板"></label>`}
+
+    function drawerHeader(key,drawer,active){
+      const hiddenCount=drawer.groups.reduce((total,group)=>total+group.items.length,0);
+      return `<button class="drawer-header wa-m-panel-drawer-head${active?' active':''}" type="button" data-framework-drawer="${key}" aria-expanded="${active}" onclick="activateDrawer('${key}')"><span class="drawer-symbol">${icon(drawer.icon)}</span><span class="drawer-name">${drawer.label}</span><span class="drawer-count" aria-hidden="true">${hiddenCount}</span>${icon('i-chevron').replace('<svg','<svg class="drawer-chevron"')}</button>`;
+    }
+    function renderPanel(){
+      const catalog=panelCatalog[currentModule];
+      const state=catalog.state;
+      document.querySelector('.panel').dataset.panelModule=currentModule;
+      const activeIndex=catalog.order.indexOf(state.drawer);
+      const top=catalog.order.slice(0,activeIndex).map(key=>drawerHeader(key,catalog.drawers[key],false)).join('');
+      const bottom=catalog.order.slice(activeIndex+1).map(key=>drawerHeader(key,catalog.drawers[key],false)).join('');
+      const drawer=catalog.drawers[state.drawer];
+      const groups=drawer.groups.map(group=>{
+        const groupAvatar=group.avatar?`<span class="category-avatar" style="${group.avatarStyle||''}">${group.avatar}</span>`:'';
+        const groupTitle=group.implicit?'':`<button class="group-title wa-m-panel-category-head${state.group===group.id?' selected':''}" type="button" onclick="activateGroup('${group.id}')"><span class="group-title-copy">${groupAvatar}<span class="group-title-name">${group.name}</span></span><span class="group-line"></span><span class="group-count" aria-hidden="true">${group.items.length}</span></button>`;
+        const items=group.items.length?group.items.map(item=>`<button class="tool-item wa-m-panel-object${state.object===item.id?' selected':''}" type="button" onclick="activateObject('${group.id}','${item.id}')"><span class="item-mark">${icon(currentModule==='link'?'i-message':'i-board')}</span><span class="item-copy"><span class="item-name">${item.name}</span>${item.subtitle?`<span class="item-subtitle">${item.subtitle}</span>`:''}</span><span class="status-slot" aria-hidden="true"></span></button>`).join(''):'<div class="panel-empty">暂无对话对象</div>';
+        return `<div class="group wa-o-panel-category${group.implicit?' is-implicit':''}">${groupTitle}${items}</div>`;
+      }).join('');
+      accordionShell.innerHTML=`<div class="top-headers">${top}</div><div class="active-drawer wa-o-panel-drawer">${drawerHeader(state.drawer,drawer,true)}<div id="drawerList" class="drawer-list wa-o-panel-object-list" role="tree">${groups}</div></div><div id="bottomDock" class="bottom-dock">${bottom}</div>`;
+      bindDockBehavior();
+    }
+    function bindDockBehavior(){
+      const list=accordionShell.querySelector('.drawer-list');
+      const dock=accordionShell.querySelector('.bottom-dock');
+      if(!list||!dock||!dock.children.length)return;
+      let lastScroll=0;
+      requestAnimationFrame(()=>list.style.setProperty('--dock-space',`${dock.offsetHeight+10}px`));
+      list.addEventListener('scroll',()=>{
+        const goingDown=list.scrollTop>lastScroll+4;
+        const goingUp=list.scrollTop<lastScroll-4;
+        if(goingDown)dock.classList.add('hidden');
+        if(goingUp||list.scrollTop<8)dock.classList.remove('hidden');
+        lastScroll=list.scrollTop;
+      });
+      accordionShell.addEventListener('pointermove',event=>{
+        const rect=accordionShell.getBoundingClientRect();
+        if(rect.bottom-event.clientY<74)dock.classList.remove('hidden');
+      });
+    }
+    function activateDrawer(key){
+      const catalog=panelCatalog[currentModule];
+      catalog.state={drawer:key,group:null,object:null};
+      renderPanel();
+      if(currentModule==='link')showClientList();
+      else showMarket(key==='plaza'?'plaza':'my');
+    }
+    function activateGroup(groupId){
+      const state=panelCatalog[currentModule].state;
+      state.group=groupId;state.object=null;renderPanel();
+      if(currentModule==='link')showCustomerConversations(groupId);
+      else showMarket(groupId);
+    }
+    function activateObject(groupId,objectId){
+      const state=panelCatalog[currentModule].state;
+      state.group=groupId;state.object=objectId;renderPanel();
+      if(currentModule==='link')openConversation(objectId);
+      else if(groupId==='created')openCreatedBoard(objectId);
+      else openBoardDetail(objectId,groupId==='favorites'?'favorites':'plaza');
+    }
+
+    function setModule(module){
+      if(!panelCatalog[module])return;
+      currentModule=module;
+      document.querySelector('.workspace').dataset.headerMode='breadcrumb-only';
+      if(module==='link')delete workspace.dataset.marketView;
+      document.querySelectorAll('[data-module]').forEach(button=>button.classList.toggle('active',button.dataset.module===module));
+      panelTitle.textContent=panelCatalog[module].title;
+      renderPanel();
+      if(module==='link')showClientList();
+      else showMarket(panelCatalog.market.state.drawer==='my'?'my':'plaza');
+    }
+    function setModuleOnlyLink(){
+      currentModule='link';
+      document.querySelector('.workspace').dataset.headerMode='breadcrumb-only';
+      delete workspace.dataset.marketView;
+      document.querySelectorAll('[data-module]').forEach(button=>button.classList.toggle('active',button.dataset.module==='link'));
+      panelTitle.textContent='拓客服务';
+    }
+    function showClientList(){
+      document.querySelector('.workspace').dataset.headerMode='breadcrumb-only';
+      setWorkspaceSurface('default',false);
+      showViews('viewClients');
+      setToolbar('客户连接','拓客服务 / 客户连接','共 3 位客户',clientActions());
+    }
+    function showCustomerConversations(customerId){
+      setModuleOnlyLink();
+      setWorkspaceSurface('default',false);
+      const customer=customers[customerId]||customers.u2616;
+      panelCatalog.link.state.drawer='clients';
+      panelCatalog.link.state.group=customerId;
+      panelCatalog.link.state.object=null;
+      renderPanel();
+      document.getElementById('customerConversationTitle').textContent=`${customer.name} 的对话记录`;
+      document.getElementById('customerConversationCount').textContent=`共 ${customer.conversations.length} 段会话`;
+      document.getElementById('customerConversationList').innerHTML=customer.conversations.length?customer.conversations.map(item=>`<button class="customer-conversation-item" type="button" onclick="openConversation('${item.id}')"><span><span class="conversation-object-title">${item.title}</span><span class="conversation-object-sub">与数字分身的完整聊天记录</span></span><span class="conversation-origin"><strong>${item.source}</strong><small>${item.sourceMeta}</small></span><span class="client-time">${item.time.replace(' ','<br>')}</span></button>`).join(''):'<div class="empty-line">该客户尚未发起对话</div>';
+      showViews('viewCustomerConversations');
+      setToolbar(`${customer.name} 的对话记录`,`拓客服务 / 客户连接 / ${customer.name}`,customer.conversations.length?`共 ${customer.conversations.length} 段会话`:'暂无会话',`<button class="btn" type="button" onclick="showClientList()">${icon('i-back')}返回客户</button>`);
+    }
+    function openConversation(id){
+      setModuleOnlyLink();
+      setWorkspaceSurface('default',false);
+      const configs={
+        bond:{customer:'u2616',customerName:'USER_2616 · 数字分身对话',title:'美债配置咨询',time:'开始于 2026/09/24 11:07',board:'美债收益率倒挂下的配置评估',version:'v1.2 · 作者 MUWEI',dataTime:'数据时间 2026/09/24 10:30',channel:'社区看板 · 用户于 11:02 查看后发起对话',messages:'messagesBond',generic:false},
+        greeting:{customer:'u2616',customerName:'USER_2616 · 数字分身对话',title:'Simple Greeting',time:'开始于 2026/09/24 10:26',board:'来自创意市场',version:'创意市场 · 通用咨询',dataTime:'无特定看板版本',channel:'用户从创意市场入口发起对话',messages:'messagesGreeting',generic:true},
+        semiconductor:{customer:'lin',customerName:'林女士 · 数字分身对话',title:'估值口径咨询',time:'开始于 2026/09/23 16:42',board:'半导体设备龙头对比',version:'v2.0 · 作者 Lin Research',dataTime:'数据时间 2026/09/23 15:00',channel:'链接分享 · 用户于 16:38 查看后发起对话',messages:'messagesSemiconductor',generic:false}
+      };
+      const config=configs[id]||configs.bond;
+      panelCatalog.link.state={drawer:'clients',group:config.customer,object:id};
+      renderPanel();
+      document.getElementById('conversationCustomer').textContent=config.customerName;
+      document.getElementById('conversationTime').textContent=config.time;
+      document.getElementById('sourceTitle').textContent=config.board;
+      document.getElementById('sourceThumbTitle').textContent=config.board;
+      document.getElementById('sourceVersion').textContent=config.version;
+      document.getElementById('sourceDataTime').textContent=config.dataTime;
+      document.getElementById('sourceChannel').textContent=config.channel;
+      document.getElementById('sourceBoardCard').dataset.boardTitle=config.board;
+      document.getElementById('sourceBoardCard').classList.toggle('generic-source',config.generic);
+      document.getElementById('sourceActionText').textContent=config.generic?'进入创意市场':'查看看板';
+      ['messagesBond','messagesGreeting','messagesSemiconductor'].forEach(messageId=>document.getElementById(messageId).hidden=messageId!==config.messages);
+      showViews('viewConversation');
+      setToolbar(config.title,`拓客服务 / 客户连接 / ${customers[config.customer].name} / ${config.title}`,'来源已归因',`<button class="btn" type="button" onclick="showCustomerConversations('${config.customer}')">${icon('i-back')}返回对话记录</button><button class="icon-btn" type="button" aria-label="更多" onclick="showToast('更多对话操作（原型演示）')">${icon('i-more')}</button>`);
+    }
+    function showMarket(view){
+      document.querySelector('.workspace').dataset.headerMode='breadcrumb-only';
+      const normalized=view||'plaza';
+      currentMarketView=normalized;
+      workspace.dataset.marketView=normalized;
+      const config={
+        plaza:{views:['viewOfficial','viewCommunity'],title:'看板广场',crumb:'创意市场 / 看板广场 / 全部',status:'全部看板',create:true},
+        official:{views:'viewOfficial',title:'看板广场',crumb:'创意市场 / 看板广场 / 官方精选',status:'官方精选',create:true},
+        community:{views:'viewCommunity',title:'看板广场',crumb:'创意市场 / 看板广场 / 社区发布',status:'社区发布',create:true},
+        my:{views:'viewMyBoards',title:'我的看板',crumb:'创意市场 / 我的看板',status:'所有我的看板',create:true},
+        favorites:{views:'viewFavorites',title:'我收藏的',crumb:'创意市场 / 我的看板 / 我收藏的',status:'引用对象',create:false},
+        created:{views:'viewCreated',title:'我创建的',crumb:'创意市场 / 我的看板 / 我创建的',status:'Work 结果',create:true},
+        shared:{views:'viewShared',title:'我分享的',crumb:'创意市场 / 我的看板 / 我分享的',status:'分享记录',create:false}
+      }[normalized];
+      if(!config)return;
+      if(['plaza','official','community'].includes(normalized))panelCatalog.market.state.drawer='plaza';
+      if(['my','favorites','created','shared'].includes(normalized))panelCatalog.market.state.drawer='my';
+      if(['favorites','created','shared'].includes(normalized))panelCatalog.market.state.group=normalized;
+      setWorkspaceSurface('default',['plaza','official','community'].includes(normalized));
+      showViews(config.views);
+      if(normalized==='my')renderMyBoardAggregate(document.querySelector('[data-my-board-filter].active')?.dataset.myBoardFilter||'all');
+      document.querySelectorAll('.segmented [data-market-view]').forEach(button=>button.classList.toggle('active',button.dataset.marketView===normalized));
+      setToolbar(config.title,config.crumb,'',marketActions(config.create));
+      bindBoardSearch();
+    }
+    function bindBoardSearch(){
+      const input=document.getElementById('boardSearch');
+      if(!input)return;
+      input.addEventListener('input',()=>{
+        const value=input.value.trim().toLowerCase();
+        document.querySelectorAll('.page-view:not([hidden]) .board-card,.page-view:not([hidden]) .my-board-item').forEach(card=>card.classList.toggle('is-filtered',value&&!card.dataset.title.toLowerCase().includes(value)));
+      });
+    }
+    function resolveBoard(boardIdOrTitle){
+      if(boards[boardIdOrTitle])return {id:boardIdOrTitle,...boards[boardIdOrTitle]};
+      const entry=Object.entries(boards).find(([,board])=>board.title===boardIdOrTitle);
+      return entry?{id:entry[0],...entry[1]}:{id:'custom',title:boardIdOrTitle||'新建看板',subtitle:'Work 结果'};
+    }
+    function dashboardMarkup(title,instance='detail'){
+      const gradientId=`boardAreaGradient-${instance}`;
+      return `<article class="dashboard-view">
+        <header class="dashboard-hero">
+          <div><small>资产配置 · 动态看板</small><h2>${title}</h2><p>基于市场数据、利率环境与组合约束生成的完整分析看板，支持持续刷新和对话修改。</p></div>
+          <div class="dashboard-updated">数据更新于 2026/09/24 10:30</div>
+        </header>
+        <section class="dashboard-kpis">
+          <div class="dashboard-panel dashboard-kpi"><small>10Y-2Y 期限利差</small><strong>-18bp</strong><span>较上周收窄 7bp</span></div>
+          <div class="dashboard-panel dashboard-kpi"><small>10 年期实际利率</small><strong>1.72%</strong><span>近 20 日下降 11bp</span></div>
+          <div class="dashboard-panel dashboard-kpi"><small>建议组合久期</small><strong>5.8 年</strong><span>分阶段增加 0.6 年</span></div>
+          <div class="dashboard-panel dashboard-kpi"><small>组合压力测试</small><strong>-2.4%</strong><span>处于风险预算内</span></div>
+        </section>
+        <section class="dashboard-main">
+          <div class="dashboard-panel dashboard-chart">
+            <div class="dashboard-panel-head"><h3>期限利差与组合久期</h3><span>近 12 个月</span></div>
+            <svg viewBox="0 0 720 230" preserveAspectRatio="none" aria-label="期限利差趋势图">
+              <defs><linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7766eb" stop-opacity=".45"/><stop offset="1" stop-color="#7766eb" stop-opacity="0"/></linearGradient></defs>
+              <path class="grid-line" d="M0 34H720M0 90H720M0 146H720M0 202H720"/>
+              <path class="area" style="fill:url(#${gradientId})" d="M0 178 L60 168 L120 182 L180 154 L240 163 L300 132 L360 141 L420 106 L480 116 L540 82 L600 92 L660 58 L720 44 L720 230 L0 230 Z"/>
+              <path class="line" d="M0 178 L60 168 L120 182 L180 154 L240 163 L300 132 L360 141 L420 106 L480 116 L540 82 L600 92 L660 58 L720 44"/>
+              <path class="compare" d="M0 70 L60 78 L120 74 L180 92 L240 86 L300 108 L360 101 L420 128 L480 121 L540 150 L600 143 L660 169 L720 158"/>
+            </svg>
+          </div>
+          <aside class="dashboard-panel dashboard-insights">
+            <div class="dashboard-panel-head"><h3>关键判断</h3><span>AI 归纳</span></div>
+            <div class="insight-item"><strong>倒挂正在修复</strong><p>期限利差接近历史极值后开始收窄，但仍需结合通胀和就业数据判断节奏。</p></div>
+            <div class="insight-item"><strong>久期宜分阶段增加</strong><p>当前不适合一次性切换，建议分三次把组合久期提高至目标区间。</p></div>
+            <div class="insight-item"><strong>主要失效条件</strong><p>核心通胀、工资增速与实际利率同步回升时，应降低长久期暴露。</p></div>
+          </aside>
+        </section>
+        <section class="dashboard-panel dashboard-table">
+          <div class="dashboard-panel-head"><h3>配置建议与监测指标</h3><span>目标权重</span></div>
+          <div class="dashboard-table-row head"><span>资产 / 指标</span><span>当前</span><span>建议</span><span>变化</span><span>信号</span></div>
+          <div class="dashboard-table-row"><strong>长期美债</strong><span>18%</span><span>24%</span><span class="positive">+6%</span><span>逐步增配</span></div>
+          <div class="dashboard-table-row"><strong>中短久期债券</strong><span>32%</span><span>29%</span><span class="negative">-3%</span><span>适度降低</span></div>
+          <div class="dashboard-table-row"><strong>现金及货币工具</strong><span>12%</span><span>9%</span><span class="negative">-3%</span><span>保留缓冲</span></div>
+        </section>
+      </article>`;
+    }
+    function ensureMarketModule(){
+      currentModule='market';
+      workspace.dataset.headerMode='breadcrumb-only';
+      document.querySelectorAll('[data-module]').forEach(button=>button.classList.toggle('active',button.dataset.module==='market'));
+      panelTitle.textContent='创意市场';
+    }
+    function marketGroup(groupId){
+      return panelCatalog.market.drawers.my.groups.find(group=>group.id===groupId);
+    }
+    function renderMyBoardAggregate(filter='all'){
+      const grid=document.getElementById('myBoardAggregateGrid');
+      if(!grid)return;
+      const visuals={
+        favorites:{label:'收藏',kindBg:'#eaf6f3',kindColor:'#257b70',art:'#31504f,#4f9488',meta:'引用看板',metric:'版本跟踪'},
+        created:{label:'创建',kindBg:'#edf0f6',kindColor:'#445878',art:'#26344e,#526888',meta:'Work 结果',metric:'持续运营'},
+        shared:{label:'分享',kindBg:'#fff3e3',kindColor:'#9c691e',art:'#6d5533,#b08b52',meta:'分享记录',metric:'访问跟踪'}
+      };
+      const boardDetails={
+        bondBoard:{status:'有新版本 v1.3',time:'今天 09:36',metric:'当前引用 v1.2'},
+        semiconductorBoard:{status:'已同步最新版本',time:'昨天 16:42',metric:'当前引用 v2.0'},
+        gold:{status:'原看板已下架',time:'09/22 11:18',metric:'历史引用 v1.3'},
+        bondCreated:{status:'社区发布 · 分身开启',time:'今天 10:22',metric:'查看 826 · 连接 18'},
+        semiconductorCreated:{status:'链接分享 · 分身开启',time:'09/22 16:08',metric:'查看 631 · 连接 11'},
+        dividendCreated:{status:'私有 · 待发布',time:'09/21 09:34',metric:'查看 385 · 连接 0'}
+      };
+      const groupIds=filter==='all'?['favorites','created','shared']:[filter];
+      const entries=groupIds.flatMap(groupId=>marketGroup(groupId).items.map(item=>({groupId,item,board:resolveBoard(item.id)})));
+      grid.dataset.filter=filter;
+      grid.innerHTML=entries.length?entries.map(({groupId,item,board})=>{
+        const visual=visuals[groupId];
+        const [artA,artB]=visual.art.split(',');
+        const detail=boardDetails[item.id]||{status:item.subtitle||visual.meta,time:'刚刚',metric:visual.metric};
+        const linePath=groupId==='created'?'M2 25 14 21 26 23 38 13 50 16 62 7 74 10':groupId==='favorites'?'M2 21 14 18 26 20 38 12 50 14 62 9 74 5':'M2 24 14 20 26 21 38 16 50 17 62 11 74 8';
+        return `<article class="my-board-item" tabindex="0" data-title="${escapeHtml(board.title)}" data-my-board-kind="${groupId}" data-board-id="${item.id}"><div class="my-board-thumb" style="--thumb-a:${artA};--thumb-b:${artB}"><span class="my-board-thumb-label">${visual.meta}</span><svg viewBox="0 0 76 28" preserveAspectRatio="none"><path d="${linePath}"/></svg></div><div class="my-board-copy"><div class="my-board-copy-head"><h4>${escapeHtml(board.title)}</h4><span class="my-board-kind" style="--kind-bg:${visual.kindBg};--kind-color:${visual.kindColor}">${visual.label}</span></div><p>${escapeHtml(detail.status)}</p><div class="my-board-copy-meta"><span>${escapeHtml(detail.time)}</span><span class="${groupId==='created'?'positive':''}">${escapeHtml(detail.metric)}</span></div></div><span class="my-board-open">${groupId==='created'?'继续编辑':'打开'} ${icon('i-arrow')}</span></article>`;
+      }).join(''):'<div class="my-board-empty">当前分类暂无看板对象</div>';
+      const favoriteCount=marketGroup('favorites').items.length;
+      const createdCount=marketGroup('created').items.length;
+      const sharedCount=marketGroup('shared').items.length;
+      const total=favoriteCount+createdCount+sharedCount;
+      document.getElementById('myBoardTotalCount').textContent=total;
+      document.getElementById('myBoardAllMetric').textContent=total;
+      document.getElementById('myBoardFavoriteMetric').textContent=favoriteCount;
+      document.getElementById('myBoardCreatedMetric').textContent=createdCount;
+      document.getElementById('myBoardSharedMetric').textContent=sharedCount;
+      document.getElementById('myBoardPortfolioSummary').textContent=`共 ${total} 个看板对象`;
+      const createdEnd=total?createdCount/total*100:0;
+      const favoriteEnd=total?(createdCount+favoriteCount)/total*100:0;
+      document.getElementById('myBoardDonut').style.background=`conic-gradient(#314565 0 ${createdEnd}%,#3b9b8f ${createdEnd}% ${favoriteEnd}%,#c18b3d ${favoriteEnd}% 100%)`;
+      const activeFilterButton=document.querySelector(`[data-my-board-filter="${filter}"]`);
+      if(activeFilterButton&&filter==='all')activeFilterButton.querySelector('span').textContent=total;
+    }
+    function updatePersonalBoardCounts(){
+      document.getElementById('favoriteBoardCount').textContent=`${marketGroup('favorites').items.length} 个引用对象`;
+      document.getElementById('createdBoardCount').textContent=`${marketGroup('created').items.length} 个 Work 结果`;
+      document.getElementById('sharedBoardCount').textContent=`${marketGroup('shared').items.length} 个分享记录`;
+      const activeFilter=document.querySelector('[data-my-board-filter].active')?.dataset.myBoardFilter||'all';
+      renderMyBoardAggregate(activeFilter);
+    }
+    function appendCreatedRecord(board,boardId,sourceLabel){
+      const row=document.createElement('div');
+      row.className='board-list-row';
+      row.tabIndex=0;
+      row.innerHTML=`<span class="tiny-art" style="--art-a:#273353;--art-b:#7362e6"></span><span class="board-list-copy"><h3>${escapeHtml(board.title)}</h3><p>${escapeHtml(sourceLabel)} · 刚刚创建</p></span><span class="state-group"><span class="tag purple">草稿</span><span class="tag">分身未开启</span></span><span class="list-meta">查看 0<br>客户连接 0</span><span class="row-actions"><button class="switch" type="button" role="switch" aria-label="数字分身" aria-checked="false"></button><button class="btn small" type="button" data-open-created="true">${icon('i-edit')}继续编辑</button><button class="icon-btn" type="button" aria-label="更多">${icon('i-more')}</button></span>`;
+      const open=()=>openCreatedBoard(boardId);
+      row.addEventListener('click',event=>{if(!event.target.closest('button'))open()});
+      row.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&!event.target.closest('button')){event.preventDefault();open()}});
+      row.querySelector('[data-open-created]').addEventListener('click',open);
+      row.querySelector('.switch').addEventListener('click',event=>{event.stopPropagation();const toggle=event.currentTarget;const on=toggle.getAttribute('aria-checked')==='true';toggle.setAttribute('aria-checked',String(!on));showToast(on?'数字分身已关闭':'数字分身已开启')});
+      document.getElementById('createdBoardList').prepend(row);
+    }
+    function appendFavoriteRecord(board,boardId){
+      const row=document.createElement('div');
+      row.className='board-list-row';
+      row.innerHTML=`<span class="tiny-art" style="--art-a:#253454;--art-b:#6f61df"></span><span class="board-list-copy"><h3>${escapeHtml(board.title)}</h3><p>${escapeHtml(board.subtitle||'看板广场')}</p></span><span class="state-group"><span class="tag purple">刚刚收藏</span></span><span class="list-meta">收藏于刚刚<br>当前引用最新版本</span><span class="row-actions"><button class="btn small" type="button" data-open-favorite="true">查看</button><button class="icon-btn" type="button" aria-label="更多">${icon('i-more')}</button></span>`;
+      row.querySelector('[data-open-favorite]').addEventListener('click',()=>openBoardModal(boardId));
+      document.getElementById('favoriteBoardList').prepend(row);
+    }
+    function appendSharedRecord(board,boardId){
+      const row=document.createElement('div');
+      row.className='board-list-row';
+      row.innerHTML=`<span class="tiny-art" style="--art-a:#322a52;--art-b:#8a65de"></span><span class="board-list-copy"><h3>${escapeHtml(board.title)}</h3><p>分享记录 · 来源：${escapeHtml(board.subtitle||'看板广场')}</p></span><span class="state-group"><span class="tag purple">分享链接已生成</span></span><span class="list-meta">分享于刚刚<br>访问 0</span><span class="row-actions"><button class="btn small" type="button" data-open-shared="true">查看看板</button><button class="icon-btn" type="button" aria-label="更多">${icon('i-more')}</button></span>`;
+      row.querySelector('[data-open-shared]').addEventListener('click',()=>openBoardModal(boardId));
+      document.getElementById('sharedBoardEmpty').hidden=true;
+      document.getElementById('sharedBoardList').prepend(row);
+    }
+    function createPersonalBoard(source){
+      const boardId=`generatedBoard${++generatedBoardIndex}`;
+      const sourceLabel='做同款 · Work 结果';
+      const board={title:`${source.title} · 我的同款`,subtitle:sourceLabel};
+      boards[boardId]=board;
+      marketGroup('created').items.unshift({id:boardId,name:board.title,subtitle:board.subtitle});
+      appendCreatedRecord(board,boardId,sourceLabel);
+      updatePersonalBoardCounts();
+      renderPanel();
+      return boardId;
+    }
+    function createConversationBoard(prompt){
+      const boardId=`generatedBoard${++generatedBoardIndex}`;
+      const shortTitle=prompt.length>18?`${prompt.slice(0,18)}…`:prompt;
+      const board={title:shortTitle||`新建看板 ${generatedBoardIndex}`,subtitle:'对话创建 · Work 结果'};
+      boards[boardId]=board;
+      marketGroup('created').items.unshift({id:boardId,name:board.title,subtitle:'对话 + 看板记录'});
+      appendCreatedRecord(board,boardId,'对话创建 · Work 结果');
+      updatePersonalBoardCounts();
+      renderPanel();
+      return boardId;
+    }
+    function createSharedRecord(source){
+      const boardId=`sharedRecord${++generatedBoardIndex}`;
+      boards[boardId]={title:source.title,subtitle:source.subtitle};
+      marketGroup('shared').items.unshift({id:boardId,name:source.title,subtitle:'已分享 · 刚刚生成'});
+      appendSharedRecord(source,boardId);
+      updatePersonalBoardCounts();
+      renderPanel();
+      return boardId;
+    }
+    function favoriteActiveBoard(){
+      if(!activeDrawerBoard)return;
+      const favorites=marketGroup('favorites');
+      const exists=favorites.items.some(item=>item.id===activeDrawerBoard.id||item.name===activeDrawerBoard.title);
+      const button=document.getElementById('favoriteBoard');
+      if(exists){showToast('该看板已在「我收藏的」中');return}
+      let boardId=activeDrawerBoard.id;
+      if(boardId==='custom'){
+        boardId=`favoriteBoard${++generatedBoardIndex}`;
+        boards[boardId]={title:activeDrawerBoard.title,subtitle:activeDrawerBoard.subtitle};
+      }
+      favorites.items.unshift({id:boardId,name:activeDrawerBoard.title,subtitle:'引用 · 当前最新版本'});
+      appendFavoriteRecord(activeDrawerBoard,boardId);
+      updatePersonalBoardCounts();
+      renderPanel();
+      button.setAttribute('aria-pressed','true');
+      button.querySelector('span').textContent='已收藏';
+      showToast('已添加到「我的看板 / 我收藏的」');
+    }
+    function shareActiveBoard(){
+      if(!activeDrawerBoard)return;
+      if(sharedDrawerRecordId){showToast('分享记录已保存在「我分享的」');return}
+      sharedDrawerRecordId=createSharedRecord(activeDrawerBoard);
+      const button=document.getElementById('shareBoard');
+      button.querySelector('span').textContent='已分享';
+      showToast('已生成分享记录，并添加到「我的看板 / 我分享的」');
+    }
+    function remixActiveBoard(){
+      if(!activeDrawerBoard)return;
+      const source=activeDrawerBoard;
+      const boardId=createPersonalBoard(source);
+      closeBoardModal(false);
+      openCreatedBoard(boardId,`参考“${source.title}”做一份同款看板，并保留核心指标结构。`);
+    }
+    function openBoardDetail(boardIdOrTitle){
+      openBoardModal(boardIdOrTitle);
+    }
+    function openCreatedBoard(boardId,customPrompt=''){
+      const board=resolveBoard(boardId==='draft'?'新建看板 · 草稿':boardId);
+      ensureMarketModule();
+      panelCatalog.market.state.drawer='my';
+      panelCatalog.market.state.group='created';
+      panelCatalog.market.state.object=boardId==='draft'?null:boardId;
+      renderPanel();
+      setWorkspaceSurface('workbench',false);
+      document.getElementById('workbenchChatTitle').textContent=boardId==='draft'?'新建看板对话':board.title;
+      document.getElementById('workbenchBoardTitle').textContent=board.title;
+      document.getElementById('workbenchBoardCanvas').innerHTML=dashboardMarkup(board.title,'workbench');
+      const messages=document.getElementById('workbenchMessages');
+      if(customPrompt){
+        messages.innerHTML=`<div class="workbench-message">${escapeHtml(customPrompt)}</div><div class="workbench-message ai">已根据你的描述生成首版看板。你可以继续对话修改，或全屏查看右侧结果。</div>`;
+      }else{
+        messages.innerHTML='<div class="workbench-message">请把这份看板的核心指标、趋势变化和关键结论放在同一页。</div><div class="workbench-message ai">已完成。右侧看板会随你的后续要求同步更新。</div>';
+      }
+      setWorkbenchLayout('split');
+      showViews('viewBoardWorkbench');
+      setToolbar(board.title,`创意市场 / 我的看板 / 我创建的 / ${board.title}`,'Work 结果',`<button class="btn" type="button" onclick="showMarket('created')">${icon('i-back')}返回我创建的</button><button class="btn primary" type="button" onclick="showToast('看板已保存')">保存看板</button>`);
+    }
+    function setWorkbenchLayout(layout){
+      const workbench=document.getElementById('boardWorkbench');
+      workbench.dataset.layout=layout;
+      workbench.querySelectorAll('[data-workbench-layout]').forEach(button=>button.classList.toggle('active',button.dataset.workbenchLayout===layout));
+    }
+    function focusMarketComposer(){
+      if(marketComposer.hidden){showMarket('plaza')}
+      document.getElementById('marketComposerInput').focus();
+    }
+    function openBoardModal(boardIdOrTitle){
+      const modal=document.getElementById('boardModal');
+      const drawer=document.getElementById('boardPreviewDrawer');
+      const toggle=document.getElementById('toggleBoardDrawer');
+      activeDrawerBoard=resolveBoard(boardIdOrTitle);
+      sharedDrawerRecordId=null;
+      lastModalTrigger=document.activeElement;
+      document.getElementById('modalBoardTitle').textContent=activeDrawerBoard.title;
+      document.getElementById('modalDashboardCanvas').innerHTML=dashboardMarkup(activeDrawerBoard.title,'drawer');
+      drawer.classList.remove('is-expanded');
+      toggle.innerHTML=icon('i-expand');
+      toggle.setAttribute('aria-label','展开看板');
+      toggle.title='展开看板';
+      const favoriteButton=document.getElementById('favoriteBoard');
+      const isFavorite=marketGroup('favorites').items.some(item=>item.id===activeDrawerBoard.id||item.name===activeDrawerBoard.title);
+      favoriteButton.setAttribute('aria-pressed',String(isFavorite));
+      favoriteButton.querySelector('span').textContent=isFavorite?'已收藏':'收藏';
+      document.getElementById('shareBoard').querySelector('span').textContent='分享';
+      modal.hidden=false;
+      toggle.focus();
+    }
+    function toggleBoardDrawerSize(){
+      const drawer=document.getElementById('boardPreviewDrawer');
+      const toggle=document.getElementById('toggleBoardDrawer');
+      const expanded=drawer.classList.toggle('is-expanded');
+      toggle.innerHTML=icon(expanded?'i-contract':'i-expand');
+      toggle.setAttribute('aria-label',expanded?'收起看板':'展开看板');
+      toggle.title=expanded?'收起看板':'展开看板';
+    }
+    function closeBoardModal(restoreFocus=true){
+      document.getElementById('boardModal').hidden=true;
+      document.getElementById('boardPreviewDrawer').classList.remove('is-expanded');
+      activeDrawerBoard=null;
+      if(restoreFocus&&lastModalTrigger)lastModalTrigger.focus();
+    }
+    function showToast(message){
+      const toast=document.getElementById('toast');
+      toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>toast.classList.remove('show'),2200);
+    }
+
+    document.querySelectorAll('[data-module]').forEach(button=>button.addEventListener('click',()=>setModule(button.dataset.module)));
+    document.querySelectorAll('.nav-item:not([data-module])').forEach(button=>button.addEventListener('click',()=>showToast(`${button.getAttribute('aria-label')}不在本次原型范围内`)));
+    document.querySelectorAll('[data-open-customer]').forEach(button=>button.addEventListener('click',()=>showCustomerConversations(button.dataset.openCustomer)));
+    document.querySelectorAll('[data-market-view]').forEach(button=>button.addEventListener('click',()=>{if(currentModule!=='market')setModule('market');showMarket(button.dataset.marketView);renderPanel()}));
+    document.getElementById('collapsePanel').addEventListener('click',()=>app.classList.add('panel-collapsed'));
+    document.getElementById('restorePanel').addEventListener('click',()=>app.classList.remove('panel-collapsed'));
+    document.querySelectorAll('.card-icon-btn[aria-label="收藏"]').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();const saved=button.getAttribute('aria-pressed')==='true';button.setAttribute('aria-pressed',String(!saved));showToast(saved?'已取消收藏':'已收藏到「我收藏的」')}));
+    document.querySelectorAll('.card-icon-btn[aria-label="改建"]').forEach(button=>button.addEventListener('click',event=>{event.stopPropagation();showToast('已创建改建对话，来源版本已记录')}));
+    document.querySelectorAll('.board-card').forEach(card=>card.addEventListener('click',event=>{if(event.target.closest('button'))return;openBoardModal(card.dataset.title)}));
+    document.getElementById('myBoardAggregateGrid').addEventListener('click',event=>{const card=event.target.closest('.my-board-item');if(!card)return;card.dataset.myBoardKind==='created'?openCreatedBoard(card.dataset.boardId):openBoardModal(card.dataset.boardId)});
+    document.getElementById('myBoardAggregateGrid').addEventListener('keydown',event=>{const card=event.target.closest('.my-board-item');if(!card||(event.key!=='Enter'&&event.key!==' '))return;event.preventDefault();card.dataset.myBoardKind==='created'?openCreatedBoard(card.dataset.boardId):openBoardModal(card.dataset.boardId)});
+    document.querySelectorAll('[data-my-board-filter]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-my-board-filter]').forEach(item=>item.classList.toggle('active',item===button));renderMyBoardAggregate(button.dataset.myBoardFilter)}));
+    ['bondCreated','semiconductorCreated','dividendCreated'].forEach((boardId,index)=>{
+      const row=document.querySelectorAll('#viewCreated .board-list-row')[index];
+      if(!row)return;
+      row.tabIndex=0;
+      row.addEventListener('click',event=>{if(!event.target.closest('button'))openCreatedBoard(boardId)});
+      row.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&!event.target.closest('button')){event.preventDefault();openCreatedBoard(boardId)}});
+    });
+    document.querySelectorAll('.switch').forEach(toggle=>toggle.addEventListener('click',()=>{const on=toggle.getAttribute('aria-checked')==='true';toggle.setAttribute('aria-checked',String(!on));showToast(on?'数字分身已关闭':'数字分身已开启')}));
+    ['资产配置','公司','宏观'].forEach((category,index)=>{const card=document.querySelectorAll('#viewCommunity .board-card')[index];if(card)card.dataset.category=category});
+    document.querySelectorAll('[data-category]').forEach(button=>button.addEventListener('click',()=>{const filterRow=button.closest('.market-filter-row');filterRow.querySelectorAll('[data-category]').forEach(chip=>chip.classList.toggle('active',chip===button));const category=button.dataset.category;document.querySelectorAll('.page-view:not([hidden]) .board-card').forEach(card=>card.classList.toggle('is-filtered',category!=='all'&&card.dataset.category!==category))}));
+    document.getElementById('sourceBoardCard').addEventListener('click',event=>{if(event.currentTarget.classList.contains('generic-source')){setModule('market');activateDrawer('plaza');return}openBoardModal(event.currentTarget.dataset.boardTitle)});
+    document.getElementById('toggleBoardDrawer').addEventListener('click',toggleBoardDrawerSize);
+    document.getElementById('remixBoard').addEventListener('click',remixActiveBoard);
+    document.getElementById('favoriteBoard').addEventListener('click',favoriteActiveBoard);
+    document.getElementById('shareBoard').addEventListener('click',shareActiveBoard);
+    document.getElementById('closeModal').addEventListener('click',closeBoardModal);
+    document.getElementById('boardModal').addEventListener('click',event=>{if(event.target.id==='boardModal')closeBoardModal()});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.getElementById('boardModal').hidden)closeBoardModal()});
+    document.querySelectorAll('.segmented button:not([data-market-view])').forEach(button=>button.addEventListener('click',()=>{button.parentElement.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===button));showToast(`已切换为${button.textContent}`)}));
+    marketComposer.addEventListener('submit',event=>{
+      event.preventDefault();
+      const input=document.getElementById('marketComposerInput');
+      const prompt=input.value.trim();
+      if(!prompt){showToast('请先描述你想创建的看板');input.focus();return}
+      input.value='';
+      const boardId=createConversationBoard(prompt);
+      openCreatedBoard(boardId,prompt);
+    });
+    document.querySelectorAll('[data-workbench-layout]').forEach(button=>button.addEventListener('click',()=>setWorkbenchLayout(button.dataset.workbenchLayout)));
+    document.getElementById('workbenchChatForm').addEventListener('submit',event=>{
+      event.preventDefault();
+      const input=document.getElementById('workbenchChatInput');
+      const value=input.value.trim();
+      if(!value)return;
+      const messages=document.getElementById('workbenchMessages');
+      const userMessage=document.createElement('div');
+      userMessage.className='workbench-message';
+      userMessage.textContent=value;
+      const aiMessage=document.createElement('div');
+      aiMessage.className='workbench-message ai';
+      aiMessage.textContent='已收到修改要求，右侧看板已同步更新。';
+      messages.append(userMessage,aiMessage);
+      input.value='';
+      showToast('看板内容已更新');
+    });
+
+    renderPanel();
+    showClientList();
+  </script>
+</body>
+</html>

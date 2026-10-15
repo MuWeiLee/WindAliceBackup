@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wind Alice · 机构管理平台原型</title>
+  <style>
+    :root{--ink:#15212d;--muted:#667786;--line:#dbe3e8;--paper:#f2f5f5;--white:#fff;--blue:#0c6a78;--blue2:#075360;--pale:#e7f3f3;--gold:#b87923;--warn:#fff1d9;--red:#b84242;--redp:#fff0ee;--green:#267456;--greenp:#eaf5ee;--radius:12px}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Microsoft YaHei UI","PingFang SC",sans-serif;color:var(--ink);background:var(--paper)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}a{color:inherit}
+    .app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}.side{background:#102d39;color:#d9e7e9;padding:26px 16px;display:flex;flex-direction:column;gap:24px}.brand{display:flex;align-items:center;gap:11px;padding:0 12px}.brand-mark{width:34px;height:34px;background:#b8e2dc;color:#0d3c46;border-radius:9px;display:grid;place-items:center;font-family:Georgia,serif;font-size:25px;font-weight:bold}.brand strong{color:white;font-size:17px;letter-spacing:.02em}.brand small{display:block;color:#9eb8be;font-size:11px;margin-top:2px;letter-spacing:.1em}.side-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#87a3aa;padding:0 13px;margin:0 0 7px}.nav{display:grid;gap:3px}.nav button{width:100%;border:0;background:transparent;color:#d1e0e3;text-align:left;padding:11px 13px;border-radius:9px;display:flex;gap:12px;align-items:center}.nav button:hover{background:#20414d}.nav button.active{background:#dff0ed;color:#103943;font-weight:700}.nav .icon{width:21px;text-align:center;font-size:17px}.side-bottom{margin-top:auto;border-top:1px solid #31515c;padding:18px 12px 0;color:#a8c0c4;font-size:12px;line-height:1.7}.side-bottom b{color:#e7f2f2}
+    .main{min-width:0}.top{height:72px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px;gap:20px}.top-left,.top-right{display:flex;align-items:center;gap:13px}.top small{color:var(--muted)}.org-select{max-width:260px;border:1px solid var(--line);background:#f9fbfb;border-radius:8px;padding:9px 12px;color:var(--ink);font-weight:700}.avatar{height:34px;width:34px;border-radius:50%;background:#c7dcd7;color:#174e50;display:grid;place-items:center;font-weight:700}.content{max-width:1370px;margin:auto;padding:35px 38px 75px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:0 0 25px}.heading h1{font-family:"Songti SC","SimSun",serif;font-size:31px;line-height:1.25;margin:6px 0}.heading p{color:var(--muted);margin:0;line-height:1.6}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:8px;padding:9px 14px;min-height:38px;font-weight:650}.btn:hover{border-color:#89aeb1;background:#f7fbfa}.btn.primary{border-color:var(--blue);background:var(--blue);color:white}.btn.primary:hover{background:var(--blue2)}.btn.danger{color:var(--red);border-color:#ebc5c2}.btn.tiny{padding:6px 9px;min-height:29px;font-size:12px}.btn.text{border:0;background:transparent;color:var(--blue)}.panel{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 2px 9px #18313a08}.panel-pad{padding:22px}.grid{display:grid;gap:15px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}.metric{padding:20px 22px;min-height:137px}.metric .label{font-size:13px;color:var(--muted)}.metric .value{font-size:32px;font-family:Georgia,"Songti SC",serif;margin:10px 0 3px;letter-spacing:-.025em}.metric .hint{font-size:12px;color:var(--muted)}.section-grid{grid-template-columns:1.3fr 1fr;align-items:start}.section-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:15px}.section-head h2{font-family:"Songti SC","SimSun",serif;margin:0;font-size:21px}.section-head small{color:var(--muted)}.status{display:inline-flex;align-items:center;gap:5px;border-radius:100px;padding:5px 9px;background:var(--greenp);color:var(--green);font-size:12px;font-weight:750;white-space:nowrap}.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.status.pending{background:var(--warn);color:#9a651d}.status.disabled,.status.removed,.status.expired{background:var(--redp);color:var(--red)}.notice{padding:13px 16px;background:#e8f0f0;border-left:3px solid var(--blue);border-radius:6px;color:#35515a;font-size:13px;line-height:1.65;margin-bottom:18px}.notice.warn{background:#fff4e2;border-color:var(--gold);color:#795b2e}.notice.critical{background:#fff0ee;border-color:var(--red);color:#8b4141}.list{display:grid}.list-item{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:14px 0;border-top:1px solid #edf0f1}.list-item:first-child{border-top:0}.list-item b{font-size:14px}.list-item small{display:block;color:var(--muted);margin-top:4px}.muted{color:var(--muted)}.num{font-variant-numeric:tabular-nums}.progress{height:8px;border-radius:10px;background:#e5eded;overflow:hidden;margin:15px 0 9px}.progress span{display:block;height:100%;background:var(--blue)}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:15px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);padding:10px 12px;outline:none}.toolbar input:focus,.toolbar select:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #0c6a781a}.toolbar input{min-width:240px;flex:1}.tabs{display:flex;gap:3px;border-bottom:1px solid var(--line);margin-bottom:18px}.tab{background:none;border:0;border-bottom:2px solid transparent;padding:11px 17px;color:var(--muted);font-weight:700}.tab.active{color:var(--blue);border-color:var(--blue)}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:720px}.table th{text-align:left;color:var(--muted);font-weight:650;font-size:12px;padding:13px 15px;background:#f7f9f9;white-space:nowrap}.table td{border-top:1px solid #edf0f1;padding:14px 15px;font-size:13px;vertical-align:middle}.table tr:hover td{background:#fbfcfc}.table .person{font-weight:750}.table .sub{font-size:11px;color:var(--muted);margin-top:4px}.row-actions{display:flex;gap:3px;white-space:nowrap}.empty{text-align:center;color:var(--muted);padding:46px 15px;line-height:1.8}.empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:5px}.badge{display:inline-block;background:#eaf0f2;color:#45616b;padding:5px 8px;border-radius:6px;font-size:12px;font-weight:700}.detail-pairs{display:grid;grid-template-columns:150px 1fr;gap:13px 18px;font-size:13px}.detail-pairs dt{color:var(--muted)}.detail-pairs dd{margin:0;line-height:1.65;overflow-wrap:anywhere}.switch-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-top:1px solid #edf0f1}.switch-row:first-child{border-top:0}.switch-row small{display:block;color:var(--muted);margin-top:4px;line-height:1.5}.switch{appearance:none;width:39px;height:23px;background:#c6d2d6;border-radius:20px;position:relative;flex:none;cursor:pointer}.switch:after{content:"";position:absolute;width:17px;height:17px;background:white;border-radius:50%;left:3px;top:3px;transition:transform .2s}.switch:checked{background:var(--blue)}.switch:checked:after{transform:translateX(16px)}.switch:disabled{opacity:.5;cursor:not-allowed}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}.pill{display:inline-block;font-size:11px;background:var(--pale);color:var(--blue);padding:4px 8px;border-radius:5px;margin-right:5px}.mock-only{font-size:12px;color:#7b632d;background:#fff2dc;border-radius:6px;padding:8px 10px;display:inline-block}.footer-note{margin-top:26px;color:var(--muted);font-size:12px;line-height:1.7}
+    dialog{border:1px solid var(--line);border-radius:14px;box-shadow:0 22px 80px #0c293947;padding:0;width:min(520px,calc(100vw - 30px));max-height:calc(100vh - 30px)}dialog::backdrop{background:#0b293b77}.dialog-head{padding:22px 24px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:start}.dialog-head h2{margin:0;font-family:"Songti SC","SimSun",serif;font-size:23px}.dialog-head p{margin:7px 0 0;color:var(--muted);font-size:13px;line-height:1.55}.dialog-body{padding:22px 24px;overflow:auto;max-height:55vh}.dialog-foot{padding:15px 24px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.field{display:grid;gap:6px;margin-bottom:16px;font-size:13px;font-weight:700}.field small{font-weight:400;color:var(--muted);line-height:1.5}.field textarea{min-height:90px;resize:vertical}.x{border:0;background:none;font-size:22px;color:var(--muted);line-height:1}.toast{position:fixed;bottom:25px;right:26px;background:#133c47;color:white;padding:13px 17px;border-radius:9px;box-shadow:0 7px 30px #0e303643;font-size:13px;z-index:30}.mobile-toggle{display:none}
+    @media(max-width:1100px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.section-grid{grid-template-columns:1fr}.content{padding:28px 24px 60px}}@media(max-width:740px){.app{grid-template-columns:1fr}.side{display:none;position:fixed;z-index:20;inset:0 auto 0 0;width:248px}.side.open{display:flex}.mobile-toggle{display:inline-block}.top{padding:0 15px}.top small,.top-right .avatar{display:none}.content{padding:22px 15px 60px}.heading{align-items:start;flex-direction:column}.heading h1{font-size:27px}.metrics,.split{grid-template-columns:1fr}.metric{min-height:100px}.org-select{max-width:170px}.detail-pairs{grid-template-columns:100px 1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><span class="brand-mark">A</span><span><strong>Wind Alice</strong><small>INSTITUTION CONSOLE</small></span></div>
+    <div><p class="side-label">工作空间</p><nav class="nav" id="nav"></nav></div>
+    <div class="side-bottom"><b>机构管理平台 · 原型 V1.0</b><br>仅演示本机构管理行为。机构开通、席位授权与积分配置由后台管理系统负责。</div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <div class="top-left"><button class="btn mobile-toggle" id="mobileToggle" aria-label="打开导航">☰</button><span class="muted">当前机构</span><select id="orgSelect" class="org-select" aria-label="切换管理机构"></select><span id="topStatus"></span></div>
+      <div class="top-right"><small>独立管理控制台 · 演示数据</small><span class="avatar">林</span><b style="font-size:13px">林依然 · Owner</b></div>
+    </header>
+    <div class="content" id="view"></div>
+  </main>
+</div>
+<dialog id="modal"><div class="dialog-head"><div><h2 id="modalTitle"></h2><p id="modalSub"></p></div><button class="x" id="closeModal" aria-label="关闭">×</button></div><div class="dialog-body" id="modalBody"></div><div class="dialog-foot" id="modalFoot"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const initial = [
+    {id:"org-001",name:"华辰证券研究院",state:"有效",seats:12,points:200000,used:86420,owner:"林依然",members:[
+      {id:"m1",name:"林依然",phone:"13800138000",email:"lin@huachen.example",dept:"研究管理",role:"Owner",status:"正常",joined:"2026-09-18",last:"2026-10-08"},
+      {id:"m2",name:"张澄",phone:"13900139001",email:"zhang@huachen.example",dept:"行业研究",role:"Admin",status:"正常",joined:"2026-09-20",last:"2026-10-08"},
+      {id:"m3",name:"陈遥",phone:"13700137002",email:"chen@huachen.example",dept:"策略研究",role:"Member",status:"正常",joined:"2026-09-24",last:"2026-10-07"},
+      {id:"m4",name:"王知秋",phone:"13600136003",email:"",dept:"财富管理",role:"Member",status:"已禁用",joined:"2026-09-28",last:"2026-10-01"}
+    ],invites:[{id:"i1",name:"李沐",phone:"13500135004",role:"Member",status:"待接受",sent:"2026-10-07",expires:"2026-10-14"}],
+    content:[
+      {id:"c1",type:"对话请求",title:"半导体行业景气度分析",creator:"陈遥",date:"2026-10-08 09:36",body:"用户请求：梳理半导体产业链的近期景气变化，并列出需要继续验证的数据。\\n\\nAlice 回复摘要：按设计、制造、封测及设备环节拆分，并提示结合最新公开数据复核。"},
+      {id:"c2",type:"生成素材",title:"四季度策略路演材料",creator:"张澄",date:"2026-10-07 16:24",body:"成果类型：演示文稿。\\n版本：V2。\\n内容摘要：市场环境、行业比较、情景假设与主要风险。"},
+      {id:"c3",type:"分享链接",title:"新能源产业跟踪摘要",creator:"陈遥",date:"2026-10-06 11:52",body:"链接状态：有效。\\n访问范围：持有链接者。\\n原型不生成或访问真实分享地址。"}
+    ],audit:[{when:"2026-10-08 10:18",who:"林依然",action:"查看成员内容",object:"四季度策略路演材料",result:"成功"},{when:"2026-10-07 15:03",who:"张澄",action:"发起成员邀请",object:"李沐",result:"成功"}],adminPerm:{invite:true,edit:true,disable:true,remove:false,content:true,audit:true},memberPerm:{chat:true,work:true,share:true,automation:false}},
+    {id:"org-002",name:"远澜资产管理",state:"有效",seats:6,points:80000,used:26170,owner:"林依然",members:[
+      {id:"n1",name:"林依然",phone:"13800138000",email:"lin@yuanlan.example",dept:"管理",role:"Owner",status:"正常",joined:"2026-09-30",last:"2026-10-08"},
+      {id:"n2",name:"周闻",phone:"13500135021",email:"",dept:"投资研究",role:"Member",status:"正常",joined:"2026-10-02",last:"2026-10-07"}],
+      invites:[],content:[{id:"d1",type:"对话请求",title:"宏观数据晨间解读",creator:"周闻",date:"2026-10-07 08:46",body:"用户请求：整理当日重要宏观数据及其对市场的可能影响。\\n\\nAlice 回复摘要：按公开数据来源整理并标记待确认项。"}],audit:[],adminPerm:{invite:true,edit:true,disable:true,remove:false,content:true,audit:true},memberPerm:{chat:true,work:true,share:false,automation:false}}
+  ];
+  const savedWorkspace=(()=>{try{return localStorage.getItem("alice-demo-workspace")||"personal"}catch{return "personal"}})();
+  const state = {orgs:structuredClone(initial),org:0,page:"overview",memberFilter:"全部",inviteFilter:"全部",contentType:"全部",query:"",contentQuery:"",auditQuery:"",workspace:savedWorkspace};
+  const $ = s => document.querySelector(s);
+  const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const org = () => state.orgs[state.org];
+  const activeInvites = () => org().invites.filter(x=>x.status==="待接受").length;
+  const occupied = () => org().members.filter(x=>["正常","已禁用"].includes(x.status)).length;
+  const available = () => Math.max(0,org().seats-occupied()-activeInvites());
+  const mask = p => p.slice(0,3)+"****"+p.slice(-4);
+  const status = s => `<span class="status ${s==="待接受"?"pending":s==="已禁用"?"disabled":s==="已移除"?"removed":""}">${esc(s)}</span>`;
+  const date = () => new Date().toLocaleString("zh-CN",{hour12:false});
+  const heading = (label,title,desc,actions="") => `<div class="heading"><div><div class="eyebrow">${label}</div><h1>${title}</h1><p>${desc}</p></div><div class="actions">${actions}</div></div>`;
+  const panel = (content,cls="") => `<section class="panel panel-pad ${cls}">${content}</section>`;
+  const metric = (label,value,hint) => `<div class="panel metric"><div class="label">${label}</div><div class="value num">${value}</div><div class="hint">${hint}</div></div>`;
+  const audit = (action,object,result="成功") => org().audit.unshift({when:date(),who:"林依然",action,object,result});
+  const toast = msg => {$("#toast").innerHTML=`<div class="toast">${esc(msg)}</div>`;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$("#toast").innerHTML="",3400)};
+  const navItems=[["overview","◇","机构概览"],["members","♙","成员管理"],["content","▤","内容管理"],["permissions","⚑","权限设置"],["usage","◫","使用与额度"],["audit","☷","操作审计"],["organization","ⓘ","机构信息"],["workspace","↗","Alice 工作区"]];
+  function render(){
+    $("#nav").innerHTML=navItems.map(([id,icon,label])=>`<button data-page="${id}" class="${state.page===id?"active":""}"><span class="icon">${icon}</span>${label}</button>`).join("");
+    $("#orgSelect").innerHTML=state.orgs.map((x,i)=>`<option value="${i}" ${i===state.org?"selected":""}>${esc(x.name)}</option>`).join("");
+    $("#topStatus").innerHTML=status(org().state);
+    const routes={overview:overview,members:members,content:content,permissions:permissions,usage:usage,audit:auditPage,organization:organization,workspace:workspace};
+    $("#view").innerHTML=routes[state.page]();
+    document.title=`${navItems.find(x=>x[0]===state.page)[2]} · Wind Alice 机构管理平台原型`;
+  }
+  function overview(){
+    const o=org();const pct=Math.min(100,Math.round((occupied()+activeInvites())/o.seats*100));
+    return heading("INSTITUTION / OVERVIEW","机构概览",`${esc(o.name)} · 管理范围仅限当前机构`,`<button class="btn primary" data-action="invite">＋ 邀请成员</button>`)
+      +`<div class="notice">本控制台用于机构内治理。机构开通、席位上限和积分额度来自后台管理系统；当前页面为虚构数据的交互原型。</div>`
+      +`<div class="grid metrics">${metric("有效成员",o.members.filter(x=>x.status==="正常").length,"含 Owner、Admin、Member")}${metric("席位占用",`${occupied()+activeInvites()} / ${o.seats}`,`${occupied()} 正式 · ${activeInvites()} 预留`)}${metric("待接受邀请",activeInvites(),"邀请接受后转为正式占用")}${metric("剩余积分",(o.points-o.used).toLocaleString(),"具体扣费口径待确认")}</div>`
+      +`<div class="grid section-grid">
+       ${panel(`<div class="section-head"><h2>需要关注</h2><button class="btn text" data-page="members">查看成员 →</button></div><div class="list">
+       <div class="list-item"><div><b>席位使用</b><small>已占用 ${occupied()}，预留 ${activeInvites()}，剩余 ${available()}</small></div>${status(available()?"可邀请":"已满额")}</div>
+       <div class="progress"><span style="width:${pct}%"></span></div>
+       <div class="list-item"><div><b>待接受邀请</b><small>${activeInvites()?org().invites.filter(x=>x.status==="待接受").map(x=>esc(x.name)).join("、"):"目前没有待接受邀请"}</small></div><button class="btn tiny" data-page="members" data-tab="invites">查看</button></div>
+       <div class="list-item"><div><b>机构权限</b><small>Admin 和 Member 的功能权限可由机构配置</small></div><button class="btn tiny" data-page="permissions">查看</button></div></div>`)}
+       ${panel(`<div class="section-head"><h2>最近管理活动</h2><button class="btn text" data-page="audit">全部记录 →</button></div><div class="list">${o.audit.length?o.audit.slice(0,4).map(x=>`<div class="list-item"><div><b>${esc(x.action)}</b><small>${esc(x.who)} · ${esc(x.object)}</small></div><small class="muted">${esc(x.when)}</small></div>`).join(""):`<div class="empty">暂无管理活动记录</div>`}</div>`)}
+      </div><p class="footer-note">演示口径：Owner/Admin/Member 均计入席位；待接受邀请预留席位。此口径待业务确认。</p>`;
+  }
+  function members(){
+    const o=org(),invTab=state.memberTab==="invites";
+    let rows=o.members.filter(m=>(state.memberFilter==="全部" || m.status===state.memberFilter) && (m.name.includes(state.query)||m.phone.includes(state.query)||m.dept.includes(state.query)));
+    const invs=o.invites.filter(i=>(state.inviteFilter==="全部"||i.status===state.inviteFilter)&&(i.name.includes(state.query)||i.phone.includes(state.query)));
+    return heading("PEOPLE / ACCESS","成员管理","成员资料只在当前机构内使用，不改变用户的统一账号资料。",`<button class="btn primary" data-action="invite" ${available()?"":"disabled"}>＋ 邀请成员</button>`)
+    +(available()? "":`<div class="notice warn">当前没有可预留席位。机构席位上限由后台管理系统设置，请先处理占用或联系平台扩容。</div>`)
+    +`<div class="tabs"><button class="tab ${!invTab?"active":""}" data-member-tab="members">成员列表</button><button class="tab ${invTab?"active":""}" data-member-tab="invites">邀请记录 ${activeInvites()?`· ${activeInvites()}`:""}</button></div>`
+    +panel(`<div class="toolbar"><input id="memberSearch" placeholder="搜索姓名、手机号或部门" value="${esc(state.query)}" aria-label="搜索成员">${invTab?`<select id="inviteFilter"><option>全部</option>${["待接受","已接受","已取消","已拒绝"].map(x=>`<option ${x===state.inviteFilter?"selected":""}>${x}</option>`).join("")}</select>`:`<select id="memberFilter"><option>全部</option>${["正常","已禁用","已移除"].map(x=>`<option ${x===state.memberFilter?"selected":""}>${x}</option>`).join("")}</select>`}<span class="muted" style="font-size:12px">${invTab?invs.length:rows.length} 条记录</span></div>
+    <div class="table-wrap">${invTab?`<table class="table"><thead><tr><th>受邀人</th><th>手机号</th><th>角色</th><th>状态</th><th>发出 / 到期</th><th>操作</th></tr></thead><tbody>${invs.map(i=>`<tr><td class="person">${esc(i.name)}</td><td>${mask(i.phone)}</td><td>${esc(i.role)}</td><td>${status(i.status)}</td><td>${esc(i.sent)}<div class="sub">到期 ${esc(i.expires)}</div></td><td><div class="row-actions">${i.status==="待接受"?`<button class="btn tiny" data-action="accept" data-id="${i.id}" title="体验受邀人验证与接受流程">体验受邀流程</button><button class="btn tiny danger" data-action="cancel-invite" data-id="${i.id}">取消</button>`:"—"}</div></td></tr>`).join("")}</tbody></table>`:`<table class="table"><thead><tr><th>成员</th><th>手机号</th><th>角色</th><th>状态</th><th>加入 / 最近进入</th><th>操作</th></tr></thead><tbody>${rows.map(m=>`<tr><td><div class="person">${esc(m.name)}</div><div class="sub">${esc(m.dept||"未填写部门")}</div></td><td>${mask(m.phone)}</td><td><span class="badge">${esc(m.role)}</span></td><td>${status(m.status)}</td><td>${esc(m.joined)}<div class="sub">最近 ${esc(m.last||"—")}</div></td><td><div class="row-actions"><button class="btn tiny" data-action="member-detail" data-id="${m.id}">详情</button>${m.status!=="已移除"&&m.role!=="Owner"?`<button class="btn tiny" data-action="toggle-member" data-id="${m.id}">${m.status==="正常"?"禁用":"启用"}</button><button class="btn tiny danger" data-action="remove-member" data-id="${m.id}">移除</button>`:""}</div></td></tr>`).join("")}</tbody></table>`}</div>${(invTab?invs:rows).length?"":`<div class="empty"><strong>暂无匹配记录</strong>试试清除搜索或切换筛选条件。</div>`}`)
+    +`<p class="footer-note">“移除”仅隐藏成员并撤销机构访问，历史内容与审计保留。「体验受邀流程」是独立的用户侧演示，不代表管理员可代用户接受。</p>`;
+  }
+  function content(){
+    const types=["全部","对话请求","生成素材","分享链接"];
+    const rows=org().content.filter(c=>(state.contentType==="全部"||c.type===state.contentType)&&(c.title.includes(state.contentQuery)||c.creator.includes(state.contentQuery)));
+    return heading("CONTENT / GOVERNANCE","内容管理","按机构范围查看成员工作区内容；每次打开详情都会留下审计记录。")
+     +`<div class="notice warn">演示展示请求正文、回复摘要、最终素材与分享记录。附件、已移除成员历史和中间步骤的正式可见范围仍待评审。</div>`
+     +`<div class="tabs">${types.map(t=>`<button class="tab ${state.contentType===t?"active":""}" data-content-type="${t}">${t}</button>`).join("")}</div>`
+     +panel(`<div class="toolbar"><input id="contentSearch" placeholder="搜索标题或创建者" value="${esc(state.contentQuery)}" aria-label="搜索内容"><span class="muted" style="font-size:12px">当前机构 · ${rows.length} 条</span></div>
+     <div class="table-wrap"><table class="table"><thead><tr><th>内容标题</th><th>类型</th><th>创建者</th><th>生成时间</th><th>操作</th></tr></thead><tbody>${rows.map(c=>`<tr><td class="person">${esc(c.title)}</td><td><span class="badge">${esc(c.type)}</span></td><td>${esc(c.creator)}</td><td>${esc(c.date)}</td><td><button class="btn tiny" data-action="content-detail" data-id="${c.id}">只读查看</button></td></tr>`).join("")}</tbody></table></div>${rows.length?"":`<div class="empty"><strong>没有找到内容</strong>请调整类型或关键词。</div>`}`);
+  }
+  function permissions(){
+    const admin=[["invite","邀请 Member","创建邀请并占用可用席位"],["edit","编辑成员资料","仅修改本机构的补充资料"],["disable","禁用与启用","影响成员对本机构工作区的访问"],["remove","移除成员","隐藏关系并释放席位"],["content","查看机构内容","仅限本机构成员工作区的授权内容"],["audit","查看操作审计","查看机构内敏感管理行为"]];
+    const member=[["chat","对话","使用机构上下文内的对话"],["work","Work 任务","创建机构归属的任务与成果"],["share","创建分享链接","分享记录会进入内容管理"],["automation","自动任务","演示为上游未授权，不能启用"]];
+    return heading("POLICY / ROLES","权限设置","Owner 可配置机构内角色权限；所有功能均不得突破后台管理系统下发的授权。",`<button class="btn primary" data-action="save-permissions">保存配置</button>`)
+     +`<div class="notice">P0 原型采用角色模板：设置将应用于该机构下对应角色的所有成员。单独给某名成员例外授权仍待确认。</div>`
+     +`<div class="split">${panel(`<div class="section-head"><h2>Admin 管理动作</h2><small>${esc(org().name)}</small></div>${admin.map(([k,title,desc])=>`<label class="switch-row"><span><b>${title}</b><small>${desc}</small></span><input class="switch" type="checkbox" data-perm-group="admin" data-perm="${k}" ${org().adminPerm[k]?"checked":""}></label>`).join("")}`)}
+     ${panel(`<div class="section-head"><h2>Member 可用功能</h2><small>受上游授权约束</small></div>${member.map(([k,title,desc])=>`<label class="switch-row"><span><b>${title}</b><small>${desc}</small></span><input class="switch" type="checkbox" data-perm-group="member" data-perm="${k}" ${org().memberPerm[k]?"checked":""} ${k==="automation"?"disabled":""}></label>`).join("")}`)}</div>
+     <p class="footer-note">Owner 固定拥有机构内最高管理权。角色变更与权限保存须审计；正式系统由服务端逐次校验。</p>`;
+  }
+  function usage(){
+    const o=org(),used=occupied()+activeInvites(),pct=Math.min(100,Math.round(used/o.seats*100));
+    return heading("CAPACITY / USAGE","使用与额度","额度与机构状态来自后台管理系统，控制台只展示机构内使用情况。")
+     +`<div class="grid metrics">${metric("授权席位",o.seats,"上游配置")}${metric("正式占用",occupied(),"含禁用成员，演示口径")}${metric("邀请预留",activeInvites(),"待接受邀请，演示口径")}${metric("剩余席位",available(),used>o.seats?`超额 ${used-o.seats}`:"可继续邀请")}</div>`
+     +`<div class="split">${panel(`<div class="section-head"><h2>席位结构</h2><small>${used} / ${o.seats}</small></div><div class="progress"><span style="width:${pct}%"></span></div><div class="list"><div class="list-item"><b>正常成员</b><span>${o.members.filter(x=>x.status==="正常").length}</span></div><div class="list-item"><b>禁用成员</b><span>${o.members.filter(x=>x.status==="已禁用").length}</span></div><div class="list-item"><b>待接受邀请</b><span>${activeInvites()}</span></div></div><p class="footer-note">缩容超额时停止新增邀请，不自动移除现有成员。</p>`)}
+     ${panel(`<div class="section-head"><h2>机构积分</h2><small>具体计量口径待定</small></div><div class="list"><div class="list-item"><b>机构总额度</b><span class="num">${o.points.toLocaleString()}</span></div><div class="list-item"><b>已消耗</b><span class="num">${o.used.toLocaleString()}</span></div><div class="list-item"><b>当前剩余</b><span class="num">${(o.points-o.used).toLocaleString()}</span></div></div><div class="progress"><span style="width:${Math.round(o.used/o.points*100)}%"></span></div><p class="footer-note">本原型不模拟真实扣分或结算。</p>`)}</div>`;
+  }
+  function auditPage(){
+    const rows=org().audit.filter(x=>[x.who,x.action,x.object].some(v=>v.includes(state.auditQuery)));
+    return heading("CONTROL / TRACE","操作审计","记录机构内管理操作与内容查看行为；普通管理员无法修改审计记录。")
+    +panel(`<div class="toolbar"><input id="auditSearch" value="${esc(state.auditQuery)}" placeholder="搜索操作者、动作或对象" aria-label="搜索审计"><span class="muted" style="font-size:12px">${rows.length} 条记录</span></div><div class="table-wrap"><table class="table"><thead><tr><th>时间</th><th>操作者</th><th>动作</th><th>对象</th><th>结果</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.when)}</td><td>${esc(x.who)}</td><td>${esc(x.action)}</td><td>${esc(x.object)}</td><td>${status(x.result)}</td></tr>`).join("")}</tbody></table></div>${rows.length?"":`<div class="empty"><strong>暂无记录</strong>后续管理行为将在此显示。</div>`}`)
+    +`<p class="footer-note">正式产品还需显示请求 ID、变更前后摘要与适当脱敏的来源信息；日志保留期限待合规确定。</p>`;
+  }
+  function organization(){
+    const o=org();
+    return heading("INSTITUTION / PROFILE","机构信息","上游机构资料与授权在此只读展示。")
+     +panel(`<div class="section-head"><h2>机构档案</h2>${status(o.state)}</div><dl class="detail-pairs"><dt>机构名称</dt><dd>${esc(o.name)}</dd><dt>机构 ID</dt><dd>${esc(o.id)}</dd><dt>首位 Owner</dt><dd>${esc(o.owner)}</dd><dt>机构状态</dt><dd>${esc(o.state)}</dd><dt>席位上限</dt><dd>${o.seats} · 由后台管理系统配置</dd><dt>积分额度</dt><dd>${o.points.toLocaleString()} · 由后台管理系统配置</dd><dt>同步状态</dt><dd>已同步（演示）</dd></dl><div class="notice" style="margin:24px 0 0">机构开通、禁用、授权席位和积分额度不在此控制台修改。如同步异常，应展示可追踪的状态与联系支持入口。</div>`);
+  }
+  function workspace(){
+    const choices=[{id:"personal",name:"个人工作区",sub:"账号私有 · 对话、Work、文件与积分独立"},...state.orgs.map(x=>({id:x.id,name:`${x.name} · 林依然的工作区`,sub:"机构上下文 · 成员个人工作区"}))];
+    const current=choices.find(x=>x.id===state.workspace)||choices[0];
+    return heading("ALICE / CONTEXT","Alice 工作区切换","此页示意机构管理平台与 Alice 用户工作端的关系。")
+     +`<div class="notice">当前用户工作区：<b>${esc(current.name)}</b>。演示切换状态保存在本机浏览器，刷新或重新打开此文件仍保持选择；正式产品还须服务端重新校验。</div>`
+     +panel(`<div class="section-head"><h2>我的工作区</h2><span class="mock-only">用户端流程示意</span></div><div class="list">${choices.map(x=>`<div class="list-item"><div><b>${esc(x.name)}</b><small>${esc(x.sub)}</small></div>${state.workspace===x.id?`<span class="status">当前工作区</span>`:`<button class="btn tiny" data-action="switch-workspace" data-id="${esc(x.id)}">切换到此处</button>`}</div>`).join("")}</div><div class="notice" style="margin:20px 0 0">机构内不同成员有各自独立的工作区。管理员通过内容管理按授权跨成员查看本机构内容；普通成员不能直接进入他人的工作区。</div>`)
+     +`<p class="footer-note">原型仅保存选择，不包含真实工作内容。正式 Alice 在刷新、重启、切换和每次请求时均需校验成员、机构及功能权限。</p>`;
+  }
+  function modal(title,sub,body,buttons){
+    $("#modalTitle").textContent=title;$("#modalSub").textContent=sub;$("#modalBody").innerHTML=body;$("#modalFoot").innerHTML=buttons;$("#modal").showModal();
+  }
+  const close = () => $("#modal").close();
+  function inviteModal(){
+    modal("邀请成员","仅由机构管理平台发起；受邀用户验证身份后接受。",`<div class="mock-only">演示假设：待接受预留 1 席，7 天后过期</div><div style="height:17px"></div><label class="field">手机号 *<input id="invitePhone" inputmode="numeric" maxlength="11" placeholder="请输入 11 位手机号"></label><label class="field">机构内姓名 *<input id="inviteName" placeholder="例如：李沐"><small>只保存在当前机构，不修改用户账号资料。</small></label><label class="field">邮箱<input id="inviteEmail" type="email" placeholder="选填"></label><label class="field">部门<input id="inviteDept" placeholder="选填"></label><div class="notice">当前剩余可邀请席位：${available()}</div>`,`<button class="btn" data-action="close">取消</button><button class="btn primary" data-action="submit-invite">发送邀请</button>`);
+  }
+  function memberModal(id){
+    const m=org().members.find(x=>x.id===id);if(!m)return;
+    modal("成员详情",`${m.role} · ${m.status}`,`<dl class="detail-pairs"><dt>机构内姓名</dt><dd>${esc(m.name)}</dd><dt>手机号</dt><dd>${mask(m.phone)}</dd><dt>邮箱</dt><dd>${esc(m.email||"—")}</dd><dt>部门</dt><dd>${esc(m.dept||"—")}</dd><dt>加入时间</dt><dd>${esc(m.joined)}</dd><dt>成员工作区</dt><dd>独立机构成员工作区 · 历史内容由机构保留</dd></dl>`,`<button class="btn" data-action="close">关闭</button>${m.status!=="已移除"?`<button class="btn primary" data-action="edit-member" data-id="${m.id}">编辑补充资料</button>`:""}`);
+  }
+  function editModal(id){
+    const m=org().members.find(x=>x.id===id);if(!m)return;
+    modal("编辑成员资料","手机号来自统一账号，不能在此修改。",`<label class="field">机构内姓名 *<input id="editName" value="${esc(m.name)}"></label><label class="field">邮箱<input id="editEmail" value="${esc(m.email)}"></label><label class="field">部门<input id="editDept" value="${esc(m.dept)}"></label>${m.role!=="Owner"?`<label class="field">机构角色<select id="editRole"><option ${m.role==="Member"?"selected":""}>Member</option><option ${m.role==="Admin"?"selected":""}>Admin</option></select><small>仅 Owner 可授予 Admin。本原型以 Owner 身份演示。</small></label>`:"<div class='notice'>唯一 Owner 不能在此直接变更。Owner 转移流程待决。</div>"}`,`<button class="btn" data-action="close">取消</button><button class="btn primary" data-action="save-member" data-id="${id}">保存</button>`);
+  }
+  function contentModal(id){
+    const c=org().content.find(x=>x.id===id);if(!c)return;
+    audit("查看成员内容",c.title);render();
+    modal(c.title,`${c.type} · ${c.creator} · ${c.date}`,`<div class="mock-only">当前机构只读内容 · 查看已记录审计</div><p style="white-space:pre-line;line-height:1.9;font-size:14px;margin-top:20px">${esc(c.body)}</p><div class="notice" style="margin:22px 0 0">内容仅属于 ${esc(org().name)} 的成员工作区。原型数据为虚构示例。</div>`,`<button class="btn" data-action="close">关闭</button>`);
+  }
+  function inviteAcceptanceModal(id){
+    const i=org().invites.find(x=>x.id===id);if(!i)return;
+    modal("受邀人处理邀请",`用户侧流程演示 · ${org().name}`,`<div class="notice">受邀加入 ${esc(org().name)}，角色为 ${esc(i.role)}。接受后会得到该机构下独立的成员工作区。</div><label class="field">验证受邀手机号 *<input id="acceptPhone" inputmode="numeric" maxlength="11" placeholder="请输入受邀手机号"><small>演示阶段以输入一致代替短信验证；正式产品必须由统一账号中心核验。</small></label><label style="display:flex;gap:9px;align-items:start;font-size:13px;line-height:1.7"><input type="checkbox" id="acceptConsent" style="margin-top:4px"><span>我已了解：机构有权管理员可按授权查看我在该机构工作区的对话请求、生成素材和分享链接；个人及其他机构工作区不在此范围。</span></label>`,`<button class="btn" data-action="close">稍后处理</button><button class="btn danger" data-action="reject-invite" data-id="${id}">拒绝</button><button class="btn primary" data-action="confirm-accept" data-id="${id}">接受邀请</button>`);
+  }
+  $("#nav").addEventListener("click",e=>{const b=e.target.closest("[data-page]");if(b){state.page=b.dataset.page;state.query="";$("#side").classList.remove("open");render()}});
+  $("#mobileToggle").onclick=()=>$("#side").classList.toggle("open");
+  $("#orgSelect").onchange=e=>{state.org=Number(e.target.value);state.page="overview";state.query="";state.contentQuery="";state.auditQuery="";state.memberTab="members";render();toast("已切换当前管理机构")};
+  $("#closeModal").onclick=close;
+  $("#view").addEventListener("click",e=>{
+    const b=e.target.closest("button");if(!b)return;
+    if(b.dataset.page){state.page=b.dataset.page;if(b.dataset.tab)state.memberTab=b.dataset.tab;render();return}
+    if(b.dataset.memberTab){state.memberTab=b.dataset.memberTab;state.query="";render();return}
+    if(b.dataset.contentType){state.contentType=b.dataset.contentType;render();return}
+    const a=b.dataset.action,id=b.dataset.id;
+    if(a==="invite"){inviteModal();return}
+    if(a==="member-detail"){memberModal(id);return}
+    if(a==="content-detail"){contentModal(id);return}
+    if(a==="toggle-member"){
+      const m=org().members.find(x=>x.id===id),to=m.status==="正常"?"已禁用":"正常";
+      if(!confirm(`确认${to==="已禁用"?"禁用":"启用"} ${m.name}？`))return;
+      m.status=to;audit(to==="正常"?"启用成员":"禁用成员",m.name);render();toast(`${m.name} 已${to==="正常"?"启用":"禁用"}`);return;
+    }
+    if(a==="remove-member"){
+      const m=org().members.find(x=>x.id===id);
+      if(!confirm(`确认移除 ${m.name}？成员将从默认列表隐藏，机构内容与审计记录保留。`))return;
+      m.status="已移除";audit("移除成员",m.name);render();toast("成员已移除，历史记录保留");return;
+    }
+    if(a==="cancel-invite"){
+      const i=org().invites.find(x=>x.id===id);
+      if(!confirm(`取消发给 ${i.name} 的邀请？预留席位将释放。`))return;
+      i.status="已取消";audit("取消成员邀请",i.name);render();toast("邀请已取消");return;
+    }
+    if(a==="accept"){
+      inviteAcceptanceModal(id);return;
+    }
+    if(a==="switch-workspace"){
+      state.workspace=id;try{localStorage.setItem("alice-demo-workspace",id)}catch{}
+      render();toast("已切换工作区；刷新后仍保留当前选择");return;
+    }
+    if(a==="save-permissions"){
+      document.querySelectorAll("[data-perm-group]").forEach(x=>org()[x.dataset.permGroup==="admin"?"adminPerm":"memberPerm"][x.dataset.perm]=x.checked);
+      audit("修改角色权限","Admin / Member 模板");render();toast("演示配置已保存");return;
+    }
+  });
+  $("#view").addEventListener("input",e=>{const map={memberSearch:"query",contentSearch:"contentQuery",auditSearch:"auditQuery"};if(map[e.target.id]){const pos=e.target.selectionStart;state[map[e.target.id]]=e.target.value;render();const input=$("#"+e.target.id);input.focus();input.setSelectionRange(pos,pos)}});
+  $("#view").addEventListener("change",e=>{if(e.target.id==="memberFilter"){state.memberFilter=e.target.value;render()}if(e.target.id==="inviteFilter"){state.inviteFilter=e.target.value;render()}});
+  $("#modal").addEventListener("click",e=>{
+    const b=e.target.closest("button[data-action]");if(!b)return;const a=b.dataset.action,id=b.dataset.id;
+    if(a==="close"){close();return}
+    if(a==="edit-member"){close();editModal(id);return}
+    if(a==="save-member"){
+      const m=org().members.find(x=>x.id===id),name=$("#editName").value.trim();if(!name){toast("请填写机构内姓名");$("#editName").focus();return}
+      m.name=name;m.email=$("#editEmail").value.trim();m.dept=$("#editDept").value.trim();if($("#editRole"))m.role=$("#editRole").value;
+      audit("编辑成员资料",m.name);close();render();toast("成员资料已更新");return;
+    }
+    if(a==="submit-invite"){
+      const phone=$("#invitePhone").value.trim(),name=$("#inviteName").value.trim(),email=$("#inviteEmail").value.trim(),dept=$("#inviteDept").value.trim();
+      if(!/^1\d{10}$/.test(phone)){toast("请输入有效的 11 位手机号");$("#invitePhone").focus();return}
+      if(!name){toast("请填写机构内姓名");$("#inviteName").focus();return}
+      if(available()<=0){toast("没有可预留席位");return}
+      if(org().members.some(x=>x.phone===phone&&x.status!=="已移除")||org().invites.some(x=>x.phone===phone&&x.status==="待接受")){toast("该手机号已是本机构成员或有待接受邀请");return}
+      const sent=new Date(),expires=new Date(sent.getTime()+7*864e5);
+      org().invites.unshift({id:"i"+Date.now(),phone,name,email,dept,role:"Member",status:"待接受",sent:sent.toISOString().slice(0,10),expires:expires.toISOString().slice(0,10)});
+      audit("发起成员邀请",name);state.page="members";state.memberTab="invites";state.query="";close();render();toast("邀请已创建，席位已预留（演示）");
+    }
+    if(a==="confirm-accept"){
+      const i=org().invites.find(x=>x.id===id);
+      if($("#acceptPhone").value.trim()!==i.phone){toast("手机号与邀请目标不一致");$("#acceptPhone").focus();return}
+      if(!$("#acceptConsent").checked){toast("请先阅读并确认机构内容告知");return}
+      i.status="已接受";org().members.push({id:"m"+Date.now(),name:i.name,phone:i.phone,email:i.email||"",dept:i.dept||"",role:"Member",status:"正常",joined:new Date().toISOString().slice(0,10),last:"—"});
+      audit("受邀用户接受",i.name);close();render();toast("邀请已接受，预留转为正式占用（演示）");return;
+    }
+    if(a==="reject-invite"){
+      const i=org().invites.find(x=>x.id===id);
+      if(!confirm(`确认拒绝 ${org().name} 的邀请？`))return;
+      i.status="已拒绝";audit("受邀用户拒绝",i.name);close();render();toast("邀请已拒绝，预留席位已释放");return;
+    }
+  });
+  render();
+})();
+</script>
+</body>
+</html>

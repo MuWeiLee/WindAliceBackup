@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>万得 · 机构工作台</title>
+  <style>
+    :root{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1c2939;background:#f3f6fa;font-size:13px;--line:#e2e8f0;--muted:#6c7e91;--blue:#2563eb;--pale:#eaf2ff;--red:#c93838}
+    *{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:#fff;border-right:1px solid var(--line);padding:26px 16px 14px;display:flex;flex-direction:column}.brand{display:flex;align-items:center;gap:12px;padding:0 11px 24px;font-size:18px;font-weight:750}.logo{width:34px;height:34px;border-radius:8px;background:#1c5aaf;color:#fff;display:grid;place-items:center;font:800 23px Georgia,serif;letter-spacing:-.12em;padding-right:3px}.org{border:1px solid var(--line);background:#f8fafc;border-radius:10px;padding:12px 14px;margin:0 4px 18px}.org small{display:block;color:#8293a6;font-size:10px;margin-bottom:7px}.org b{font-size:13px;color:#29415e}.caption,.nav-group{color:#8a99aa;font-size:11px;font-weight:700;padding:4px 13px 8px}.nav{flex:1;overflow:auto;min-height:0}.nav-group{padding-top:18px}.nav-btn{width:100%;height:42px;text-align:left;border:0;background:transparent;border-radius:9px;padding:0 13px;color:#5b6c80;font-weight:600}.nav-btn:hover{background:#f1f6fc;color:#19487f}.nav-btn.active{background:var(--pale);color:#1457b4;font-weight:730;border-left:3px solid var(--blue);padding-left:10px}.account-slot{border-top:1px solid var(--line);padding-top:13px}.account{width:100%;display:flex;gap:10px;align-items:center;border:0;background:#fff;text-align:left;padding:8px 9px;border-radius:9px}.account:hover,.account[aria-expanded=true]{background:#f1f5fa}.avatar{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#e8eff8;color:#315b8e;font-weight:750}.account b,.account small{display:block}.account small{font-size:10px;color:#8a98a9;margin-top:3px}.account-more{margin-left:auto;color:#8a98a9}.main{min-width:0}.topbar{position:sticky;top:0;z-index:3;height:72px;background:#fff;border-bottom:1px solid var(--line);padding:0 38px;display:flex;align-items:center;justify-content:space-between;gap:14px}.crumb{color:#8a99aa;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crumb b{color:#25354a}.top-action{display:flex;gap:8px}.view{max-width:1510px;margin:0 auto;padding:32px 38px 80px}.page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.page-head h1{margin:0;font-size:26px;font-weight:755;letter-spacing:-.04em}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 8px #1e345005}.pad{padding:22px}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:17px}.toolbar .search{min-width:220px;flex:1}.toolbar .count{color:#8a99aa;font-size:12px;margin-left:auto}.input,.select{height:36px;border:1px solid #cdd7e3;border-radius:8px;background:#fff;padding:0 11px;color:#26384e;outline:none}.input:focus,.select:focus{border-color:#4d8bdf;box-shadow:0 0 0 3px #2563eb1c}.btn{min-height:36px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;border:1px solid #cdd7e3;border-radius:8px;background:#fff;color:#34465b;padding:0 13px;font-size:12px;font-weight:650}.btn:hover{background:#f5f9ff;border-color:#a9c1df}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.primary:hover{background:#1d54ce}.btn.danger{color:var(--red);border-color:#efcbcb}.btn.danger:hover{background:#fff5f4}.btn.tiny{min-height:30px;padding:0 9px}.btn.ghost{border-color:transparent;background:transparent}.btn:focus-visible,.nav-btn:focus-visible,.account:focus-visible{outline:2px solid #397ee0;outline-offset:2px}.table-wrap{overflow:auto;scrollbar-width:thin}.table{border-collapse:collapse;width:100%;min-width:760px}.table th{background:#f6f9fc;color:#65788e;text-align:left;font-size:11px;font-weight:700;white-space:nowrap;padding:14px 15px;border-bottom:1px solid var(--line)}.table td{padding:15px;color:#42546a;border-bottom:1px solid #edf1f5;vertical-align:top}.table tr:last-child td{border-bottom:0}.table tbody tr:hover td{background:#f8fbff}.table td.name{font-weight:720;color:#1d324a}.row-actions{display:flex;align-items:center;gap:6px;white-space:nowrap}.mono{font-variant-numeric:tabular-nums}.muted{color:var(--muted)}.pill{display:inline-flex;padding:5px 8px;border-radius:6px;background:#f1f4f8;color:#607185;font-size:11px;font-weight:700;white-space:nowrap}.pill.green{color:#15815d;background:#e8f6ef}.pill.gray{color:#66768a;background:#eef1f4}.summary-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}.metric{padding:19px 20px;min-height:111px}.metric span{font-size:12px;color:#687b91}.metric strong{display:block;margin-top:22px;font-size:30px;line-height:1;font-weight:735;color:#182a40}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px}.section-title h2{margin:0;font-size:15px;color:#24364d}.section-title small{color:#8a99aa}.section-gap{margin-top:16px}.empty{padding:46px 16px;text-align:center;color:#93a1b1;line-height:1.7}.empty b{display:block;color:#42566d;font-size:14px;margin-bottom:4px}.short-text{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.link-text{color:#2462b6;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-2px 0 18px}.tab{border:0;background:none;padding:0 17px 12px;color:#6b7e92;font-weight:650}.tab.active{color:#1457b4;border-bottom:2px solid var(--blue)}.tag-list{display:flex;gap:5px;flex-wrap:wrap}.tag{padding:3px 7px;border-radius:5px;background:#f1f4f8;color:#607185;font-size:11px}.snapshot{margin-bottom:16px;padding:12px 15px;background:#f8fafc;border:1px solid var(--line);border-radius:9px;color:#667a90;font-size:12px}.modal{width:min(500px,calc(100vw - 26px));max-height:calc(100vh - 30px);border:1px solid #dce5ef;border-radius:15px;padding:0;box-shadow:0 25px 80px #1228423d}.modal::backdrop{background:#172a4380}.modal-head{padding:21px 22px 14px;border-bottom:1px solid var(--line)}.modal-head h2{margin:0;font-size:18px}.modal-head p{font-size:12px;color:#8293a6;margin:7px 0 0;line-height:1.5}.modal-head p:empty{display:none}.modal-body{padding:20px 22px;max-height:65vh;overflow:auto}.modal-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:#f8fafc}.field{display:grid;gap:7px;margin-bottom:15px}.field label{font-size:12px;font-weight:700;color:#53667d}.field .input,.field .select{width:100%}.detail-row{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}.detail-row span{color:#8191a5}.detail-row b{font-weight:600}.toast{position:fixed;right:24px;bottom:24px;background:#243b56;color:white;border-radius:9px;padding:11px 15px;box-shadow:0 12px 28px #15294030;opacity:0;transform:translateY(8px);transition:.2s;z-index:10;pointer-events:none}.toast.show{opacity:1;transform:none}.account-menu{position:fixed;z-index:8;width:215px;padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff;box-shadow:0 16px 38px #17334d24}.account-menu[hidden]{display:none}.account-menu button{width:100%;height:34px;border:0;background:#fff;text-align:left;padding:0 10px;border-radius:7px;color:#42566d}.account-menu button:hover{background:#f2f6fb}.mobile-trigger,.mobile-nav{display:none}
+    .mobile-account{display:none}
+    .input[readonly]{background:#f5f7fa;color:#63778d;cursor:default}
+    .view{padding-top:24px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .seat-overview{margin-bottom:16px}.seat-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.seat-card{padding:18px 19px 15px;min-width:0}.seat-card.is-active{border-color:#8db6ef;box-shadow:0 0 0 2px #2563eb17}.seat-card h3,.seat-card-heading{display:block;margin:0;color:#40546b;font-size:13px;font-weight:700}.seat-card-value{display:flex;align-items:baseline;gap:5px;margin-top:18px;color:#1d324a;font-variant-numeric:tabular-nums;white-space:nowrap}.seat-card-value strong{font-size:28px;line-height:1;font-weight:750}.seat-card-value span{font-size:18px;color:#8292a4}.seat-card-caption{display:block;margin-top:5px;color:#8796a6;font-size:11px}.seat-card-main{display:block;width:100%;padding:0;border:0;background:transparent;text-align:left}.seat-card-main:hover .seat-card-heading,.seat-card-main:hover strong{color:#1457b4}.seat-card-foot{display:flex;justify-content:space-between;gap:8px;width:100%;margin-top:15px;padding:12px 0 0;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;color:#697d92;font-size:12px}.seat-card-foot b{color:#244b77;font-weight:750;font-variant-numeric:tabular-nums}.seat-card-foot:not(:disabled):hover,.seat-card-foot.is-active{color:#1457b4}.seat-card-foot:not(:disabled):hover b,.seat-card-foot.is-active b{color:#1457b4}.seat-card-main:focus-visible,.seat-card-foot:focus-visible{outline:2px solid #397ee0;outline-offset:3px}.seat-member-card .seat-card-caption{white-space:normal}
+    .seat-conflict{margin-bottom:16px;padding:12px 15px;border:1px solid #f0d69a;border-radius:9px;background:#fff9eb;color:#76531e;line-height:1.6}.seat-conflict strong{color:#684512}.pill.warning{background:#fff1cf;color:#8a5a0d}
+    .dialog-scope{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#f8fafc;color:#6d7e90;font-size:12px}.dialog-scope strong{color:#253b55;font-size:13px}.dialog-scope .count{margin-left:auto;color:#687b91}
+    .dialog-picker{position:relative;width:min(520px,100%)}.dialog-picker-input{width:100%;padding-right:32px}.dialog-picker-arrow{position:absolute;right:13px;top:9px;color:#74869b;pointer-events:none;font-size:15px;line-height:18px}.dialog-options{position:absolute;top:calc(100% + 6px);left:0;z-index:6;width:100%;max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding:5px;border:1px solid #cdd7e3;border-radius:9px;background:#fff;box-shadow:0 15px 36px #1e345024}.dialog-options[hidden]{display:none}.dialog-option{display:block;width:100%;border:0;border-radius:6px;background:#fff;text-align:left;padding:9px 10px;color:#273b52}.dialog-option:hover,.dialog-option.active{background:#eef4fc}.dialog-option[aria-selected=true]{color:#1457b4}.dialog-option:focus-visible{outline:2px solid #397ee0;outline-offset:-2px}.dialog-option strong,.dialog-option small{display:block}.dialog-option strong{font-size:12px}.dialog-option small{margin-top:4px;color:#7b8ca0;font-size:11px}.dialog-no-options{padding:14px 10px;color:#7b8ca0}
+    .dialog-filters{gap:12px}.dialog-filters .dialog-picker{flex:1 1 320px;width:auto;min-width:220px}.dialog-time{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dialog-time-label{color:#62758c;white-space:nowrap}.dialog-time .input[type=date]{width:148px}.period-switch{display:inline-flex;align-items:stretch;height:36px;border:1px solid #cdd7e3;border-radius:8px;overflow:hidden;background:#fff}.period-btn{border:0;border-right:1px solid #e3e9f0;background:#fff;color:#52667e;padding:0 12px;white-space:nowrap;font-size:12px;font-weight:650}.period-btn:last-child{border-right:0}.period-btn:hover{background:#f5f9ff;color:#1558af}.period-btn[aria-pressed=true]{background:#eaf2ff;color:#1457b4}.period-btn:focus-visible{outline:2px solid #397ee0;outline-offset:-2px}
+    .detail-drawer{position:fixed;inset:0 0 0 auto;width:min(600px,100vw);height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-left:1px solid var(--line);background:#fff;box-shadow:-18px 0 48px #17334d26;color:#1c2939}.detail-drawer[open]{display:flex;flex-direction:column}.detail-drawer::backdrop{background:#172a4366}.detail-drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:25px 28px 20px;border-bottom:1px solid var(--line)}.detail-drawer-head h2{margin:0;font-size:18px}.detail-drawer-head p{margin:9px 0 0;color:#7c8da0;font-size:12px}.detail-drawer-body{min-height:0;overflow:auto;padding:24px 28px 32px}.detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}.detail-meta span{padding:5px 8px;border-radius:6px;background:#f3f6fa;color:#63778d;font-size:11px}.qa-section{margin-bottom:20px}.qa-section h3{margin:0 0 9px;color:#65788e;font-size:12px;font-weight:700}.qa-content{padding:16px 18px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:#2d4056;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.qa-section.output .qa-content{background:#fff}.detail-files{display:flex;gap:7px;flex-wrap:wrap}.detail-drawer .close-detail{min-width:34px;width:34px;height:34px;padding:0;font-size:19px;line-height:1}
+    @media(max-width:1150px){.seat-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:950px){.app{grid-template-columns:210px minmax(0,1fr)}.topbar{padding:0 24px}.view{padding:24px 24px 60px}}
+    @media(max-width:760px){.app{display:block}.sidebar{display:none}.topbar{height:62px;padding:0 16px}.view{padding:24px 16px 55px}.page-head h1{font-size:23px}.summary-cards{grid-template-columns:1fr 1fr}.metric{min-height:95px}.metric strong{margin-top:16px}.mobile-trigger,.mobile-account{display:inline-flex;margin-right:8px}.mobile-nav:not([hidden]){display:flex;overflow:auto;gap:5px;padding:8px 15px;background:#fff;border-bottom:1px solid var(--line)}.mobile-nav .nav-btn{width:auto;white-space:nowrap;padding:0 10px;height:36px}.mobile-nav .nav-btn.active{padding-left:8px}.mobile-nav .nav-group{display:none}.toolbar .search{min-width:100%}.toolbar .count{margin-left:0}}
+    @media(max-width:450px){.summary-cards,.seat-summary{grid-template-columns:1fr}.topbar .btn.primary{padding:0 9px;font-size:11px}.crumb span{display:none}.period-btn{padding:0 8px}.detail-drawer-head{padding:20px 18px 16px}.detail-drawer-body{padding:20px 18px 28px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><span class="logo" aria-hidden="true">W</span>机构工作台</div>
+      <div class="org"><small>当前机构</small><b>万得</b></div>
+      <div class="caption">功能菜单</div>
+      <nav class="nav" id="nav" aria-label="功能菜单"></nav>
+      <div class="account-slot"><button class="account" id="accountTrigger" type="button" aria-expanded="false" aria-controls="accountMenu"><span class="avatar">林</span><span><b>林依然</b><small>机构 Owner</small></span><span class="account-more">···</span></button></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb"><button class="btn tiny mobile-trigger" id="mobileTrigger" aria-label="打开功能菜单">菜单</button><span>机构工作台　/　</span><b id="crumb">成员管理</b></div><div class="top-action" id="topAction"></div><button class="btn tiny mobile-account" id="mobileAccountTrigger" aria-label="账号信息" aria-expanded="false" aria-controls="accountMenu">林</button></header>
+      <nav class="mobile-nav" id="mobileNav" aria-label="移动端功能菜单" hidden></nav>
+      <div class="view" id="view"></div>
+    </main>
+  </div>
+  <div class="account-menu" id="accountMenu" hidden><button type="button" data-action="account-info">账号信息</button></div>
+  <dialog class="modal" id="modal"><div class="modal-head"><h2 id="modalTitle"></h2><p id="modalDescription"></p></div><div class="modal-body" id="modalBody"></div><div class="modal-foot" id="modalFoot"></div></dialog>
+  <dialog class="detail-drawer" id="dialogDetail" aria-labelledby="dialogDetailTitle"><div class="detail-drawer-head"><div><h2 id="dialogDetailTitle">对话详情</h2><p id="dialogDetailSubtitle"></p></div><button class="btn close-detail" type="button" data-action="close-dialog-detail" aria-label="关闭对话详情">×</button></div><div class="detail-drawer-body" id="dialogDetailBody"></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    (() => {
+      "use strict";
+      const STORAGE="wind-alice-workbench-current-scope-v1";
+      const seed={
+        members:[
+          {id:"u001",phone:"13800138000",name:"林依然",email:"lin@example.com",createdAt:"2026-10-09 09:00",status:"enabled",owner:true},
+          {id:"u002",phone:"13900139001",name:"张澄",email:"zhang@example.com",createdAt:"2026-10-10 10:36",status:"enabled"},
+          {id:"u003",phone:"13700137002",name:"陈遥",email:"chen@example.com",createdAt:"2026-10-10 14:08",status:"enabled"},
+          {id:"u004",phone:"13600136003",name:"王知秋",email:"wang@example.com",createdAt:"2026-10-11 11:12",status:"enabled"},
+          {id:"u005",phone:"13500135004",name:"李沐",email:"li@example.com",createdAt:"2026-10-11 16:42",status:"disabled"}
+        ],
+        seatTypes:[{id:"basic",name:"基础版"},{id:"pro",name:"专业版"},{id:"advanced",name:"高级版"},{id:"premium",name:"尊享版"}],
+        seats:[
+          {id:"JC-001",typeId:"basic",points:780,expiresAt:"2027-09-30",memberId:"u003"},
+          {id:"JC-002",typeId:"basic",points:560,expiresAt:"2027-09-30",memberId:"u004"},
+          {id:"JC-003",typeId:"basic",points:920,expiresAt:"2027-09-30",memberId:"u005"},
+          {id:"JC-004",typeId:"basic",points:1000,expiresAt:"2027-09-30",memberId:null},
+          {id:"ZY-001",typeId:"pro",points:1680,expiresAt:"2027-09-30",memberId:null},
+          {id:"ZY-002",typeId:"pro",points:1235,expiresAt:"2027-09-30",memberId:"u002"},
+          {id:"ZY-003",typeId:"pro",points:340,expiresAt:"2027-09-30",memberId:null},
+          {id:"GJ-001",typeId:"advanced",points:3000,expiresAt:"2027-09-30",memberId:null},
+          {id:"GJ-002",typeId:"advanced",points:3000,expiresAt:"2027-09-30",memberId:null},
+          {id:"ZX-001",typeId:"premium",points:5000,expiresAt:"2027-09-30",memberId:null}
+        ],
+        dialogues:[
+          {id:"d1",at:"2026-10-13 10:24",userId:"u002",input:"梳理半导体行业近期变化。",output:"已形成行业变化摘要，并列出需要进一步核实的数据。",files:["半导体行业资料.pdf"]},
+          {id:"d2",at:"2026-10-13 15:08",userId:"u002",input:"整理四季度策略路演提纲。",output:"已生成包含市场环境、行业比较与风险提示的提纲。",files:["路演提纲.docx","图表数据.xlsx"]},
+          {id:"d3",at:"2026-10-13 16:42",userId:"u003",input:"比较两家公司的收入增速。",output:"已列出两家公司近三年的收入增速及比较要点。",files:[]},
+          {id:"d4",at:"2026-10-14 08:15",userId:"u004",input:"生成基金产品介绍摘要。",output:"已汇总产品定位、风险等级及关键说明。",files:["产品资料.pdf"]},
+          {id:"d5",at:"2026-10-14 09:40",userId:"u002",input:"请根据上传的材料，整理本周产品评审需要确认的问题。",output:"已整理评审问题清单：\n1. 目标用户和使用场景是否已明确；\n2. 页面中的关键操作是否都有反馈；\n3. 权限与数据范围是否和当前机构一致。\n建议在评审会上逐项确认负责人及截止时间。",files:["产品评审材料.pdf"]},
+          {id:"d6",at:"2026-10-13 18:20",userId:"u002",input:"把今天的客户反馈按问题类型归类。",output:"已将反馈归为功能使用、数据理解、性能体验和权限配置四类，并为每类整理了待核查事项。此内容为演示结果，请以实际反馈记录为准。",files:["客户反馈汇总.xlsx"]},
+          {id:"d7",at:"2026-10-12 10:36",userId:"u002",input:"基于资料写一版产品更新公告，重点说明用户能做什么。",output:"产品更新公告草稿：\n本次更新优化了成员查询和使用记录查看流程。管理人员可更快定位单个成员，并核查其在指定时间内的相关记录。\n发布前请补充上线日期、适用范围和支持渠道。",files:["更新说明.docx"]},
+          {id:"d8",at:"2026-10-10 16:10",userId:"u002",input:"列出新成员加入机构工作台后的关键引导步骤。",output:"建议引导顺序为：确认机构身份、补全成员信息、查看席位分配、了解可访问的机构内容，并在首次使用时提示求助入口。",files:[]},
+          {id:"d9",at:"2026-10-14 09:20",userId:"u003",input:"对比两版首页方案的主要差异和待验证点。",output:"已按信息层级、首屏任务、操作路径和异常状态四个维度对比两版方案。\n待验证点包括：用户是否能快速找到核心入口，以及卡片信息是否足以支持下一步决策。",files:["首页方案A.pdf","首页方案B.pdf"]},
+          {id:"d10",at:"2026-10-13 11:30",userId:"u003",input:"梳理对话记录详情页需要展示的信息。",output:"详情页建议优先展示提问时间、用户、完整输入、完整输出与关联文件。若未来提供执行日志，应与本期问答内容分区，避免混淆。",files:[]},
+          {id:"d11",at:"2026-10-11 15:25",userId:"u003",input:"检查这份页面文案是否存在重复表达。",output:"发现标题与说明段落重复描述同一能力。建议保留简短标题，并把说明调整为用户完成任务所需的下一步提示。",files:["页面文案.docx"]},
+          {id:"d12",at:"2026-10-14 08:55",userId:"u004",input:"根据上传资料整理基金产品常见问题。",output:"已整理常见问题初稿，覆盖产品定位、适用人群、风险提示和资料获取方式。\n所有涉及产品条款的表述均需回到正式文件复核后再对外使用。",files:["产品资料.pdf","常见问题初稿.docx"]},
+          {id:"d13",at:"2026-10-13 13:10",userId:"u004",input:"给销售同事整理一页客户沟通提纲。",output:"提纲分为客户目标、当前痛点、产品能力匹配、演示路径与后续跟进五部分。建议沟通结束后记录客户尚未解决的问题。",files:["客户沟通提纲.docx"]},
+          {id:"d14",at:"2026-10-11 14:00",userId:"u004",input:"将会议纪要提炼成待办事项。",output:"已提炼出需求确认、原型评审、演示数据准备三类待办，并标记了需补充负责人的项目。",files:["会议纪要.pdf"]},
+          {id:"d15",at:"2026-10-13 14:20",userId:"u001",input:"汇总本期机构工作台待确认的管理规则。",output:"待确认规则包括手机号唯一范围、节点管理员是否进入本期、成员停用后的会话处理，以及内容记录的保留与查看权限。",files:["需求讨论记录.docx"]},
+          {id:"d16",at:"2026-10-09 11:20",userId:"u001",input:"梳理机构成员与席位的管理边界。",output:"机构工作台负责成员维护和已采购席位的分配、释放；采购总量与订单由上游系统管理。停用成员保留席位，移除成员释放席位。",files:[]},
+          {id:"d17",at:"2026-10-13 09:10",userId:"u005",input:"整理三条新人培训要点。",output:"培训要点：先确认所在机构与访问范围，再了解常用功能入口，最后演示如何查看自己的使用记录和获取帮助。",files:["培训提纲.pdf"]},
+          {id:"d18",at:"2026-10-12 09:25",userId:"u005",input:"把这份操作说明改写得更容易理解。",output:"已将长段落拆为连续步骤，并把抽象术语替换为页面上可见的按钮名称。建议邀请首次使用者试读验证。",files:["操作说明.docx"]}
+        ],
+        shares:[
+          {id:"s1",at:"2026-10-13 17:12",userId:"u003",type:"Link 看板",link:"alice.wind.com/s/dashboard-4821"},
+          {id:"s2",at:"2026-10-13 16:35",userId:"u002",type:"Chat 对话",link:"alice.wind.com/s/chat-9164"},
+          {id:"s3",at:"2026-10-12 11:20",userId:"u004",type:"单文件",link:"alice.wind.com/s/file-2087"}
+        ],
+        downloads:[
+          {id:"w1",at:"2026-10-13 18:04",userId:"u002",link:"alice.wind.com/download/report-1032"},
+          {id:"w2",at:"2026-10-12 14:18",userId:"u003",link:"alice.wind.com/download/chart-7915"}
+        ],
+        points:[
+          {id:"p1",at:"2026-10-13 15:09",userId:"u002",type:"消耗",description:"生成四季度策略路演提纲",amount:-120},
+          {id:"p2",at:"2026-10-13 10:25",userId:"u002",type:"消耗",description:"半导体行业分析对话",amount:-65},
+          {id:"p3",at:"2026-10-12 09:00",userId:"u003",type:"发放",description:"机构席位积分发放",amount:1000},
+          {id:"p4",at:"2026-10-11 16:44",userId:"u004",type:"退回",description:"执行失败积分退回",amount:25}
+        ]
+      };
+      const pages=[["members","成员与席位","成员管理"],["seats","成员与席位","席位管理"],["dialogues","使用情况","对话内容"],["shares","使用情况","分享链接"],["downloads","使用情况","文件下载"],["points","积分","积分记录"]];
+      let data;try{data=JSON.parse(localStorage.getItem(STORAGE))||structuredClone(seed)}catch{data=structuredClone(seed)}
+      if(!Array.isArray(data.members))data=structuredClone(seed);
+      if(!Array.isArray(data.seats)){
+        const previousAssignments=Array.isArray(data.assignments)?data.assignments:[];
+        data.seatTypes=structuredClone(seed.seatTypes);
+        data.seats=structuredClone(seed.seats).map(item=>({...item,memberId:null}));
+        for(const assignment of previousAssignments){
+          const typeId=assignment.typeId==="standard"?"basic":assignment.typeId;
+          let slot=data.seats.find(item=>item.typeId===typeId&&!item.memberId);
+          if(!slot&&data.seatTypes.some(item=>item.id===typeId)){
+            const prefix={basic:"JC",pro:"ZY",advanced:"GJ",premium:"ZX"}[typeId];
+            slot={id:prefix+"-"+String(data.seats.filter(item=>item.typeId===typeId).length+1).padStart(3,"0"),typeId,points:null,expiresAt:"—",memberId:null};
+            data.seats.push(slot);
+          }
+          if(slot&&data.members.some(item=>item.id===assignment.memberId&&item.status!=="removed"))slot.memberId=assignment.memberId;
+        }
+        delete data.assignments;
+        localStorage.setItem(STORAGE,JSON.stringify(data));
+      }
+      if(!Array.isArray(data.dialogues))data.dialogues=structuredClone(seed.dialogues);
+      if(data.demoDialogueVersion!==2){
+        const existing=new Set(data.dialogues.map(item=>item.id));
+        for(const item of seed.dialogues.slice(4))if(!existing.has(item.id))data.dialogues.push(structuredClone(item));
+        data.demoDialogueVersion=2;
+        localStorage.setItem(STORAGE,JSON.stringify(data));
+      }
+      for(const item of data.members){item.accountId ||= item.id;item.joinedAt ||= item.createdAt}
+      for(const kind of ["dialogues","shares","downloads","points"])for(const record of data[kind]||[])record.membershipId ||= record.userId;
+      const ui={page:"members",memberKeyword:"",memberStatus:"all",seatKeyword:"",seatType:"all",seatStatus:"all",dialogUser:"",dialogQuery:"",dialogPickerOpen:false,dialogActiveIndex:0,dialogPeriod:"7d",dialogStart:"",dialogEnd:"",pointUser:"all"};
+      const $=selector=>document.querySelector(selector);
+      const esc=value=>String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+      const member=id=>data.members.find(item=>item.id===id);
+      const seat=id=>data.seatTypes.find(item=>item.id===id);
+      const activeMembers=()=>data.members.filter(item=>item.status!=="removed");
+      const unassignedMembers=()=>activeMembers().filter(item=>!data.seats.some(slot=>slot.memberId===item.id));
+      const assignableMembers=()=>unassignedMembers().filter(item=>item.status==="enabled");
+      const duplicateSeatHolders=()=>activeMembers().map(item=>({member:item,slots:data.seats.filter(slot=>slot.memberId===item.id)})).filter(item=>item.slots.length>1);
+      const assignedCount=typeId=>data.seats.filter(item=>item.typeId===typeId&&item.memberId).length;
+      const seatPoints=item=>Number.isFinite(item.points)?item.points.toLocaleString("zh-CN"):"—";
+      const fmt=value=>new Date(value).toLocaleString("zh-CN",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).replaceAll("/","-");
+      const save=()=>localStorage.setItem(STORAGE,JSON.stringify(data));
+      const toast=message=>{const el=$("#toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),2500)};
+      const newId=prefix=>prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+      const options=(list,current,value,label)=>list.map(item=>`<option value="${esc(value(item))}" ${value(item)===current?"selected":""}>${esc(label(item))}</option>`).join("");
+      function showModal(title,description,body,foot){$("#modalTitle").textContent=title;$("#modalDescription").textContent=description||"";$("#modalBody").innerHTML=body;$("#modalFoot").innerHTML=foot;$("#modal").showModal()}
+      function closeModal(){$("#modal").close()}
+      function confirmAction(title,description,callback){showModal(title,description,"",'<button class="btn" data-action="close-modal">取消</button><button class="btn danger" id="confirmModal">确认</button>');$("#confirmModal").onclick=()=>{closeModal();callback()}}
+      function top(title,action=""){$("#crumb").textContent=title;$("#topAction").innerHTML=action;return `<h1 class="sr-only">${esc(title)}</h1>`}
+      function nav(){
+        let group="",markup="";
+        for(const [id,section,label] of pages){if(section!==group){markup+=`<div class="nav-group">${esc(section)}</div>`;group=section}markup+=`<button class="nav-btn ${ui.page===id?"active":""}" data-page="${id}" ${ui.page===id?'aria-current="page"':""}>${esc(label)}</button>`}
+        $("#nav").innerHTML=markup;$("#mobileNav").innerHTML=markup;
+      }
+      function render(){nav();({members:renderMembers,seats:renderSeats,dialogues:renderDialogues,shares:renderShares,downloads:renderDownloads,points:renderPoints}[ui.page]||renderMembers)()}
+      function renderMembers(){
+        const q=ui.memberKeyword.toLowerCase();
+        const current=activeMembers();
+        const list=current.filter(item=>(ui.memberStatus==="all"||item.status===ui.memberStatus)&&(!q||[item.phone,item.name,item.email].join(" ").toLowerCase().includes(q)));
+        $("#view").innerHTML=top("成员管理",'<button class="btn primary" data-action="add-member">+ 新增成员</button>')+
+        `<div class="summary-cards"><section class="panel metric"><span>成员总数</span><strong class="mono">${current.length}</strong></section><section class="panel metric"><span>启用成员</span><strong class="mono">${current.filter(item=>item.status==="enabled").length}</strong></section><section class="panel metric"><span>停用成员</span><strong class="mono">${current.filter(item=>item.status==="disabled").length}</strong></section></div>`+
+        `<section class="panel pad"><div class="toolbar"><input class="input search" id="memberSearch" aria-label="搜索成员" placeholder="搜索手机号、人名或邮箱" value="${esc(ui.memberKeyword)}"><select class="select" id="memberStatus" aria-label="成员状态"><option value="all">全部状态</option><option value="enabled" ${ui.memberStatus==="enabled"?"selected":""}>启用</option><option value="disabled" ${ui.memberStatus==="disabled"?"selected":""}>停用</option></select><span class="count">共 ${list.length} 人</span></div><div class="table-wrap"><table class="table"><thead><tr><th>人名</th><th>手机号</th><th>邮箱</th><th>加入时间</th><th>状态</th><th>操作</th></tr></thead><tbody>${list.map(item=>`<tr><td class="name">${esc(item.name)}</td><td class="mono">${esc(item.phone)}</td><td>${esc(item.email||"—")}</td><td class="mono">${esc(item.joinedAt)}</td><td><span class="pill ${item.status==="enabled"?"green":"gray"}">${item.status==="enabled"?"启用":"停用"}</span></td><td><div class="row-actions"><button class="btn tiny" data-action="edit-member" data-id="${item.id}">编辑</button>${item.owner?'<span class="muted">机构 Owner</span>':`<button class="btn tiny" data-action="toggle-member" data-id="${item.id}">${item.status==="enabled"?"停用":"启用"}</button><button class="btn tiny danger" data-action="remove-member" data-id="${item.id}">移除</button>`}</div></td></tr>`).join("")||'<tr><td colspan="6"><div class="empty"><b>没有符合条件的成员</b>请调整搜索词或状态筛选。</div></td></tr>'}</tbody></table></div></section>`;
+        $("#memberSearch").oninput=event=>{const pos=event.target.selectionStart;ui.memberKeyword=event.target.value;renderMembers();$("#memberSearch").focus();$("#memberSearch").setSelectionRange(pos,pos)};
+        $("#memberStatus").onchange=event=>{ui.memberStatus=event.target.value;renderMembers()};
+      }
+      function memberForm(id){
+        const item=id?member(id):null;if(item?.status==="removed")return toast("成员已移除");
+        showModal(item?"编辑成员":"新增成员","",`<form id="memberForm"><div class="field"><label for="memberPhone">手机号 ${item?"":"*"}</label><input class="input" id="memberPhone" name="phone" required inputmode="numeric" pattern="1[0-9]{10}" title="请输入 11 位手机号" value="${esc(item?.phone||"")}" ${item?"readonly aria-readonly='true'":""}>${item?'<small class="muted">手机号不可在机构工作台修改</small>':""}</div><div class="field"><label for="memberName">人名 *</label><input class="input" id="memberName" name="name" required maxlength="30" value="${esc(item?.name||"")}"></div><div class="field"><label for="memberEmail">邮箱</label><input class="input" id="memberEmail" name="email" type="email" value="${esc(item?.email||"")}"></div></form>`,'<button class="btn" data-action="close-modal">取消</button><button class="btn primary" id="saveMember">保存</button>');
+        $("#saveMember").onclick=()=>{
+          const form=$("#memberForm");if(!form.reportValidity())return;
+          const values=Object.fromEntries(new FormData(form).entries());const phone=item?item.phone:values.phone.trim(),name=values.name.trim(),email=values.email.trim();
+          if(!name)return toast("请填写人名");
+          if(data.members.some(other=>other.id!==id&&other.status!=="removed"&&other.phone===phone))return toast("手机号已存在");
+          const prior=data.members.find(other=>other.status==="removed"&&other.phone===phone);
+          if(item)Object.assign(item,{name,email});
+          else data.members.push({id:newId("r"),accountId:prior?.accountId||newId("u"),phone,name,email,joinedAt:fmt(new Date()),status:"enabled"});
+          save();closeModal();render();toast(item?"成员信息已更新":prior?"已建立新的机构成员关系":"成员已新增");
+        };
+      }
+      function renderSeats(){
+        const q=ui.seatKeyword.toLowerCase();
+        const duplicateHolders=duplicateSeatHolders(),duplicateIds=new Set(duplicateHolders.map(item=>item.member.id));
+        const list=data.seats.filter(item=>(ui.seatType==="all"||item.typeId===ui.seatType)&&(ui.seatStatus==="all"||(ui.seatStatus==="assigned")===!!item.memberId)&&(!q||[item.id,seat(item.typeId)?.name,member(item.memberId)?.name,member(item.memberId)?.phone].join(" ").toLowerCase().includes(q)));
+        $("#view").innerHTML=top("席位管理",'<button class="btn primary" data-action="request-seat-adjustment">发起席位调整</button>')+
+        (duplicateHolders.length?`<div class="seat-conflict" role="status"><strong>发现 ${duplicateHolders.length} 名成员重复占用付费席位</strong><br>${duplicateHolders.map(item=>`${esc(item.member.name)}：${item.slots.map(slot=>esc(slot.id)).join("、")}`).join("；")}。请核对后在对应席位行手动释放多余绑定，系统不会自动选择保留哪一席。</div>`:"")+
+        `<section class="seat-overview" aria-label="席位概况"><div class="seat-summary"><article class="panel seat-card seat-member-card"><h3>未分配席位成员</h3><div class="seat-card-value"><strong>${unassignedMembers().length}</strong><span>人</span></div><div class="seat-card-caption">当前未绑定付费席位</div><div class="seat-card-foot"><span>其中可分配</span><b>${assignableMembers().length} 人</b></div></article>${data.seatTypes.map(item=>{const total=data.seats.filter(slot=>slot.typeId===item.id).length,assigned=assignedCount(item.id),typeActive=ui.seatType===item.id,statusActive=typeActive&&ui.seatStatus==="unassigned";return `<article class="panel seat-card ${typeActive?"is-active":""}"><button type="button" class="seat-card-main" data-action="filter-seat-type" data-type="${esc(item.id)}" aria-pressed="${typeActive&&ui.seatStatus==="all"}" aria-label="筛选${esc(item.name)}全部席位"><span class="seat-card-heading">${esc(item.name)}</span><span class="seat-card-value"><strong>${assigned}</strong><span>/ ${total}</span></span><span class="seat-card-caption">已分配 / 总席位</span></button><button type="button" class="seat-card-foot ${statusActive?"is-active":""}" data-action="filter-seat-unassigned" data-type="${esc(item.id)}" aria-pressed="${statusActive}" aria-label="筛选${esc(item.name)}未分配席位"><span>未分配席位</span><b>${total-assigned}</b></button></article>`}).join("")}</div></section>`+
+        `<section class="panel pad section-gap"><div class="toolbar"><input class="input search" id="seatSearch" aria-label="搜索席位" placeholder="搜索席位编号、使用人或手机号" value="${esc(ui.seatKeyword)}"><select class="select" id="seatTypeFilter" aria-label="筛选席位类型"><option value="all">全部席位类型</option>${options(data.seatTypes,ui.seatType,item=>item.id,item=>item.name)}</select><select class="select" id="seatStatusFilter" aria-label="筛选分配状态"><option value="all" ${ui.seatStatus==="all"?"selected":""}>全部状态</option><option value="assigned" ${ui.seatStatus==="assigned"?"selected":""}>已分配</option><option value="unassigned" ${ui.seatStatus==="unassigned"?"selected":""}>待分配</option></select><span class="count">共 ${list.length} 个席位</span></div><div class="table-wrap"><table class="table" style="min-width:920px"><thead><tr><th>席位编号</th><th>席位类型</th><th>剩余积分</th><th>分配状态</th><th>当前使用人</th><th>到期时间</th><th>操作</th></tr></thead><tbody>${list.map(item=>{const holder=member(item.memberId);return `<tr><td class="name mono">${esc(item.id)}</td><td>${esc(seat(item.typeId)?.name||"—")}</td><td class="mono">${seatPoints(item)}</td><td><span class="pill ${holder?"green":"gray"}">${holder?"已分配":"待分配"}</span></td><td>${holder?`${esc(holder.name)}<br><span class="muted mono">${esc(holder.phone)}</span>${duplicateIds.has(holder.id)?'<br><span class="pill warning">重复绑定</span>':""}`:"—"}</td><td class="mono">${esc(item.expiresAt)}</td><td><div class="row-actions">${holder?`<button class="btn tiny" data-action="change-seat-user" data-id="${esc(item.id)}">更换使用人</button><button class="btn tiny danger" data-action="release-seat" data-id="${esc(item.id)}">释放</button>`:`<button class="btn tiny" data-action="assign-seat" data-id="${esc(item.id)}">分配</button>`}</div></td></tr>`}).join("")||'<tr><td colspan="7"><div class="empty"><b>没有符合条件的席位</b>请调整搜索词或筛选条件。</div></td></tr>'}</tbody></table></div></section>`;
+        $("#seatSearch").oninput=event=>{const pos=event.target.selectionStart;ui.seatKeyword=event.target.value;renderSeats();$("#seatSearch").focus();$("#seatSearch").setSelectionRange(pos,pos)};
+        $("#seatTypeFilter").onchange=event=>{ui.seatType=event.target.value;renderSeats()};
+        $("#seatStatusFilter").onchange=event=>{ui.seatStatus=event.target.value;renderSeats()};
+      }
+      function seatForm(seatId="",replacing=false){
+        const chosen=data.seats.find(item=>item.id===seatId);
+        if(seatId&&!chosen)return toast("席位不存在");
+        if(replacing&&!chosen?.memberId)return toast("席位尚未分配");
+        const available=seatId?[chosen]:data.seats.filter(item=>!item.memberId);
+        if(!available.length)return toast("暂无待分配席位");
+        if(!assignableMembers().length)return toast("暂无已启用且未分配付费席位的成员");
+        const label=slot=>slot.id+" · "+(seat(slot.typeId)?.name||"—")+" · "+seatPoints(slot)+" 积分";
+        const title=replacing?"更换使用人":"分配席位";
+        showModal(title,"仅可选择已启用且未持有付费席位的成员。",`<form id="seatForm"><div class="field"><label for="seatInstance">席位</label><select class="select" id="seatInstance" name="seatId" required ${seatId?"disabled":""}><option value="">请选择席位</option>${options(available,seatId,item=>item.id,label)}</select>${seatId?`<input type="hidden" name="seatId" value="${esc(seatId)}">`:""}</div><div class="field"><label for="seatMember">成员</label><select class="select" id="seatMember" name="memberId" required><option value="">请选择成员</option></select></div></form>`,'<button class="btn" data-action="close-modal">取消</button><button class="btn primary" id="saveSeat">确认</button>');
+        const updateMembers=()=>{const slot=data.seats.find(item=>item.id===$("#seatInstance").value);$("#seatMember").innerHTML='<option value="">请选择成员</option>'+(slot?options(assignableMembers(),"",item=>item.id,item=>item.name+" · "+item.phone):"")};
+        $("#seatInstance").onchange=updateMembers;updateMembers();
+        $("#saveSeat").onclick=()=>{
+          const form=$("#seatForm");if(!form.reportValidity())return;
+          const values=Object.fromEntries(new FormData(form).entries()),slot=data.seats.find(item=>item.id===values.seatId),target=member(values.memberId);
+          if(!slot||!target||!assignableMembers().some(item=>item.id===target.id))return toast("该成员已有付费席位或不可分配");
+          if(replacing?!slot.memberId:!!slot.memberId)return toast("席位分配已变更");
+          slot.memberId=target.id;save();closeModal();render();toast(replacing?"使用人已更换":"席位已分配");
+        };
+      }
+      function updateDialogActive(scroll=false){
+        const input=$("#dialogUserSearch"),items=[...document.querySelectorAll("#dialogUserOptions [role=option]")];
+        if(!input||!ui.dialogPickerOpen)return;
+        if(!items.length){input.removeAttribute("aria-activedescendant");return}
+        ui.dialogActiveIndex=Math.max(0,Math.min(ui.dialogActiveIndex,items.length-1));
+        items.forEach((item,index)=>item.classList.toggle("active",index===ui.dialogActiveIndex));
+        input.setAttribute("aria-activedescendant",items[ui.dialogActiveIndex].id);
+        if(scroll)items[ui.dialogActiveIndex].scrollIntoView({block:"nearest"});
+      }
+      function openDialogPicker(){
+        const input=$("#dialogUserSearch"),list=$("#dialogUserOptions");
+        if(!input||!list)return;
+        ui.dialogPickerOpen=true;list.hidden=false;input.setAttribute("aria-expanded","true");
+        if(ui.dialogUser&&!ui.dialogQuery)input.value="";
+        updateDialogActive();
+      }
+      function closeDialogPicker(){
+        const input=$("#dialogUserSearch"),list=$("#dialogUserOptions");
+        ui.dialogPickerOpen=false;
+        if(!input||!list)return;
+        list.hidden=true;input.setAttribute("aria-expanded","false");input.removeAttribute("aria-activedescendant");
+        const target=member(ui.dialogUser);
+        input.value=target?target.name+" · "+target.phone:ui.dialogQuery;
+      }
+      function chooseDialogUser(id){
+        if(!member(id))return;
+        ui.dialogUser=id;ui.dialogQuery="";ui.dialogPickerOpen=false;ui.dialogActiveIndex=0;
+        renderDialogues();
+        $("#dialogUserSearch").focus();closeDialogPicker();
+      }
+      function dialogTimeRange(){
+        if(ui.dialogPeriod==="custom"){
+          if(!ui.dialogStart||!ui.dialogEnd)return {valid:false,message:"请选择开始日期和结束日期"};
+          if(ui.dialogStart>ui.dialogEnd)return {valid:false,message:"开始日期不能晚于结束日期"};
+          return {valid:true,match:item=>item.at.slice(0,10)>=ui.dialogStart&&item.at.slice(0,10)<=ui.dialogEnd};
+        }
+        const now=new Date(),start=new Date(now);
+        if(ui.dialogPeriod==="1d")start.setDate(start.getDate()-1);
+        else if(ui.dialogPeriod==="1m"){
+          const day=start.getDate();
+          start.setDate(1);
+          start.setMonth(start.getMonth()-1);
+          start.setDate(Math.min(day,new Date(start.getFullYear(),start.getMonth()+1,0).getDate()));
+        }
+        else start.setDate(start.getDate()-7);
+        return {valid:true,match:item=>{const time=new Date(item.at.replace(" ","T"));return time>=start&&time<=now}};
+      }
+      function renderDialogues(){
+        const query=ui.dialogQuery.trim().toLowerCase();
+        const candidates=data.members.filter(item=>!query||[item.email,item.phone,item.name].join(" ").toLowerCase().includes(query));
+        const target=member(ui.dialogUser);
+        const range=dialogTimeRange();
+        const list=target&&range.valid?data.dialogues.filter(item=>item.membershipId===target.id&&range.match(item)).sort((a,b)=>b.at.localeCompare(a.at)):[];
+        const inputValue=target&&!ui.dialogPickerOpen?target.name+" · "+target.phone:ui.dialogQuery;
+        const choices=candidates.map((item,index)=>`<button type="button" class="dialog-option ${index===ui.dialogActiveIndex?"active":""}" id="dialog-option-${esc(item.id)}" role="option" tabindex="-1" aria-selected="${item.id===ui.dialogUser}" data-action="select-dialog-user" data-id="${esc(item.id)}"><strong>${esc(item.name)}</strong><small>${esc(item.phone)} · ${esc(item.email||"未填写邮箱")}${item.status==="removed"?" · 已移除":""}</small></button>`).join("")||'<div class="dialog-no-options">未找到成员</div>';
+        const chooser=`<div class="toolbar dialog-filters"><div class="dialog-picker" id="dialogPicker"><input class="input dialog-picker-input" id="dialogUserSearch" role="combobox" aria-label="搜索邮箱、手机号或人名并选择一位成员" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="dialogUserOptions" aria-expanded="${ui.dialogPickerOpen}" autocomplete="off" placeholder="搜索邮箱、手机号或人名" value="${esc(inputValue)}"><span class="dialog-picker-arrow" aria-hidden="true">⌄</span><div class="dialog-options" id="dialogUserOptions" role="listbox" aria-label="成员列表" ${ui.dialogPickerOpen?"":"hidden"}>${choices}</div></div><div class="dialog-time"><span class="dialog-time-label">时间</span><div class="period-switch" role="group" aria-label="对话时间">${[["1d","近1日"],["7d","近7日"],["1m","近1月"],["custom","自定义"]].map(([value,label])=>`<button type="button" class="period-btn" data-action="dialog-period" data-period="${value}" aria-pressed="${ui.dialogPeriod===value}">${label}</button>`).join("")}</div>${ui.dialogPeriod==="custom"?`<input class="input" type="date" id="dialogStart" aria-label="开始日期" value="${esc(ui.dialogStart)}"><span>至</span><input class="input" type="date" id="dialogEnd" aria-label="结束日期" value="${esc(ui.dialogEnd)}">`:""}</div></div>`;
+        const scope=target?`<div class="dialog-scope"><span>当前查询用户</span><strong>${esc(target.name)}</strong><span class="mono">${esc(target.phone)}</span><span>${esc(target.joinedAt)}</span><span class="count">共 ${list.length} 条对话</span></div>`:"";
+        const content=!target?`<div class="empty"><b>${candidates.length?"请选择一位成员":"未找到成员"}</b>${candidates.length?"选中成员后查看对话记录。":"请更换搜索条件。"}</div>`:
+          !range.valid?`<div class="empty"><b>${esc(range.message)}</b>设置有效的时间范围后查看对话记录。</div>`:
+          `<div class="table-wrap"><table class="table" style="min-width:1120px"><thead><tr><th>时间</th><th>用户 ID</th><th>人名</th><th>输入内容</th><th>输出内容</th><th>文件列表</th><th>操作</th></tr></thead><tbody>${list.map(item=>`<tr><td class="mono">${esc(item.at)}</td><td class="mono">${esc(item.userId)}</td><td class="name">${esc(member(item.membershipId)?.name||"—")}</td><td><div class="short-text" title="${esc(item.input)}">${esc(item.input)}</div></td><td><div class="short-text" title="${esc(item.output)}">${esc(item.output)}</div></td><td>${item.files.length?`<div class="tag-list">${item.files.map(file=>`<span class="tag">${esc(file)}</span>`).join("")}</div>`:"—"}</td><td><button class="btn tiny" data-action="dialog-detail" data-id="${item.id}">查看详情</button></td></tr>`).join("")||'<tr><td colspan="7"><div class="empty"><b>该用户在所选时间内暂无对话记录</b></div></td></tr>'}</tbody></table></div>`;
+        $("#view").innerHTML=top("对话内容")+`<section class="panel pad">${chooser}${scope}${content}</section>`;
+        $("#dialogUserSearch").onfocus=openDialogPicker;
+        $("#dialogUserSearch").onclick=openDialogPicker;
+        $("#dialogUserSearch").oninput=event=>{const position=event.target.selectionStart;ui.dialogQuery=event.target.value;ui.dialogUser="";ui.dialogPickerOpen=true;ui.dialogActiveIndex=0;renderDialogues();$("#dialogUserSearch").focus();$("#dialogUserSearch").setSelectionRange(position,position)};
+        if(ui.dialogPeriod==="custom"){
+          $("#dialogStart").onchange=event=>{ui.dialogStart=event.target.value;renderDialogues()};
+          $("#dialogEnd").onchange=event=>{ui.dialogEnd=event.target.value;renderDialogues()};
+        }
+        $("#dialogUserSearch").onkeydown=event=>{
+          if(event.key==="Escape"){event.preventDefault();closeDialogPicker();return}
+          if(event.key==="Tab"){closeDialogPicker();return}
+          if(!["ArrowDown","ArrowUp","Enter"].includes(event.key))return;
+          event.preventDefault();
+          if(!ui.dialogPickerOpen){openDialogPicker();return}
+          if(!candidates.length)return;
+          if(event.key==="Enter"){const choice=candidates[ui.dialogActiveIndex];if(choice)chooseDialogUser(choice.id);return}
+          ui.dialogActiveIndex+=event.key==="ArrowDown"?1:-1;
+          if(ui.dialogActiveIndex<0)ui.dialogActiveIndex=candidates.length-1;
+          if(ui.dialogActiveIndex>=candidates.length)ui.dialogActiveIndex=0;
+          updateDialogActive(true);
+        };
+        updateDialogActive();
+      }
+      function showDialogDetail(id){
+        const range=dialogTimeRange();
+        const item=data.dialogues.find(row=>row.id===id&&row.membershipId===ui.dialogUser&&range.valid&&range.match(row));
+        if(!item)return toast("请先选择有效的对话记录");
+        const person=member(item.membershipId);
+        $("#dialogDetailSubtitle").textContent=item.at+" · "+(person?.name||item.userId);
+        $("#dialogDetailBody").innerHTML=`<div class="detail-meta"><span>用户 ID：${esc(item.userId)}</span><span>时间：${esc(item.at)}</span></div><section class="qa-section"><h3>输入内容</h3><div class="qa-content">${esc(item.input)}</div></section><section class="qa-section output"><h3>输出内容</h3><div class="qa-content">${esc(item.output)}</div></section><section class="qa-section"><h3>文件列表</h3><div class="detail-files">${item.files.length?item.files.map(file=>`<span class="tag">${esc(file)}</span>`).join(""):'<span class="muted">无文件</span>'}</div></section>`;
+        $("#dialogDetail").showModal();
+      }
+      function renderShares(){
+        $("#view").innerHTML=top("分享链接")+`<section class="panel pad"><div class="table-wrap"><table class="table"><thead><tr><th>时间</th><th>用户ID</th><th>人名</th><th>分享类型</th><th>分享链接</th></tr></thead><tbody>${data.shares.map(item=>`<tr><td class="mono">${esc(item.at)}</td><td class="mono">${esc(item.userId)}</td><td class="name">${esc(member(item.membershipId)?.name||"—")}</td><td><span class="pill">${esc(item.type)}</span></td><td><div class="link-text" title="${esc(item.link)}">${esc(item.link)}</div></td></tr>`).join("")||'<tr><td colspan="5"><div class="empty"><b>暂无分享记录</b></div></td></tr>'}</tbody></table></div></section>`;
+      }
+      function renderDownloads(){
+        $("#view").innerHTML=top("文件下载")+`<section class="panel pad"><div class="table-wrap"><table class="table"><thead><tr><th>时间</th><th>用户ID</th><th>人名</th><th>链接</th></tr></thead><tbody>${data.downloads.map(item=>`<tr><td class="mono">${esc(item.at)}</td><td class="mono">${esc(item.userId)}</td><td class="name">${esc(member(item.membershipId)?.name||"—")}</td><td><div class="link-text" title="${esc(item.link)}">${esc(item.link)}</div></td></tr>`).join("")||'<tr><td colspan="4"><div class="empty"><b>暂无下载记录</b></div></td></tr>'}</tbody></table></div></section>`;
+      }
+      function renderPoints(){
+        const list=data.points.filter(item=>ui.pointUser==="all"||item.membershipId===ui.pointUser);
+        $("#view").innerHTML=top("积分记录")+`<section class="panel pad"><div class="toolbar"><select class="select" id="pointUser" aria-label="筛选用户"><option value="all">全部用户</option>${options(data.members,ui.pointUser,item=>item.id,item=>item.name+" · "+item.accountId+" · "+item.joinedAt+(item.status==="removed"?"（已移除）":""))}</select><span class="count">共 ${list.length} 条记录</span></div><div class="table-wrap"><table class="table"><thead><tr><th>时间</th><th>用户 ID</th><th>类型</th><th>描述</th><th>数量</th></tr></thead><tbody>${list.map(item=>`<tr><td class="mono">${esc(item.at)}</td><td class="mono">${esc(item.userId)}</td><td><span class="pill">${esc(item.type)}</span></td><td>${esc(item.description)}</td><td class="mono">${item.amount>0?"+":""}${item.amount}</td></tr>`).join("")||'<tr><td colspan="5"><div class="empty"><b>暂无积分记录</b></div></td></tr>'}</tbody></table></div></section>`;
+        $("#pointUser").onchange=event=>{ui.pointUser=event.target.value;renderPoints()};
+      }
+      document.addEventListener("click",event=>{
+        const pageButton=event.target.closest("[data-page]");if(pageButton){ui.dialogPickerOpen=false;ui.page=pageButton.dataset.page;$("#mobileNav").hidden=true;render();window.scrollTo(0,0);return}
+        const button=event.target.closest("[data-action]");if(!button)return;
+        const action=button.dataset.action,id=button.dataset.id;
+        if(action==="close-modal")return closeModal();
+        if(action==="close-dialog-detail")return $("#dialogDetail").close();
+        if(action==="add-member")return memberForm();
+        if(action==="edit-member")return memberForm(id);
+        if(action==="request-seat-adjustment")return showModal("席位调整","如需调整机构采购的席位，请发起席位调整工单或联系销售。当前工作台暂不支持在线提交。","",'<button class="btn primary" data-action="close-modal">知道了</button>');
+        if(action==="filter-seat-type"){ui.seatType=button.dataset.type;ui.seatStatus="all";ui.seatKeyword="";return renderSeats()}
+        if(action==="filter-seat-unassigned"){ui.seatType=button.dataset.type;ui.seatStatus="unassigned";ui.seatKeyword="";return renderSeats()}
+        if(action==="toggle-member"){const item=member(id);if(!item||item.owner||item.status==="removed")return toast("无法修改该成员状态");item.status=item.status==="enabled"?"disabled":"enabled";save();render();return toast(item.status==="enabled"?"成员已启用":"成员已停用")}
+        if(action==="remove-member"){const item=member(id);if(!item||item.owner||item.status==="removed")return toast("无法移除该成员");const occupied=data.seats.filter(row=>row.memberId===id);return confirmAction("移除成员？",`移除 ${item.name} 后将释放其 ${occupied.length} 个席位，历史记录保留。`,()=>{item.status="removed";for(const slot of occupied)slot.memberId=null;save();render();toast("成员已移除，席位已释放")})}
+        if(action==="assign-seat")return seatForm(id);
+        if(action==="change-seat-user")return seatForm(id,true);
+        if(action==="release-seat"){const slot=data.seats.find(item=>item.id===id),target=member(slot?.memberId);if(!slot||!target)return toast("席位分配已变更");return confirmAction("释放席位？",`${slot.id} 将变为待分配，剩余积分保留在该席位。`,()=>{slot.memberId=null;save();render();toast("席位已释放")})}
+        if(action==="select-dialog-user")return chooseDialogUser(id);
+        if(action==="dialog-period"){ui.dialogPeriod=button.dataset.period;ui.dialogPickerOpen=false;return renderDialogues()}
+        if(action==="dialog-detail")return showDialogDetail(id);
+        if(action==="account-info"){closeAccount();return showModal("账号信息","",'<div class="detail-row"><span>人名</span><b>林依然</b></div><div class="detail-row"><span>身份</span><b>机构 Owner</b></div><div class="detail-row"><span>当前机构</span><b>万得</b></div>','<button class="btn primary" data-action="close-modal">关闭</button>')}
+      });
+      function toggleAccount(trigger){const menu=$("#accountMenu"),open=menu.hidden;menu.hidden=!open;for(const button of [$("#accountTrigger"),$("#mobileAccountTrigger")])button.setAttribute("aria-expanded",String(open));if(open){const rect=trigger.getBoundingClientRect();menu.style.left=Math.max(12,Math.min(rect.left,innerWidth-menu.offsetWidth-12))+"px";menu.style.top=(rect.top>menu.offsetHeight+8?rect.top-menu.offsetHeight-8:rect.bottom+8)+"px"}}
+      function closeAccount(){$("#accountMenu").hidden=true;for(const button of [$("#accountTrigger"),$("#mobileAccountTrigger")])button.setAttribute("aria-expanded","false")}
+      $("#accountTrigger").onclick=()=>toggleAccount($("#accountTrigger"));
+      $("#mobileAccountTrigger").onclick=()=>toggleAccount($("#mobileAccountTrigger"));
+      document.addEventListener("click",event=>{if(!event.target.closest("#accountTrigger")&&!event.target.closest("#mobileAccountTrigger")&&!event.target.closest("#accountMenu"))closeAccount()});
+      document.addEventListener("click",event=>{if(ui.page==="dialogues"&&!event.target.closest("#dialogPicker"))closeDialogPicker()});
+      document.addEventListener("keydown",event=>{if(event.key==="Escape")closeAccount()});
+      $("#mobileTrigger").onclick=()=>{$("#mobileNav").hidden=!$("#mobileNav").hidden};
+      $("#modal").onclick=event=>{if(event.target===$("#modal"))closeModal()};
+      $("#dialogDetail").onclick=event=>{const rect=$("#dialogDetail").getBoundingClientRect();if(event.target===$("#dialogDetail")&&(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom))$("#dialogDetail").close()};
+      render();
+    })();
+  </script>
+</body>
+</html>

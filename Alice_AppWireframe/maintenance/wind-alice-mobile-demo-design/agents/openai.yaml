@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wind Alice Mobile Demo Design"
+  short_description: "Maintain the Wind Alice mobile demo framework."
+  default_prompt: "Use this skill when updating the Wind Alice mobile demo prototype or adding module pages while preserving the fixed Demo | Component layout, phone frame, status bar, shared components, Panel logic, input bar, and TabBar rules."
